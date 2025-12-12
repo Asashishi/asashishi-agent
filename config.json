@@ -1,0 +1,32 @@
+{
+    "info": {
+        "version": "3.2.7",
+        "owner": "Asashishi",
+        "name": "asashishi-agent.exe"
+    },
+    "proc": {
+        "backup": false,
+        "backup_excepts": [
+            "log",
+            "build",
+            "backup\\files",
+            "node_modules"
+        ],
+        "tick_per_sec": 90
+    },
+    "llm": {
+        "temperature": 0.5,
+        "files_excepts": [
+            "build",
+            "node_modules",
+            "backup\\files"
+        ],
+        "context_length": 128,
+        "use_web_search": true,
+        "show_toolcall_args": false,
+        "model_name": "deepseek-chat",
+        "max_response_token_length": 8192,
+        "base_url": "https://api.deepseek.com/v1",
+        "api_key": ""
+    }
+}
