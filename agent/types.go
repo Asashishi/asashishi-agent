@@ -12,12 +12,11 @@ type ToolCall struct {
 }
 
 type AgentClient struct {
-	StdOutHasContent bool
-	ModelName        string
-	ErrorChan        chan error
-	StreamChan       chan string
-	LlmClient        openai.Client
-	Context          context.Context
-	ToolsList        []openai.ChatCompletionToolUnionParam
-	MsgContext       []openai.ChatCompletionMessageParamUnion
+	ModelName  string
+	ErrorChan  chan error
+	StreamChan chan string
+	LlmClient  openai.Client
+	Context    context.Context
+	ToolsList  []openai.ChatCompletionToolUnionParam
+	MsgContext []openai.ChatCompletionMessageParamUnion
 }
