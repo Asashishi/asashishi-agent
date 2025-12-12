@@ -10,7 +10,8 @@
             "log",
             "build",
             "backup\\files",
-            "node_modules"
+            "node_modules",
+            ".git"
         ],
         "tick_per_sec": 90
     },
@@ -19,7 +20,8 @@
         "files_excepts": [
             "build",
             "node_modules",
-            "backup\\files"
+            "backup\\files",
+            ".git"
         ],
         "context_length": 128,
         "use_web_search": true,
