@@ -37,8 +37,8 @@ func ClearCommands() bool {
 }
 
 func Execute() string {
-	fmt.Println("-- Press 'enter' to back to chat")
-	defer fmt.Println("-- Exit")
+	fmt.Println("\n-- Press 'enter' to back to chat")
+	defer fmt.Println("\n-- Exit")
 	var (
 		stopFlag        bool
 		err             error

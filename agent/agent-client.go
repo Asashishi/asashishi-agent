@@ -19,7 +19,6 @@ func (cli *AgentClient) Init(
 ) {
 	cli.ToolsList = toolList
 	cli.ModelName = modelName
-	cli.StdOutHasContent = false
 	cli.ErrorChan = make(chan error)
 	cli.StreamChan = make(chan string)
 	cli.Context = context.Background()
@@ -66,11 +65,12 @@ func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 
 func (cli *AgentClient) StreamChat(prompt string) {
 	var (
-		call             *ToolCall
-		assistantMessage strings.Builder
-		currTools        = map[string]*ToolCall{}
-		chunk            openai.ChatCompletionChunk
-		stream           *ssestream.Stream[openai.ChatCompletionChunk]
+		assistantMsg        string
+		call                *ToolCall
+		assistantMsgBuilder strings.Builder
+		currTools           = map[string]*ToolCall{}
+		chunk               openai.ChatCompletionChunk
+		stream              *ssestream.Stream[openai.ChatCompletionChunk]
 	)
 	if prompt != "" {
 		cli.MsgContext = append(cli.MsgContext, openai.UserMessage(prompt))
@@ -91,9 +91,8 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		if len(chunk.Choices) > 0 {
 			for _, choice := range chunk.Choices {
 				if choice.Delta.Content != "" {
-					cli.StdOutHasContent = true
-					assistantMessage.WriteString(choice.Delta.Content)
 					cli.StreamChan <- choice.Delta.Content
+					assistantMsgBuilder.WriteString(choice.Delta.Content)
 				}
 				if len(choice.Delta.ToolCalls) > 0 {
 					for _, info := range choice.Delta.ToolCalls {
@@ -121,7 +120,10 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		}
 	}
 	stream.Close()
-	cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMessage.String()))
+	assistantMsg = assistantMsgBuilder.String()
+	if assistantMsg != "" {
+		cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMsg))
+	}
 	for k, v := range currTools {
 		if k == "" {
 			continue
