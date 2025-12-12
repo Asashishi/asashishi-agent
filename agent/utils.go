@@ -1,9 +1,13 @@
 package agent
 
-import "github.com/openai/openai-go/v3"
+import (
+	"math"
+
+	"github.com/openai/openai-go/v3"
+)
 
 func IsUseNewLine(cli *AgentClient) bool {
 	var item openai.ChatCompletionMessageParamUnion = cli.MsgContext[len(cli.MsgContext)-1]
-	var prevItem openai.ChatCompletionMessageParamUnion = cli.MsgContext[len(cli.MsgContext)-3]
+	var prevItem openai.ChatCompletionMessageParamUnion = cli.MsgContext[int(math.Max(float64(len(cli.MsgContext)-3), 0))]
 	return (item.OfTool == nil && prevItem.OfTool != nil) || item.OfAssistant != nil || item.OfUser != nil
 }
