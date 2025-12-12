@@ -17,7 +17,7 @@ jobs:
       - name: setup go
         uses: actions/setup-go@v5
         with: 
-          go-version: '1.22'
+          go-version: '1.25.5'
 
       - name: get libs
         run: go mod download
@@ -25,5 +25,10 @@ jobs:
       - name: build
         run: go build -ldflags="-s -w" -trimpath -o asashishi-agent.exe
 
-      - name: run process
-        run: .\asashishi-agent.exe
+      - name: run process for limited time
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath ".\asashishi-agent.exe" -PassThru
+          Start-Sleep -Seconds 30
+          Stop-Process -Id $p.Id
+
