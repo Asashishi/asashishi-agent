@@ -4,11 +4,11 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
 [![OpenAI API](https://img.shields.io/badge/OpenAI-API-412991?style=flat-square&logo=openai)](https://platform.openai.com/)
 
-**Asashishi Agent** 是一个基于 Go 语言开发的智能编程助手命令行工具，通过自然语言交互帮助开发者进行项目开发、代码生成和文件管理。支持 OpenAI 兼容 API（如 DeepSeek），提供完整的文件操作、Shell 命令执行和网络搜索能力。
-
 <p align="center">
   <img src="https://raw.githubusercontent.com/Asashishi/asashishi-agent/refs/heads/main/resources/app.ico" alt="Logo" />
 </p>
+
+**Asashishi Agent** 是一个基于 Go 语言开发的智能编程助手命令行工具，通过自然语言交互帮助开发者进行项目开发、代码生成和文件管理。支持 OpenAI 兼容 API（如 DeepSeek），提供完整的文件操作、Shell 命令执行和网络搜索能力。
 
 ## ✨ 核心特性
 
