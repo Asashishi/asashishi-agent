@@ -314,7 +314,7 @@ upx --best --lzma asashishi-agent.exe
 - 其他兼容 OpenAI API 的服务
 
 ### Q: 可以在 Linux/macOS 上运行吗？
-**A:** 可以，但需要调整构建脚本（主要是图标资源部分）。核心 Go 代码是跨平台的。
+**A:** 可以，但需要调整构建脚本和部分Shell操作代码。核心 Go 代码是跨平台的。
 
 ## 📄 许可证
 
