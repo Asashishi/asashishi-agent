@@ -10,7 +10,7 @@ import (
 
 func UseTool(id string, name string, arguments string, cli *AgentClient) {
 	if IsUseNewLine(cli) {
-		fmt.Print(global.EmptyString)
+		fmt.Print(global.LineBreakString)
 	}
 	if conf.Env.ShowToolCallArgs {
 		fmt.Printf(CallToolWithArgs, name, arguments)
