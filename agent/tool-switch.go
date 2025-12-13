@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"asashishi-agent/global"
 	"asashishi-agent/tools"
 	"encoding/json"
 	"fmt"
@@ -25,8 +26,8 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		)
 		json.Unmarshal([]byte(arguments), &args)
 		searchResult = tools.WebContentSearch(args.Url)
-		fmt.Println("Processing Data Clean", "🔄")
-		if searchResult == "" || searchResult == NotFound {
+		fmt.Println(ProcessingDataClean)
+		if searchResult == global.EmptyString {
 			message = searchResult
 		} else {
 			message = cli.ChatForWebSearchContentDataClean(searchResult)
@@ -43,13 +44,13 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		} else {
 			message = string(data)
 		}
-	case "RenameContent":
+	case "MoveContent":
 		var args struct {
 			OPath string `json:"opath"`
 			NPath string `json:"nPath"`
 		}
 		json.Unmarshal([]byte(arguments), &args)
-		if tools.RenameContent(args.OPath, args.NPath) {
+		if tools.MoveContent(args.OPath, args.NPath) {
 			message = Done
 		} else {
 			message = NeedRetry
@@ -99,10 +100,11 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 			Path string `json:"path"`
 		}
 		json.Unmarshal([]byte(arguments), &args)
-		if data, err := json.Marshal(tools.ReadFileContent(args.Path)); err != nil {
-			message = NeedRetry
+		var result string = tools.ReadFileContent(args.Path)
+		if result != global.EmptyString {
+			message = result
 		} else {
-			message = string(data)
+			message = NeedRetry
 		}
 	case "AppendContentAtTail":
 		var args struct {
@@ -115,17 +117,39 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		} else {
 			message = NeedRetry
 		}
-	case "AppendContentAtMiddle":
+	case "SearchFileContent":
 		var args struct {
 			Path    string `json:"path"`
-			Stp     int    `json:"stp"`
 			Content string `json:"content"`
 		}
 		json.Unmarshal([]byte(arguments), &args)
-		if data, err := json.Marshal(tools.AppendContentAtMiddle(args.Path, args.Stp, args.Content)); err != nil {
+		if data, err := json.Marshal(tools.SearchFileContent(args.Path, args.Content)); err != nil {
 			message = NeedRetry
 		} else {
 			message = string(data)
+		}
+	case "ReplaceFileContentByPosition":
+		var args struct {
+			Position []int  `json:"position"`
+			Path     string `json:"path"`
+			Content  string `json:"content"`
+		}
+		json.Unmarshal([]byte(arguments), &args)
+		if tools.ReplaceFileContentByPosition(args.Path, args.Position, args.Content) {
+			message = Done
+		} else {
+			message = NeedRetry
+		}
+	case "DeleteFileContentByPosition":
+		var args struct {
+			Position []int  `json:"position"`
+			Path     string `json:"path"`
+		}
+		json.Unmarshal([]byte(arguments), &args)
+		if tools.DeleteFileContentByPosition(args.Path, args.Position) {
+			message = Done
+		} else {
+			message = NeedRetry
 		}
 	case "DeleteFileContent":
 		var args struct {
@@ -191,8 +215,10 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		} else {
 			message = NeedRetry
 		}
-	case "Excute":
-		message = tools.Execute()
+	case "InterActiveExcute":
+		message = tools.InterActiveExecute()
+	case "NoInterActiveExecute":
+		message = tools.NoInterActiveExecute()
 	}
 	return message
 }

@@ -25,10 +25,6 @@ jobs:
       - name: build
         run: go build -ldflags="-s -w" -trimpath -o asashishi-agent.exe
 
-      - name: run process for limited time
+      - name: test
         shell: pwsh
-        run: |
-          $p = Start-Process -FilePath ".\asashishi-agent.exe" -PassThru
-          Start-Sleep -Seconds 30
-          Stop-Process -Id $p.Id
-
+        run: ./run-test.bat

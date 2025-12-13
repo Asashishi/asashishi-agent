@@ -2,6 +2,7 @@ package agent
 
 import (
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"context"
 	"strings"
 
@@ -46,7 +47,7 @@ func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 		err  error
 		resp *openai.ChatCompletion
 	)
-	if prompt == "" {
+	if prompt == global.EmptyString {
 		return ""
 	} else if resp, err = cli.LlmClient.Chat.Completions.New(
 		cli.Context,
@@ -72,7 +73,7 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		chunk               openai.ChatCompletionChunk
 		stream              *ssestream.Stream[openai.ChatCompletionChunk]
 	)
-	if prompt != "" {
+	if prompt != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.UserMessage(prompt))
 	}
 	stream = cli.LlmClient.Chat.Completions.NewStreaming(
@@ -85,33 +86,30 @@ func (cli *AgentClient) StreamChat(prompt string) {
 	)
 	for stream.Next() {
 		chunk = stream.Current()
-		if chunk.Usage.PromptTokens > conf.Env.ContextLength*K {
+		if chunk.Usage.PromptTokens > conf.Env.ContextLength*global.BitK {
 			cli.SetContextToLastUserPrompt()
 		}
 		if len(chunk.Choices) > 0 {
 			for _, choice := range chunk.Choices {
-				if choice.Delta.Content != "" {
+				if choice.Delta.Content != global.EmptyString {
 					cli.StreamChan <- choice.Delta.Content
 					assistantMsgBuilder.WriteString(choice.Delta.Content)
 				}
 				if len(choice.Delta.ToolCalls) > 0 {
 					for _, info := range choice.Delta.ToolCalls {
-						if choice.FinishReason == "tool_calls" || len(currTools) == 0 {
-							call = &ToolCall{
-								Name:     "",
-								Augments: "",
-							}
+						if choice.FinishReason == ToolCalls || len(currTools) == 0 {
+							call = &ToolCall{}
 						}
-						if info.ID != "" {
+						if info.ID != global.EmptyString {
 							_, ok := currTools[info.ID]
 							if !ok {
 								currTools[info.ID] = call
 							}
 						}
-						if info.Function.Name != "" {
+						if info.Function.Name != global.EmptyString {
 							call.Name = info.Function.Name
 						}
-						if info.Function.Arguments != "" {
+						if info.Function.Arguments != global.EmptyString {
 							call.Augments = call.Augments + info.Function.Arguments
 						}
 					}
@@ -121,11 +119,11 @@ func (cli *AgentClient) StreamChat(prompt string) {
 	}
 	stream.Close()
 	assistantMsg = assistantMsgBuilder.String()
-	if assistantMsg != "" {
+	if assistantMsg != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMsg))
 	}
 	for k, v := range currTools {
-		if k == "" {
+		if k == global.EmptyString {
 			continue
 		}
 		UseTool(k, v.Name, v.Augments, cli)

@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"asashishi-agent/global"
 	"bufio"
 	"bytes"
 	"fmt"
@@ -36,9 +37,36 @@ func ClearCommands() bool {
 	return true
 }
 
-func Execute() string {
-	fmt.Println("\n-- Press 'enter' to back to chat")
-	defer fmt.Println("\n-- Exit")
+func InterActiveExecute() string {
+	var (
+		stopFlag        bool
+		err             error
+		fomatedCommands string
+		shell           *exec.Cmd
+		buffer          bytes.Buffer
+	)
+	stopFlag = false
+	fomatedCommands = InitialCommand
+	for _, cmd := range Commands {
+		fomatedCommands = fmt.Sprintf("%s; if ($?) { %s }", fomatedCommands, cmd)
+	}
+	Commands = []string{}
+	shell = exec.Command("powershell", "-Command", fomatedCommands)
+	shell.Stdin = os.Stdin
+	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
+	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
+	if err = shell.Run(); err != nil {
+		if stopFlag {
+			return buffer.String() + StopedByUser
+		}
+		return err.Error()
+	}
+	return buffer.String()
+}
+
+func NoInterActiveExecute() string {
+	fmt.Println(PressEnterToBackToChat)
+	defer fmt.Println(Exit)
 	var (
 		stopFlag        bool
 		err             error
@@ -54,7 +82,6 @@ func Execute() string {
 	}
 	Commands = []string{}
 	shell = exec.Command("powershell", "-Command", fomatedCommands)
-	shell.Stdin = os.Stdin
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
 	wg.Add(1)
@@ -66,7 +93,7 @@ func Execute() string {
 			reader   *bufio.Reader
 		)
 		reader = bufio.NewReader(os.Stdin)
-		if _, innerErr = reader.ReadString('\n'); innerErr != nil {
+		if _, innerErr = reader.ReadString(global.LineBreakChar); innerErr != nil {
 			stopFlag = true
 		}
 		stopFlag = true
