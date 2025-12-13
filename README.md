@@ -58,12 +58,7 @@ go install github.com/akavel/rsrc@latest  # Windows 图标资源工具
 
 ### 基本配置
 
-1. **复制配置文件**
-```bash
-cp config.example.json config.json
-```
-
-2. **编辑 `config.json`** - 至少需要配置 API 密钥：
+1. **编辑配置文件** - 项目已包含 `config.json` 文件，直接编辑即可：
 ```json
 {
     "llm": {
@@ -73,6 +68,11 @@ cp config.example.json config.json
     }
 }
 ```
+
+2. **配置说明**：
+   - `api_key`: **必填** - 您的 OpenAI 兼容 API 密钥
+   - `base_url`: API 服务地址，默认为 DeepSeek
+   - `model_name`: 使用的 AI 模型名称
 
 3. **启动程序**
 ```bash
@@ -93,7 +93,7 @@ go run main.go
     },
     "proc": {
         "backup": true,
-        "backup_excepts": ["log", "build", "backup\\files", "node_modules"],
+        "backup_excepts": ["log", "backup\\files", "node_modules"],
         "tick_per_sec": 90
     },
     "llm": {
@@ -105,7 +105,7 @@ go run main.go
         "show_toolcall_args": false,
         "context_length": 128,
         "max_response_token_length": 8192,
-        "files_excepts": ["build", "node_modules", "backup\\files"]
+        "files_excepts": ["node_modules", "backup\\files"]
     }
 }
 ```
@@ -120,8 +120,8 @@ go run main.go
 | `llm.temperature` | 创造力参数 (0.0-2.0) | `0.5`（平衡） |
 | `proc.backup` | 是否启用自动备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
-
-## 📖 使用示例
+| `proc.backup_excepts` | 备份排除目录 | `["log", "backup\\files", "node_modules"]` |
+| `llm.files_excepts` | 文件操作排除目录 | `["node_modules", "backup\\files"]` |## 📖 使用示例
 
 ### 示例 1：创建 TypeScript 项目
 ```
@@ -167,33 +167,78 @@ asashishi-agent/
 ├── config.json               # 用户配置文件
 ├── sys-prompt.config         # 系统提示词配置
 ├── build.bat                 # Windows 构建脚本
+├── run-test.bat              # 测试运行脚本
 ├── go.mod                    # Go 模块定义
+├── go.sum                    # 依赖校验文件
+├── .gitignore               # Git 忽略配置
+├── LICENSE                   # MIT 许可证
 │
-├── agent/                    # AI 代理核心
+├── agent/                    # AI 代理核心模块
 │   ├── agent-client.go      # AI 客户端实现
-│   ├── types.go             # 类型定义
+│   ├── consts.go            # 常量定义
 │   ├── tool-switch.go       # 工具调用路由
+│   ├── types.go             # 类型定义
+│   ├── use-tool.go          # 工具使用逻辑
 │   └── utils.go             # 工具函数
 │
-├── tools/                    # 工具实现
+├── tools/                    # 工具实现模块
 │   ├── init-desc.go         # 工具描述定义
 │   ├── flie-ops.go          # 文件操作实现
 │   ├── shell-ops.go         # Shell 操作实现
 │   ├── net-ops.go           # 网络操作实现
-│   └── time-ops.go          # 时间工具实现
+│   ├── time-ops.go          # 时间工具实现
+│   └── consts.go            # 工具常量定义
 │
-├── conf/                     # 配置管理
+├── conf/                     # 配置管理模块
 │   ├── init-conf.go         # 配置初始化
-│   └── types.go             # 配置类型定义
+│   ├── types.go             # 配置类型定义
+│   └── consts.go            # 配置常量定义
 │
-├── backup/                   # 备份系统
-├── log/                     # 操作日志
-├── build/                   # 构建输出
-└── resources/               # 资源文件
+├── backup/                   # 备份系统模块
+│   ├── backup.go            # 备份逻辑实现
+│   └── consts.go            # 备份常量定义
+│
+├── global/                   # 全局功能模块
+│   ├── consts.go            # 全局常量定义
+│   └── utils.go             # 全局工具函数
+│
+├── test/                     # 测试模块
+│   ├── init-test.go         # 测试初始化
+│   └── consts.go            # 测试常量定义
+│
+├── log/                      # 操作日志目录
+│   └── *.md                 # 时间戳命名的日志文件
+│
+└── resources/                # 资源文件目录
     └── app.ico              # 程序图标
 ```
 
-## 🔧 开发指南
+### 📁 模块说明
+
+| 模块 | 功能描述 | 关键文件 |
+|------|----------|----------|
+| **agent/** | AI 代理核心，处理与 LLM 的交互和工具调用 | `agent-client.go`, `tool-switch.go` |
+| **tools/** | 工具实现，提供文件、Shell、网络等操作能力 | `flie-ops.go`, `shell-ops.go`, `net-ops.go` |
+| **conf/** | 配置管理，读取和验证用户配置 | `init-conf.go`, `types.go` |
+| **backup/** | 备份系统，在重要操作前自动备份文件 | `backup.go` |
+| **global/** | 全局功能，提供跨模块使用的常量和工具 | `consts.go`, `utils.go` |
+| **test/** | 测试模块，提供测试初始化功能 | `init-test.go` |
+| **log/** | 日志记录，保存所有操作的详细日志 | `YYYYMMDDhhmmss.md` 格式文件 |
+
+### 🔄 数据流架构
+
+```
+用户输入 → agent/ → 工具调用 → 操作执行 → 结果返回 → 日志记录
+    ↓           ↓           ↓           ↓           ↓
+配置验证 → 智能规划 → 安全检查 → 备份保护 → 状态更新
+```
+
+### 🎯 设计原则
+
+1. **模块化设计** - 每个模块职责单一，便于维护和扩展
+2. **单向数据流** - 严格遵循 DDD 原则，避免循环依赖
+3. **错误隔离** - 模块间错误不传播，确保系统稳定性
+4. **日志驱动** - 所有操作都有详细日志，便于调试和审计## 🔧 开发指南
 
 ### 环境设置
 ```bash

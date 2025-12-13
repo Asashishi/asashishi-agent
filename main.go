@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"time"
 
 	"asashishi-agent/agent"
 	"asashishi-agent/backup"
@@ -13,12 +12,6 @@ import (
 	"asashishi-agent/tools"
 	"os"
 )
-
-func wait() {
-	time.Sleep(
-		(time.Duration((1000 / conf.Env.TickPerSec) * global.FloatK)) * time.Microsecond,
-	)
-}
 
 func init() {
 	conf.InitConfig()
@@ -74,7 +67,7 @@ func main() {
 						}
 					}()
 				}
-				wait()
+				global.WaitNextFrame(conf.Env.TickPerSec)
 			}
 		}
 	}
