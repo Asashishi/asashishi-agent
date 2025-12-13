@@ -4,10 +4,11 @@ import (
 	"asashishi-agent/conf"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
-var rollBackMap = map[string][]string{}
+var rollBackMap = map[string]string{}
 
 func listFiles(path string) []string {
 	var (
@@ -71,7 +72,7 @@ func GetFileList(path string) []string {
 	}
 }
 
-func RenameContent(oPath string, nPath string) bool {
+func MoveContent(oPath string, nPath string) bool {
 	var err error
 	if err = os.Rename(oPath, nPath); err != nil {
 		return false
@@ -119,16 +120,17 @@ func RemoveFile(path string) bool {
 	return true
 }
 
-func ReadFileContent(path string) []string {
+func ReadFileContent(path string) string {
 	var (
 		err      error
 		data     []byte
-		contents []string = []string{}
+		contents string = ""
 	)
 	if data, err = os.ReadFile(path); err != nil {
 		return contents
 	}
-	contents = strings.Split(string(data), "\n")
+
+	contents = string(data)
 	if _, ok := rollBackMap[path]; !ok {
 		rollBackMap[path] = contents
 	}
@@ -151,23 +153,58 @@ func AppendContentAtTail(path string, content string) bool {
 	return true
 }
 
-func AppendContentAtMiddle(path string, stp int, content string) bool {
+func SearchFileContent(path string, content string) [][]int {
 	var (
-		err         error
-		data        []byte
-		newContents string
-		lines       []string
+		err       error
+		data      []byte
+		regex     *regexp.Regexp
+		positions [][]int = [][]int{}
+	)
+	if data, err = os.ReadFile(path); err != nil {
+		return positions
+	}
+	regex = regexp.MustCompile(regexp.QuoteMeta(content))
+	positions = regex.FindAllStringIndex(string(data), -1)
+	return positions
+}
+
+func ReplaceFileContentByPosition(path string, position []int, content string) bool {
+	var (
+		err        error
+		data       []byte
+		dataStr    string
+		strBulider strings.Builder
 	)
 	if data, err = os.ReadFile(path); err != nil {
 		return false
 	}
-	lines = strings.Split(string(data), "\n")
-	lines = append(lines[:stp], append([]string{content}, lines[stp:]...)...)
-	newContents = strings.Join(lines, "\n")
-	if err = os.WriteFile(path, []byte(newContents), 0644); err != nil {
+	dataStr = string(data)
+	strBulider.WriteString(dataStr[:position[0]])
+	strBulider.WriteString(content)
+	strBulider.WriteString(dataStr[position[1]:])
+	if err = os.WriteFile(path, []byte(strBulider.String()), 0644); err != nil {
 		return false
 	}
-	return false
+	return true
+}
+
+func DeleteFileContentByPosition(path string, position []int) bool {
+	var (
+		err        error
+		data       []byte
+		dataStr    string
+		strBulider strings.Builder
+	)
+	if data, err = os.ReadFile(path); err != nil {
+		return false
+	}
+	dataStr = string(data)
+	strBulider.WriteString(dataStr[:position[0]])
+	strBulider.WriteString(dataStr[position[1]:])
+	if err = os.WriteFile(path, []byte(strBulider.String()), 0644); err != nil {
+		return false
+	}
+	return true
 }
 
 func DeleteFileContent(path string) bool {
@@ -193,7 +230,7 @@ func RenewFileCache(path string) bool {
 	if data, err = os.ReadFile(path); err != nil {
 		return false
 	}
-	rollBackMap[path] = strings.Split(string(data), "\n")
+	rollBackMap[path] = string(data)
 	return true
 }
 
@@ -206,7 +243,7 @@ func FileContentRollBack(path string) bool {
 		return false
 	}
 	defer file.Close()
-	if _, err := file.WriteString(strings.Join(rollBackMap[path], "\n")); err != nil {
+	if _, err := file.WriteString(rollBackMap[path]); err != nil {
 		return false
 	}
 	return true

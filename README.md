@@ -123,7 +123,7 @@ go run main.go
 - `GetFileList(path)` - 获取目录文件列表
 - `CreateFile(path)` / `RemoveFile(path)` - 创建/删除文件
 - `CreateDir(path)` / `RemoveDir(path)` - 创建/删除目录
-- `RenameContent(opath, npath)` - 重命名文件/目录
+- `MoveContent(opath, npath)` - 重命名文件/目录
 - `ReadFileContent(path)` - 读取文件内容
 - `AppendContentAtTail(path, content)` - 在文件末尾追加内容
 - `AppendContentAtMiddle(path, stp, content)` - 在文件中间插入内容
