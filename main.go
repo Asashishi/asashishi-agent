@@ -67,7 +67,7 @@ func main() {
 						}
 					}()
 				}
-				global.Wait(conf.Env.TickPerSec)
+				global.WaitNextFrame(conf.Env.TickPerSec)
 			}
 		}
 	}
