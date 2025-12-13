@@ -117,33 +117,6 @@ go run main.go
 | `proc.backup` | 是否启用自动备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
 
-## 🛠️ 工具功能详解
-
-### 📁 文件操作 (FileOps)
-- `GetFileList(path)` - 获取目录文件列表
-- `CreateFile(path)` / `RemoveFile(path)` - 创建/删除文件
-- `CreateDir(path)` / `RemoveDir(path)` - 创建/删除目录
-- `MoveContent(opath, npath)` - 重命名文件/目录
-- `ReadFileContent(path)` - 读取文件内容
-- `AppendContentAtTail(path, content)` - 在文件末尾追加内容
-- `AppendContentAtMiddle(path, stp, content)` - 在文件中间插入内容
-- `DeleteFileContent(path)` - 清空文件内容
-- `FileContentRollBack(path)` - 回滚到上次缓存状态
-- `RenewFileCache(path)` - 更新文件缓存
-
-### 💻 Shell 操作 (ShellOps)
-- `GetCommands()` - 获取当前命令组
-- `AddCommands(command)` - 添加命令到命令组
-- `PopCommands(num)` - 移除末尾命令
-- `ClearCommands()` - 清空命令组
-- `Excute()` - 执行命令组并返回结果
-
-### 🌐 网络操作 (NetOps)
-- `WebContentSearch(url)` - 获取网页文本内容（需启用 `use_web_search`）
-
-### ⏰ 时间工具
-- `GetFormatedTime()` - 获取格式化时间戳 (YYYYMMDDhhmmss)
-
 ## 📖 使用示例
 
 ### 示例 1：创建 TypeScript 项目
