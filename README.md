@@ -21,7 +21,7 @@
 - **文件操作** - 完整的文件/目录创建、读取、修改、删除、重命名功能
 - **Shell 集成** - 安全的命令组管理和执行，支持 PowerShell
 - **网络搜索** - 联网获取最新库信息和 API 文档（可选）
-- **自动备份** - 重要操作前自动备份，支持操作回滚
+- **自动备份** - 支持启动时备份，支持文件内容操作自动回滚
 
 ### ⚡ 高效开发
 - **快速项目初始化** - 一键创建标准化项目结构
@@ -118,7 +118,7 @@ go run main.go
 | `llm.base_url` | API 服务地址 | `https://api.deepseek.com/v1` |
 | `llm.model_name` | 使用的 AI 模型 | `deepseek-chat` |
 | `llm.temperature` | 创造力参数 (0.0-2.0) | `0.5`（平衡） |
-| `proc.backup` | 是否启用自动备份 | `true`（生产环境） |
+| `proc.backup` | 是否启用启动时备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
 | `proc.backup_excepts` | 备份排除目录 | `["log", "backup\\files", "node_modules"]` |
 | `llm.files_excepts` | 文件操作排除目录 | `["node_modules", "backup\\files"]` |## 📖 使用示例
@@ -302,7 +302,7 @@ upx --best --lzma asashishi-agent.exe
 4. 查看 `log/` 目录下的详细错误日志
 
 ### Q: 如何备份我的项目？
-**A:** 在 `config.json` 中设置 `"backup": true`，程序会在重要操作前自动备份文件到 `backup/files/` 目录。
+**A:** 在 `config.json` 中设置 `"backup": true`，程序会在启动时自动备份文件到 `backup/files/` 目录。
 
 ### Q: 联网搜索功能消耗多少 token？
 **A:** 网页内容会经过摘要处理，但仍会消耗一定 token。建议仅在需要最新信息时启用，或使用 `"use_web_search": false` 关闭。
