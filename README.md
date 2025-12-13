@@ -8,7 +8,7 @@
 
 <div class="center-logo">
 
-![Logo](https://raw.githubusercontent.com/Asashishi/asashishi-agent/refs/tags/3.2.8/resources/app.ico)
+![Logo](https://raw.githubusercontent.com/Asashishi/asashishi-agent/refs/heads/main/resources/app.ico)
 
 </div>
 
