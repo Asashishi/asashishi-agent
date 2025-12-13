@@ -18,7 +18,7 @@ func InitConfig() {
 	)
 	if dirName, err = os.Getwd(); err != nil {
 		panic(err)
-	} else if file, err = os.Open(path.Join(dirName, "config.json")); err != nil {
+	} else if file, err = os.Open(path.Join(dirName, ConfigJsonName)); err != nil {
 		panic(err)
 	}
 	defer file.Close()
@@ -27,7 +27,7 @@ func InitConfig() {
 		panic(err)
 	}
 	// prompt
-	if sysPrompt, err = os.ReadFile(path.Join(dirName, "sys-prompt.config")); err != nil {
+	if sysPrompt, err = os.ReadFile(path.Join(dirName, SysPromptName)); err != nil {
 		panic(err)
 	}
 	Env.SysPrompt = string(sysPrompt)

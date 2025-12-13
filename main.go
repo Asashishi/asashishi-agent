@@ -8,6 +8,7 @@ import (
 	"asashishi-agent/agent"
 	"asashishi-agent/backup"
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"asashishi-agent/tools"
 	"os"
 )
@@ -17,7 +18,7 @@ func init() {
 	if conf.Env.BackUP {
 		backup.BackupFiles()
 	}
-	fmt.Printf("-- Asashishi Agent v%s --", conf.Env.Version)
+	fmt.Printf(global.AsashishiAgentWithVersion, conf.Env.Version)
 }
 func main() {
 	var (
@@ -47,23 +48,23 @@ func main() {
 				isWaitInput = true
 				go func() {
 					if !firstInput && conf.Env.BackUP {
-						fmt.Print("Input: ")
+						fmt.Print(global.Input)
 						firstInput = true
 					} else {
-						fmt.Print("\nInput: ")
+						fmt.Print(global.InputWidthLineBreakFirst)
 					}
 					reader = bufio.NewReader(os.Stdin)
-					if input, err = reader.ReadString('\n'); err != nil {
+					if input, err = reader.ReadString(global.LineBreakChar); err != nil {
 						return
-					} else if input != "" {
-						fmt.Print("Loading...\n")
+					} else if input != global.EmptyString {
+						fmt.Println(global.Loading)
 						cli.StreamChat(input)
 						isWaitInput = false
 					}
 				}()
 			} else {
 				time.Sleep(
-					(time.Duration((1000 / conf.Env.TickPerSec) * 1000)) * time.Microsecond,
+					(time.Duration((1000 / conf.Env.TickPerSec) * global.FloatK)) * time.Microsecond,
 				)
 			}
 		}

@@ -2,6 +2,7 @@ package tools
 
 import (
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -62,7 +63,7 @@ func GetFileList(path string) []string {
 		err     error
 		dirPath string
 	)
-	if path == "" {
+	if path == global.EmptyString {
 		if dirPath, err = os.Getwd(); err != nil {
 			return []string{}
 		}
@@ -124,7 +125,7 @@ func ReadFileContent(path string) string {
 	var (
 		err      error
 		data     []byte
-		contents string = ""
+		contents string = global.EmptyString
 	)
 	if data, err = os.ReadFile(path); err != nil {
 		return contents
@@ -146,7 +147,7 @@ func AppendContentAtTail(path string, content string) bool {
 	if data, err = os.ReadFile(path); err != nil {
 		return false
 	}
-	newContents = string(data) + "\n" + content
+	newContents = string(data) + global.LineBreakString + content
 	if err = os.WriteFile(path, []byte(newContents), 0644); err != nil {
 		return false
 	}
@@ -216,7 +217,7 @@ func DeleteFileContent(path string) bool {
 		return false
 	}
 	defer file.Close()
-	if _, err := file.WriteString(""); err != nil {
+	if _, err := file.WriteString(global.EmptyString); err != nil {
 		return false
 	}
 	return true

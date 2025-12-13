@@ -1,10 +1,11 @@
 package agent
 
-const K int64 = 1024
 const Done string = "Done"
 const NeedRetry string = "Need retry"
-
-const NotFound string = "404 Not Found"
+const ToolCalls string = "tool_calls"
+const ProcessingDataClean string = "Processing Data Clean 🔄"
+const CallToolWithoutArgs string = "\nCalling %s 🔄\n"
+const CallToolWithArgs string = "\nCalling %s 🔄 args: %s\n"
 const DataCleanSysPrompt string = `
 # Work
 1. 对用户发来的所有信息进行摘要

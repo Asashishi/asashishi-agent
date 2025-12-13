@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"asashishi-agent/global"
 	"io"
 	"net/http"
 	"strings"
@@ -28,16 +29,16 @@ func WebContentSearch(url string) string {
 		gText       func(node *html.Node)
 	)
 	if resp, err = http.Get(url); err != nil {
-		return ""
+		return global.EmptyString
 	}
 	defer resp.Body.Close()
 
 	if body, err = io.ReadAll(resp.Body); err != nil {
-		return ""
+		return global.EmptyString
 	}
 	bodyStr = string(body)
 	if bodyRoot, err = html.Parse(strings.NewReader(bodyStr)); err != nil {
-		return ""
+		return global.EmptyString
 	}
 	gText = func(node *html.Node) {
 		var (
@@ -52,7 +53,7 @@ func WebContentSearch(url string) string {
 		case html.TextNode:
 			text = strings.TrimSpace(node.Data)
 			if len(text) > 0 {
-				textBuilder.WriteString(text + "\n")
+				textBuilder.WriteString(text + global.LineBreakString)
 			}
 		}
 		for child = node.FirstChild; child != nil; child = child.NextSibling {

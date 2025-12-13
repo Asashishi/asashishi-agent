@@ -2,6 +2,7 @@ package agent
 
 import (
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"fmt"
 
 	"github.com/openai/openai-go/v3"
@@ -9,12 +10,12 @@ import (
 
 func UseTool(id string, name string, arguments string, cli *AgentClient) {
 	if IsUseNewLine(cli) {
-		fmt.Print("\n")
+		fmt.Print(global.EmptyString)
 	}
 	if conf.Env.ShowToolCallArgs {
-		fmt.Println("Calling", name, "🔄 args: ", arguments)
+		fmt.Printf(CallToolWithArgs, name, arguments)
 	} else {
-		fmt.Println("Calling", name, "🔄")
+		fmt.Printf(CallToolWithoutArgs, name)
 	}
 	var toolMessage string = ToolCallSwitch(name, arguments, cli)
 	var assistantMsg openai.ChatCompletionMessageParamUnion = openai.ChatCompletionMessageParamUnion{

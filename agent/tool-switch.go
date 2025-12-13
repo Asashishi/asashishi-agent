@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"asashishi-agent/global"
 	"asashishi-agent/tools"
 	"encoding/json"
 	"fmt"
@@ -25,8 +26,8 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		)
 		json.Unmarshal([]byte(arguments), &args)
 		searchResult = tools.WebContentSearch(args.Url)
-		fmt.Println("Processing Data Clean", "🔄")
-		if searchResult == "" || searchResult == NotFound {
+		fmt.Println(ProcessingDataClean)
+		if searchResult == global.EmptyString {
 			message = searchResult
 		} else {
 			message = cli.ChatForWebSearchContentDataClean(searchResult)
@@ -100,7 +101,7 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		}
 		json.Unmarshal([]byte(arguments), &args)
 		var result string = tools.ReadFileContent(args.Path)
-		if result != "" {
+		if result != global.EmptyString {
 			message = result
 		} else {
 			message = NeedRetry

@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"asashishi-agent/global"
 	"bufio"
 	"bytes"
 	"fmt"
@@ -64,8 +65,8 @@ func InterActiveExecute() string {
 }
 
 func NoInterActiveExecute() string {
-	fmt.Println("\n-- Press 'enter' to back to chat")
-	defer fmt.Println("-- Exit")
+	fmt.Println(PressEnterToBackToChat)
+	defer fmt.Println(Exit)
 	var (
 		stopFlag        bool
 		err             error
@@ -92,7 +93,7 @@ func NoInterActiveExecute() string {
 			reader   *bufio.Reader
 		)
 		reader = bufio.NewReader(os.Stdin)
-		if _, innerErr = reader.ReadString('\n'); innerErr != nil {
+		if _, innerErr = reader.ReadString(global.LineBreakChar); innerErr != nil {
 			stopFlag = true
 		}
 		stopFlag = true

@@ -3,6 +3,7 @@ package backup
 import (
 	"archive/zip"
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"asashishi-agent/tools"
 	"fmt"
 	"io"
@@ -50,8 +51,8 @@ func BackupFiles() {
 	var countTotalFileNumber = func(path string, info os.FileInfo, err error) error {
 		var filePathStr []string
 		for _, except := range conf.Env.BackUPExcepts {
-			filePathStr = strings.Split(path, `\`)
-			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], `\`), except) {
+			filePathStr = strings.Split(path, global.Backslash)
+			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], global.Backslash), except) {
 				return nil
 			}
 		}
@@ -80,8 +81,8 @@ func BackupFiles() {
 			return innerErr
 		}
 		for _, except := range conf.Env.BackUPExcepts {
-			filePathStr = strings.Split(path, `\`)
-			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], `\`), except) || relPath == conf.Env.AppName {
+			filePathStr = strings.Split(path, global.Backslash)
+			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], global.Backslash), except) || relPath == conf.Env.AppName {
 				innerErr = nil
 				return innerErr
 			}
@@ -111,8 +112,8 @@ func BackupFiles() {
 				percent = float64(completedFiles) / float64(totalFiles) * 100
 				filled = int((percent / 100) * BarWidth)
 				fmt.Printf(
-					"\r[%s] %.2f%%(%d/%d)",
-					strings.Repeat("█", filled)+strings.Repeat(" ", int(BarWidth)-filled),
+					ProcessBar,
+					strings.Repeat(Processed, filled)+strings.Repeat(UnProcessed, int(BarWidth)-filled),
 					percent,
 					completedFiles,
 					totalFiles,
@@ -127,13 +128,13 @@ func BackupFiles() {
 	if err = filepath.Walk(rootPath, countTotalFileNumber); err != nil {
 		panic(err)
 	} else if totalFiles > 0 {
-		fmt.Println("\n-- Start Backup, It may take some times ...")
+		fmt.Println(StartBackupComment)
 	} else {
-		fmt.Println("\n-- No files to backup --")
+		fmt.Println(NoFileToBackupComment)
 		return
 	}
 	if err = filepath.Walk(rootPath, fileHanldeFunc); err != nil {
 		panic(err)
 	}
-	fmt.Print("Completed All Backups! --\n")
+	fmt.Println(BackupCompletedComment)
 }
