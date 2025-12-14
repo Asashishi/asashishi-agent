@@ -83,14 +83,8 @@ func NoInterActiveExecute() string {
 	defer wg.Wait()
 	go func() {
 		defer wg.Done()
-		var (
-			innerErr error
-			reader   *bufio.Reader
-		)
-		reader = bufio.NewReader(os.Stdin)
-		if _, innerErr = reader.ReadString(global.LineBreakChar); innerErr != nil {
-			stopFlag = true
-		}
+		var reader *bufio.Reader = bufio.NewReader(os.Stdin)
+		reader.ReadString(global.LineBreakChar)
 		stopFlag = true
 		killChildProcessGroup(strconv.Itoa(shell.Process.Pid))
 	}()
