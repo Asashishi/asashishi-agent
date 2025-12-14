@@ -10,55 +10,55 @@ func RunTest() {
 
 	// TimeOps
 	if tools.GetFormatedTime() == global.EmptyString {
-		panic(WrongAtGetFormatedTime)
+		panic(ExceptionAtGetFormatedTime)
 	}
 
 	// FileOps
 	if len(tools.GetFileList(global.EmptyString)) < 1 {
-		panic(WrongAtGetFlieList)
+		panic(ExceptionAtGetFlieList)
 	} else if !tools.CreateDir(CreateDirParam) {
-		panic(WrongAtCreateDir)
+		panic(ExceptionAtCreateDir)
 	} else if !tools.CreateFile(CreateFileParam) {
 		panic(WrontAtCreateFile)
 	} else if !tools.MoveContent(CreateFileParam, MoveContentParam) {
-		panic(WrongAtMoveContent)
+		panic(ExceptionAtMoveContent)
 	} else if !tools.AppendContentAtTail(MoveContentParam, AppendContentAtTailParam) {
-		panic(WrongAtAppendContentAtTail)
+		panic(ExceptionAtAppendContentAtTail)
 	} else if tools.ReadFileContent(MoveContentParam) == global.EmptyString {
-		panic(WrongAtReadFileContent)
+		panic(ExceptionAtReadFileContent)
 	} else if !tools.RenewFileCache(MoveContentParam) {
-		panic(WrongAtRenewFileCache)
+		panic(ExceptionAtRenewFileCache)
 	} else if !tools.FileContentRollBack(MoveContentParam) {
-		panic(WrongAtFileContentRollBack)
+		panic(ExceptionAtFileContentRollBack)
 	} else if position := tools.SearchFileContent(MoveContentParam, SearchFileContentParam); len(position) == 0 {
-		panic(WrongAtSearchFileContent)
+		panic(ExceptionAtSearchFileContent)
 	} else if !tools.ReplaceFileContentByPosition(MoveContentParam, position[0], SearchFileContentParam) {
-		panic(WrongAtReplaceFileContentByPosition)
+		panic(ExceptionAtReplaceFileContentByPosition)
 	} else if !tools.DeleteFileContentByPosition(MoveContentParam, position[0]) {
-		panic(WrongAtDeleteFileContentByPosition)
+		panic(ExceptionAtDeleteFileContentByPosition)
 	} else if !tools.DeleteFileContent(MoveContentParam) {
-		panic(WrongAtDeleteFileContent)
+		panic(ExceptionAtDeleteFileContent)
 	} else if !tools.RemoveFile(MoveContentParam) {
-		panic(WrongAtRemoveFile)
+		panic(ExceptionAtRemoveFile)
 	} else if !tools.RemoveDir(CreateDirParam) {
-		panic(WrongAtRemoveDir)
+		panic(ExceptionAtRemoveDir)
 	}
 
 	// ShellOps
 	// 此处不单独测试跑命令的交互环境
 	if !tools.AddCommands(AddCommandsParam) {
-		panic(WrongAtAddCommands)
+		panic(ExceptionAtAddCommands)
 	} else if len(tools.GetCommands()) < 1 {
-		panic(WrongAtGetCommands)
+		panic(ExceptionAtGetCommands)
 	} else if tools.AddCommands(AddCommandsParam) && !tools.PopCommands(1) && len(tools.GetCommands()) == 1 {
-		panic(WrongAtPopCommands)
+		panic(ExceptionAtPopCommands)
 	} else if !tools.ClearCommands() {
-		panic(WrongAtClearCommands)
+		panic(ExceptionAtClearCommands)
 	}
 
 	// NetOps
 	if len(tools.WebContentSearch(WebContentSearchParam)) < 1 {
-		panic(WrongAtWebContentSearch)
+		panic(ExceptionAtWebContentSearch)
 	}
 
 	fmt.Println(CompleteComment)
