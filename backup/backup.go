@@ -50,7 +50,7 @@ func BackupFiles() {
 
 	var countTotalFileNumber = func(path string, info os.FileInfo, err error) error {
 		var filePathStr []string
-		for _, except := range conf.Env.BackUPExcepts {
+		for _, except := range conf.Env.BackUpExcepts {
 			filePathStr = strings.Split(path, global.Backslash)
 			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], global.Backslash), except) {
 				return nil
@@ -80,7 +80,7 @@ func BackupFiles() {
 			innerErr = err
 			return innerErr
 		}
-		for _, except := range conf.Env.BackUPExcepts {
+		for _, except := range conf.Env.BackUpExcepts {
 			filePathStr = strings.Split(path, global.Backslash)
 			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], global.Backslash), except) || relPath == conf.Env.AppName {
 				innerErr = nil
