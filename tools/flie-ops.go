@@ -25,7 +25,7 @@ func listFiles(path string) []string {
 			paths = append(paths, filepath.Join(path, entry.Name()))
 		} else {
 			var next bool = false
-			for _, name := range conf.Env.FilesExcepts {
+			for _, name := range conf.Env.DirExcepts {
 				if strings.Contains(entry.Name(), name) {
 					next = true
 					break

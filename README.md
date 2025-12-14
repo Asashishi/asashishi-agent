@@ -165,7 +165,6 @@ go run main.go
 asashishi-agent/
 ├── main.go                    # 程序入口
 ├── config.json               # 用户配置文件
-├── sys-prompt.config         # 系统提示词配置
 ├── build.bat                 # Windows 构建脚本
 ├── run-test.bat              # 测试运行脚本
 ├── go.mod                    # Go 模块定义
@@ -314,7 +313,8 @@ upx --best --lzma asashishi-agent.exe
 - 其他兼容 OpenAI API 的服务
 
 ### Q: 可以在 Linux/macOS 上运行吗？
-**A:** 可以，但需要调整构建脚本和部分Shell操作代码。核心 Go 代码是跨平台的。
+**A:** 虽然可以，但需要调整构建脚本和部分Shell操作代码以及系统提示词。核心 Go 代码是跨平台的。
+- 短期内没有进一步支持 linux 平台的计划
 
 ## 📄 许可证
 
@@ -334,6 +334,5 @@ upx --best --lzma asashishi-agent.exe
 
 ---
 
-**✨ 开始您的智能编程之旅！** 如有任何问题或建议，欢迎参与项目贡献或提交反馈。
-
-> "让编程更智能，让开发更高效" - Asashishi
+**✨ 开始您的智能编程之旅！** 
+- 如有任何问题或建议，欢迎参与项目贡献或提交反馈。

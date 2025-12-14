@@ -14,11 +14,12 @@ import (
 )
 
 func init() {
+	global.SetTerminalTitle()
 	conf.InitConfig()
-	if conf.Env.BackUP {
+	if conf.Env.BackUp {
 		backup.BackupFiles()
 	}
-	fmt.Printf(global.AsashishiAgentWithVersion, conf.Env.Version)
+	global.PrintAppBanner(conf.Env.Version)
 }
 
 func main() {
@@ -51,7 +52,7 @@ func main() {
 				if !isWaitInput {
 					isWaitInput = true
 					go func() {
-						if !firstInput && conf.Env.BackUP {
+						if !firstInput && conf.Env.BackUp {
 							fmt.Print(global.Input)
 							firstInput = true
 						} else {

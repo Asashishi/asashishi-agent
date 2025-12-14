@@ -17,6 +17,5 @@ upx --best --lzma asashishi-agent.exe
 move asashishi-agent.exe build\
 copy README.md build\
 copy config.json build\
-copy sys-prompt.config build\
 powershell -command "Compress-Archive -Path build -DestinationPath build\win-x86-amd64.zip"
 echo Complete! --
