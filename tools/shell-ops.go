@@ -39,13 +39,11 @@ func ClearCommands() bool {
 
 func InterActiveExecute() string {
 	var (
-		stopFlag        bool
 		err             error
 		fomatedCommands string
 		shell           *exec.Cmd
 		buffer          bytes.Buffer
 	)
-	stopFlag = false
 	fomatedCommands = InitialCommand
 	for _, cmd := range Commands {
 		fomatedCommands = fmt.Sprintf("%s; if ($?) { %s }", fomatedCommands, cmd)
@@ -56,9 +54,6 @@ func InterActiveExecute() string {
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
 	if err = shell.Run(); err != nil {
-		if stopFlag {
-			return buffer.String() + StopedByUser
-		}
 		return err.Error()
 	}
 	return buffer.String()
