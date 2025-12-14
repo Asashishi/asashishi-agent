@@ -1,7 +1,7 @@
 package test
 
 // TimeOps
-const WrongAtGetFormatedTime string = "GetFormatedTime"
+const ExceptionAtGetFormatedTime string = "GetFormatedTime"
 
 // FileOps
 const CreateDirParam string = `.\temp`
@@ -14,33 +14,33 @@ const AppendContentAtTailParam string = `
 `
 const SearchFileContentParam string = "1: 测试文本"
 
-const WrongAtCreateDir string = "CreateDir"
+const ExceptionAtCreateDir string = "CreateDir"
 const WrontAtCreateFile string = "CreateFile"
-const WrongAtRemoveFile string = "RemoveFile"
-const WrongAtRemoveDir string = "RemoveDir"
-const WrongAtGetFlieList string = "GetFileList"
-const WrongAtMoveContent string = "MoveContent"
-const WrongAtRenewFileCache string = "RenewFileCache"
-const WrongAtAppendContentAtTail string = "AppendContentAtTail"
-const WrongAtSearchFileContent string = "SearchFileContent"
-const WrongAtReadFileContent string = "ReadFileConten"
-const WrongAtFileContentRollBack string = "FileContentRollBack"
-const WrongAtDeleteFileContent string = "DeleteFileContent"
-const WrongAtReplaceFileContentByPosition string = "ReplaceFileContentByPosition"
-const WrongAtDeleteFileContentByPosition string = "DeleteFileContentByPosition"
+const ExceptionAtRemoveFile string = "RemoveFile"
+const ExceptionAtRemoveDir string = "RemoveDir"
+const ExceptionAtGetFlieList string = "GetFileList"
+const ExceptionAtMoveContent string = "MoveContent"
+const ExceptionAtRenewFileCache string = "RenewFileCache"
+const ExceptionAtAppendContentAtTail string = "AppendContentAtTail"
+const ExceptionAtSearchFileContent string = "SearchFileContent"
+const ExceptionAtReadFileContent string = "ReadFileConten"
+const ExceptionAtFileContentRollBack string = "FileContentRollBack"
+const ExceptionAtDeleteFileContent string = "DeleteFileContent"
+const ExceptionAtReplaceFileContentByPosition string = "ReplaceFileContentByPosition"
+const ExceptionAtDeleteFileContentByPosition string = "DeleteFileContentByPosition"
 
 // ShellOps
 const AddCommandsParam string = "echo Asashishi"
 
-const WrongAtAddCommands string = "AddCommands"
-const WrongAtGetCommands string = "GetCommands"
-const WrongAtPopCommands string = "PopCommands"
-const WrongAtClearCommands string = "ClearCommands"
+const ExceptionAtAddCommands string = "AddCommands"
+const ExceptionAtGetCommands string = "GetCommands"
+const ExceptionAtPopCommands string = "PopCommands"
+const ExceptionAtClearCommands string = "ClearCommands"
 
 // NetOps
 const WebContentSearchParam string = "https://github.com/Asashishi/asashishi-agent"
 
-const WrongAtWebContentSearch string = "WebContentSearch"
+const ExceptionAtWebContentSearch string = "WebContentSearch"
 
 // Complete
 const CompleteComment string = "\nAll Test Past!"
