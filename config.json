@@ -1,6 +1,6 @@
 {
     "info": {
-        "version": "3.2.8",
+        "version": "3.2.9",
         "owner": "Asashishi",
         "name": "asashishi-agent.exe"
     },
@@ -8,20 +8,20 @@
         "backup": false,
         "backup_excepts": [
             "log",
+            ".git",
             "build",
             "backup\\files",
-            "node_modules",
-            ".git"
+            "node_modules"
         ],
         "tick_per_sec": 90
     },
     "llm": {
         "temperature": 0.5,
-        "files_excepts": [
+        "dir_excepts": [
             "build",
+            ".git",
             "node_modules",
-            "backup\\files",
-            ".git"
+            "backup\\files"
         ],
         "context_length": 128,
         "use_web_search": true,

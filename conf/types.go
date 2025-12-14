@@ -6,9 +6,9 @@ type InfoConfig struct {
 }
 
 type ProcConfig struct {
-	BackUP        bool     `json:"backup"`
+	BackUp        bool     `json:"backup"`
 	TickPerSec    float64  `json:"tick_per_sec"`
-	BackUPExcepts []string `json:"backup_excepts"`
+	BackUpExcepts []string `json:"backup_excepts"`
 }
 
 type LLMConfig struct {
@@ -21,7 +21,7 @@ type LLMConfig struct {
 	BaseURL                string   `json:"base_url"`
 	ModelName              string   `json:"model_name"`
 	Temperature            float64  `json:"temperature"`
-	FilesExcepts           []string `json:"files_excepts"`
+	DirExcepts             []string `json:"dir_excepts"`
 }
 
 type EnvConfig struct {

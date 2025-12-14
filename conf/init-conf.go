@@ -15,6 +15,7 @@ func InitConfig() {
 		file    *os.File
 		decoder *json.Decoder
 	)
+	Env.SysPrompt = SysPrompt
 	if dirName, err = os.Getwd(); err != nil {
 		panic(err)
 	} else if file, err = os.Open(path.Join(dirName, ConfigJsonName)); err != nil {
@@ -25,5 +26,4 @@ func InitConfig() {
 	if err = decoder.Decode(&Env); err != nil {
 		panic(err)
 	}
-	Env.SysPrompt = SysPrompt
 }

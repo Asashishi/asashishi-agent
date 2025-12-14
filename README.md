@@ -192,7 +192,6 @@ go run main.go
 asashishi-agent/
 ├── main.go                    # 程序入口
 ├── config.json               # 用户配置文件
-├── sys-prompt.config         # 系统提示词配置
 ├── build.bat                 # Windows 构建脚本
 ├── run-test.bat              # 测试运行脚本
 ├── go.mod                    # Go 模块定义

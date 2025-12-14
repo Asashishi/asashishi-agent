@@ -15,7 +15,7 @@ import (
 
 func init() {
 	conf.InitConfig()
-	if conf.Env.BackUP {
+	if conf.Env.BackUp {
 		backup.BackupFiles()
 	}
 	fmt.Printf(global.AsashishiAgentWithVersion, conf.Env.Version)
@@ -51,7 +51,7 @@ func main() {
 				if !isWaitInput {
 					isWaitInput = true
 					go func() {
-						if !firstInput && conf.Env.BackUP {
+						if !firstInput && conf.Env.BackUp {
 							fmt.Print(global.Input)
 							firstInput = true
 						} else {
