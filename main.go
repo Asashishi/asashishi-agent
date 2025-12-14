@@ -14,11 +14,12 @@ import (
 )
 
 func init() {
+	global.SetTerminalTitle()
 	conf.InitConfig()
 	if conf.Env.BackUp {
 		backup.BackupFiles()
 	}
-	fmt.Printf(global.AsashishiAgentWithVersion, conf.Env.Version)
+	global.PrintAppBanner(conf.Env.Version)
 }
 
 func main() {

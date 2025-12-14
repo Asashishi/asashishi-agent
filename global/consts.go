@@ -9,5 +9,19 @@ const LineBreakString string = "\n"
 const LineBreakChar byte = '\n'
 const Loading string = "Loading..."
 const Input string = "Input: "
+const TilteEscape string = "\033]0;%s\007"
+const AppTitle string = "Asashishi Agent Cli"
+const AppBanner string = `
+    /██████                                /██       /██           /██       /██
+   /██__  ██                              | ██      |__/          | ██      |__/
+  | ██  \ ██  /███████  /██████   /███████| ███████  /██  /███████| ███████  /██
+  | ████████ /██_____/ |____  ██ /██_____/| ██__  ██| ██ /██_____/| ██__  ██| ██
+  | ██__  ██|  ██████   /███████|  ██████ | ██  \ ██| ██|  ██████ | ██  \ ██| ██
+  | ██  | ██ \____  ██ /██__  ██ \____  ██| ██  | ██| ██ \____  ██| ██  | ██| ██
+  | ██  | ██ /███████/|  ███████ /███████/| ██  | ██| ██ /███████/| ██  | ██| ██
+  |__/  |__/|_______/  \_______/|_______/ |__/  |__/|__/|_______/ |__/  |__/|__/
+
+				    -- v%s --
+`
 const InputWidthLineBreakFirst string = "\nInput: "
 const AsashishiAgentWithVersion string = "-- Asashishi Agent v%s --"
