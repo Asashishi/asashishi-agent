@@ -34,5 +34,5 @@ var InputStyle ui.Style = ui.Style{
 }
 
 var AIOutputStyle ui.Style = ui.Style{
-	Fg: LiteCyan,
+	Fg: LiteBlue,
 }
