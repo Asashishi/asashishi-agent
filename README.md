@@ -347,11 +347,10 @@ upx --best --lzma asashishi-agent.exe
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
-## 🙏 致谢
+## 🧩 外部集成
 
-- 感谢 [OpenAI](https://openai.com/) 提供的 API 接口
-- 感谢 [DeepSeek](https://www.deepseek.com/) 提供优质的 AI 服务
-- 感谢所有贡献者和用户的支持
+[OpenAI](https://openai.com/)
+[DeepSeek](https://www.deepseek.com/)
 
 ## 📞 支持与反馈
 
