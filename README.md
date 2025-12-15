@@ -200,15 +200,16 @@ asashishi-agent/
 ├── LICENSE                   # MIT 许可证
 │
 ├── agent/                    # AI 代理核心模块
-│   ├── agent-client.go      # AI 客户端实现
+│   ├── init-agent.go        # 代理初始化
 │   ├── consts.go            # 常量定义
 │   ├── tool-switch.go       # 工具调用路由
 │   ├── types.go             # 类型定义
 │   ├── use-tool.go          # 工具使用逻辑
-│   └── utils.go             # 工具函数
+│   ├── utils.go             # 工具函数
+│   └── styled-text.go       # 样式化文本处理
 │
 ├── tools/                    # 工具实现模块
-│   ├── init-desc.go         # 工具描述定义
+│   ├── init-tool.go         # 工具初始化
 │   ├── flie-ops.go          # 文件操作实现
 │   ├── shell-ops.go         # Shell 操作实现
 │   ├── net-ops.go           # 网络操作实现
@@ -221,16 +222,29 @@ asashishi-agent/
 │   └── consts.go            # 配置常量定义
 │
 ├── backup/                   # 备份系统模块
-│   ├── backup.go            # 备份逻辑实现
-│   └── consts.go            # 备份常量定义
+│   ├── init-backup.go       # 备份初始化
+│   ├── consts.go            # 备份常量定义
+│   └── styled-text.go       # 样式化文本处理
 │
 ├── global/                   # 全局功能模块
 │   ├── consts.go            # 全局常量定义
-│   └── utils.go             # 全局工具函数
+│   ├── utils.go             # 全局工具函数
+│   ├── colors.go            # 颜色定义
+│   ├── styles.go            # 样式定义
+│   └── styled-text.go       # 样式化文本处理
 │
 ├── test/                     # 测试模块
 │   ├── init-test.go         # 测试初始化
 │   └── consts.go            # 测试常量定义
+│
+├── cmd/                      # 快捷命令模块
+│   ├── init-cmd.go          # 初始化Hash
+│   └── consts.go            # 命令行常量定义
+│
+├── ui/                       # 用户界面模块
+│   ├── init-color.go        # 颜色初始化
+│   ├── types.go             # UI 类型定义
+│   └── consts.go            # UI 常量定义
 │
 ├── log/                      # 操作日志目录
 │   └── *.md                 # 时间戳命名的日志文件
@@ -243,20 +257,22 @@ asashishi-agent/
 
 | 模块 | 功能描述 | 关键文件 |
 |------|----------|----------|
-| **agent/** | AI 代理核心，处理与 LLM 的交互和工具调用 | `agent-client.go`, `tool-switch.go` |
+| **agent/** | AI 代理核心，处理与 LLM 的交互和工具调用 | `init-agent.go`, `tool-switch.go`, `use-tool.go` |
 | **tools/** | 工具实现，提供文件、Shell、网络等操作能力 | `flie-ops.go`, `shell-ops.go`, `net-ops.go` |
 | **conf/** | 配置管理，读取和验证用户配置 | `init-conf.go`, `types.go` |
-| **backup/** | 备份系统，在重要操作前自动备份文件 | `backup.go` |
-| **global/** | 全局功能，提供跨模块使用的常量和工具 | `consts.go`, `utils.go` |
+| **backup/** | 备份系统，在重要操作前自动备份文件 | `init-backup.go` |
+| **global/** | 全局功能，提供跨模块使用的常量和工具 | `consts.go`, `utils.go`, `colors.go`, `styles.go` |
 | **test/** | 测试模块，提供测试初始化功能 | `init-test.go` |
+| **cmd/** | 命令行模块，处理命令行参数和交互 | `init-cmd.go` |
+| **ui/** | 用户界面模块，处理颜色和样式输出 | `init-color.go`, `types.go` |
 | **log/** | 日志记录，保存所有操作的详细日志 | `YYYYMMDDhhmmss.md` 格式文件 |
 
 ### 🔄 数据流架构
 
 ```
-用户输入 → agent/ → 工具调用 → 操作执行 → 结果返回 → 日志记录
-    ↓           ↓           ↓           ↓           ↓
-配置验证 → 智能规划 → 安全检查 → 备份保护 → 状态更新
+用户输入 → cmd/ → agent/ → 工具调用 → 操作执行 → 结果返回 → 日志记录
+    ↓           ↓           ↓           ↓           ↓           ↓
+配置验证 → 智能规划 → 安全检查 → 备份保护 → 状态更新 → UI 渲染
 ```
 
 ### 🎯 设计原则
@@ -264,7 +280,8 @@ asashishi-agent/
 1. **模块化设计** - 每个模块职责单一，便于维护和扩展
 2. **单向数据流** - 严格遵循 DDD 原则，避免循环依赖
 3. **错误隔离** - 模块间错误不传播，确保系统稳定性
-4. **日志驱动** - 所有操作都有详细日志，便于调试和审计## 🔧 开发指南
+4. **日志驱动** - 所有操作都有详细日志，便于调试和审计
+5. **UI 分离** - 用户界面逻辑与业务逻辑分离，便于定制和扩展## 🔧 开发指南
 
 ### 环境设置
 ```bash
@@ -341,16 +358,14 @@ upx --best --lzma asashishi-agent.exe
 
 ### Q: 可以在 Linux/macOS 上运行吗？
 **A:** 虽然可以，但需要调整构建脚本和部分Shell操作代码以及系统提示词。核心 Go 代码是跨平台的。
-- 短期内没有进一步支持 linux 平台的计划
+- 近期内没有进一步支持 linux 平台的计划, 但仍是项目计划的一部分
 
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
-## 🧩 外部集成
-
+## 🧩 三方库集成
 [OpenAI](https://openai.com/)
-[DeepSeek](https://www.deepseek.com/)
 
 ## 📞 支持与反馈
 
