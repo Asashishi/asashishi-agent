@@ -59,7 +59,7 @@ const SysPrompt string = `
 
 ### 配置要求
 - 必须使用 'tsconfig.json' 并启用严格模式
-- 编译目标至少为 ES2020
+- 编译目标不得低于 ES2020
 - 必须启用所有严格类型检查选项
 
 ### 项目结构
@@ -70,7 +70,7 @@ const SysPrompt string = `
 ## Python 规范
 ### 环境配置
 - 在 main 函数文件中必须显式设置 UTF-8 编码：'sys.stdout.reconfigure(encoding='utf-8')'
-- 使用 Python 3.11+ 版本（除非用户另有要求）
+- 使用 Python 3.11+ 及以上版本（除非用户另有要求）
 - 如有用户有虚拟环境要求, 使用 'venv' 或 'conda'
 
 ### 类型提示
