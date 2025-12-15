@@ -30,39 +30,39 @@ func ResetStyle() {
 }
 
 func WidthStyle(content string, style Style) string {
-	var result string = ""
+	var styled string = ""
 	if style.Bold {
-		result += Bold
+		styled += Bold
 	}
 	if style.Dim {
-		result += Dim
+		styled += Dim
 	}
 	if style.Italic {
-		result += Italic
+		styled += Italic
 	}
 	if style.Underline {
-		result += Underline
+		styled += Underline
 	}
 	if style.Blink {
-		result += Blink
+		styled += Blink
 	}
 	if style.FastBlink {
-		result += FastBlink
+		styled += FastBlink
 	}
 	if style.Reverse {
-		result += Reverse
+		styled += Reverse
 	}
 	if style.Hidden {
-		result += Hidden
+		styled += Hidden
 	}
 	if style.Strikethrough {
-		result += Strikethrough
+		styled += Strikethrough
 	}
 	if style.Fg != "" {
-		result += FgColorBase + hexToANSI(style.Fg)
+		styled += FgColorBase + hexToANSI(style.Fg)
 	}
 	if style.Bg != "" {
-		result += BgColorBase + hexToANSI(style.Bg)
+		styled += BgColorBase + hexToANSI(style.Bg)
 	}
-	return result + content + Reset
+	return styled + content + Reset
 }
