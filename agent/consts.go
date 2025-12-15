@@ -3,9 +3,6 @@ package agent
 const Done string = "Done"
 const NeedRetry string = "Need retry"
 const ToolCalls string = "tool_calls"
-const ProcessingDataClean string = "Processing Data Clean 🔄"
-const CallToolWithoutArgs string = "Calling %s 🔄\n"
-const CallToolWithArgs string = "Calling %s 🔄 args: %s\n"
 const DataCleanSysPrompt string = `
 # Work
 1. 对用户发来的所有信息进行摘要
