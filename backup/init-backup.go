@@ -113,7 +113,7 @@ func BackupFiles() {
 				filled = int((percent / 100) * BarWidth)
 				fmt.Printf(
 					ProcessBar,
-					strings.Repeat(Processed, filled)+strings.Repeat(UnProcessed, int(BarWidth)-filled),
+					strings.Repeat(Processed, filled)+strings.Repeat(global.SpaceString, int(BarWidth)-filled),
 					percent,
 					completedFiles,
 					totalFiles,
