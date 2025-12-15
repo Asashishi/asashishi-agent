@@ -9,6 +9,10 @@ import (
 )
 
 func UseTool(id string, name string, arguments string, cli *AgentClient) {
+	var (
+		toolMessage  string
+		assistantMsg openai.ChatCompletionMessageParamUnion
+	)
 	if IsUseNewLine(cli) {
 		fmt.Print(global.LineBreakString)
 	}
@@ -17,8 +21,8 @@ func UseTool(id string, name string, arguments string, cli *AgentClient) {
 	} else {
 		fmt.Printf(CallToolWithoutArgs, name)
 	}
-	var toolMessage string = ToolCallSwitch(name, arguments, cli)
-	var assistantMsg openai.ChatCompletionMessageParamUnion = openai.ChatCompletionMessageParamUnion{
+	toolMessage = ToolCallSwitch(name, arguments, cli)
+	assistantMsg = openai.ChatCompletionMessageParamUnion{
 		OfAssistant: &openai.ChatCompletionAssistantMessageParam{
 			Role: "assistant",
 			ToolCalls: []openai.ChatCompletionMessageToolCallUnionParam{

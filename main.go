@@ -3,9 +3,11 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"strings"
 
 	"asashishi-agent/agent"
 	"asashishi-agent/backup"
+	"asashishi-agent/cmd"
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
 	"asashishi-agent/test"
@@ -24,9 +26,11 @@ func init() {
 
 func main() {
 	var (
+		ok          bool
 		firstInput  bool
 		isWaitInput bool
 		err         error
+		cmdTool     func()
 		msg         string
 		input       string
 		reader      *bufio.Reader
@@ -45,7 +49,7 @@ func main() {
 		for {
 			select {
 			case msg = <-cli.StreamChan:
-				fmt.Print(msg)
+				fmt.Printf(global.AIOutput, msg)
 			case err = <-cli.ErrorChan:
 				panic(err)
 			default:
@@ -62,8 +66,13 @@ func main() {
 						if input, err = reader.ReadString(global.LineBreakChar); err != nil {
 							return
 						} else if input != global.EmptyString {
-							fmt.Println(global.Loading)
-							cli.StreamChat(input)
+							input = strings.TrimSpace(input)
+							if cmdTool, ok = cmd.CmdTools[input]; ok {
+								cmdTool()
+							} else {
+								fmt.Println(global.Loading)
+								cli.StreamChat(input)
+							}
 							isWaitInput = false
 						}
 					}()
