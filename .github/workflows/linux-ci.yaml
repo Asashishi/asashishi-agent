@@ -27,5 +27,4 @@ jobs:
         run: go build -ldflags="-s -w" -trimpath -o asashishi-agent
 
       - name: test
-        shell: bash
         run: ./run-test.sh
