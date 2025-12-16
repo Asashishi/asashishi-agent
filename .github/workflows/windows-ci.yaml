@@ -1,4 +1,4 @@
-name: Asashishi-Agent Winodws CI
+name: Asashishi Agent Winodws CI
 
 on:
   push:

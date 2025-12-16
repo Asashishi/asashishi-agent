@@ -1,4 +1,4 @@
-name: Asashishi-Agent Linux CI
+name: Asashishi Agent Linux CI
 
 on:
   push:
@@ -24,8 +24,8 @@ jobs:
         run: go mod download
 
       - name: build
-        run: go build -ldflags="-s -w" -trimpath -o asashishi-agent.exe
+        run: go build -ldflags="-s -w" -trimpath -o asashishi-agent
 
       - name: test
-        shell: pwsh
+        shell: bash
         run: ./run-test.sh
