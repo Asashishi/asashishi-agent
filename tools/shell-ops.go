@@ -37,8 +37,9 @@ func readProcessChildren(pid int) []int {
 			continue
 		}
 		if cpid, err := strconv.Atoi(s); err == nil {
-			fmt.Println(GetStyledError(err.Error()))
 			children = append(children, cpid)
+		} else {
+			fmt.Println(GetStyledError(err.Error()))
 		}
 	}
 	return children
