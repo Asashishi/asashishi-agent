@@ -13,7 +13,8 @@
             "backup\\files",
             "node_modules"
         ],
-        "tick_per_sec": 90
+        "tick_per_sec": 90,
+        "terminal_code_style": "monokai"
     },
     "llm": {
         "temperature": 0.5,

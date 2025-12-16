@@ -68,9 +68,11 @@ func main() {
 							return
 						} else if input != global.EmptyString {
 							input = strings.TrimSpace(input)
-							cmdToJudge = strings.Split(input, " ")
-							if cmdTool, ok = cmd.CmdTools[cmdToJudge[0]]; ok {
-								cmdTool(input)
+							cmdToJudge = strings.Split(input, global.SpaceString)
+							if len(cmdToJudge) > 2 && cmdToJudge[0] == global.Cmd {
+								if cmdTool, ok = cmd.CmdTools[cmdToJudge[1]]; ok {
+									cmdTool(input)
+								}
 							} else {
 								fmt.Println(global.Loading)
 								cli.StreamChat(input)

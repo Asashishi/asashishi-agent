@@ -6,9 +6,10 @@ type InfoConfig struct {
 }
 
 type ProcConfig struct {
-	BackUp        bool     `json:"backup"`
-	TickPerSec    float64  `json:"tick_per_sec"`
-	BackUpExcepts []string `json:"backup_excepts"`
+	BackUp            bool     `json:"backup"`
+	TickPerSec        float64  `json:"tick_per_sec"`
+	TerminalCodeStyle string   `json:"terminal_code_style"`
+	BackUpExcepts     []string `json:"backup_excepts"`
 }
 
 type LLMConfig struct {
