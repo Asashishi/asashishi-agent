@@ -3,6 +3,7 @@ package cmd
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/tools"
+	"fmt"
 	"os"
 
 	"github.com/alecthomas/chroma/v2/lexers"
@@ -18,6 +19,7 @@ func RenderFileToTerminal(path string) error {
 	if fileType = lexers.Match(path).Config().Name; fileType == "" {
 		fileType = "plaintext"
 	}
+	fmt.Println(FileContentMark)
 	content = tools.ReadFileContent(path)
 	if err = quick.Highlight(
 		os.Stdout,
@@ -28,5 +30,6 @@ func RenderFileToTerminal(path string) error {
 	); err != nil {
 		return err
 	}
+	fmt.Println(EOFMark)
 	return nil
 }

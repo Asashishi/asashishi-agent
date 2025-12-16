@@ -26,9 +26,11 @@ func readProcessChildren(pid int) []int {
 	)
 	path = fmt.Sprintf("/proc/%d/task/%d/children", pid, pid)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return children
 	}
 	if textData = strings.Split(strings.TrimSpace(string(data)), global.SpaceString); len(textData) == 0 {
+		fmt.Println(GetStyledError(err.Error()))
 		return children
 	}
 	for _, s := range textData {
@@ -36,6 +38,7 @@ func readProcessChildren(pid int) []int {
 			continue
 		}
 		if cpid, err := strconv.Atoi(s); err == nil {
+			fmt.Println(GetStyledError(err.Error()))
 			children = append(children, cpid)
 		}
 	}
@@ -43,7 +46,6 @@ func readProcessChildren(pid int) []int {
 }
 
 func killProcessTree(pid int) {
-
 	var childrens []int = readProcessChildren(pid)
 	for _, c := range childrens {
 		killProcessTree(c)
