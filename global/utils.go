@@ -27,3 +27,10 @@ func GetStyledError(errString string) string {
 		SystemErrorStyle,
 	)
 }
+
+func GetStyledSuccess(sucStirng string) string {
+	return ui.WidthStyle(
+		sucStirng,
+		SystemSuccesStyle,
+	)
+}

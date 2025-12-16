@@ -30,14 +30,14 @@ var CmdTools = CmdMap[any, any]{
 			dParam []string
 		)
 		if param, ok = cmd[0].(string); !ok {
-			fmt.Println(ExceptionAtReadFile)
+			fmt.Println(global.GetStyledError(ExceptionAtReadFile))
 			return nil
 		} else if dParam = strings.Split(param, global.SpaceString); len(dParam) < 3 {
-			fmt.Println(ExceptionAtReadFile)
+			fmt.Println(global.GetStyledError(ExceptionAtReadFile))
 			return nil
 		}
 		if err = RenderFileToTerminal(dParam[2]); err != nil {
-			fmt.Println(ExceptionAtReadFile)
+			fmt.Println(global.GetStyledError(ExceptionAtReadFile))
 		}
 		return nil
 	},

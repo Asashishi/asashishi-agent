@@ -14,8 +14,3 @@ var EOFMark string = global.LineBreakString + ui.WidthStyle(
 	"-- EOF",
 	global.SystemCommentStyle,
 )
-
-var ExceptionAtReadFile string = ui.WidthStyle(
-	"Unexpect command, eg: cmd -rfile consts.py",
-	global.SystemErrorStyle,
-)
