@@ -30,7 +30,6 @@ func readProcessChildren(pid int) []int {
 		return children
 	}
 	if textData = strings.Split(strings.TrimSpace(string(data)), global.SpaceString); len(textData) == 0 {
-		fmt.Println(GetStyledError(err.Error()))
 		return children
 	}
 	for _, s := range textData {
