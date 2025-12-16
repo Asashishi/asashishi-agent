@@ -348,7 +348,7 @@ upx --best --lzma asashishi-agent.exe
 **A:** 在 `config.json` 中设置 `"backup": true`，程序会在启动时自动备份文件到 `backup/files/` 目录。
 
 ### Q: 联网搜索功能消耗多少 token？
-**A:** 网页内容会经过摘要处理，但仍会消耗一定 token。建议仅在需要最新信息时启用，或使用 `"use_web_search": false` 关闭。
+**A:** 网页内容会经过摘要处理，会消耗一定 token (根据网页内容大小, 通常在 110k 左右, 摘要由独立上下文处理，主上下文消耗在 10k 左右)。建议仅在需要最新信息时启用，或使用 `"use_web_search": false` 关闭。
 
 ### Q: 支持哪些 AI 模型？
 **A:** 支持所有 OpenAI 兼容 API，包括：
