@@ -41,3 +41,8 @@ var SystemSuccesStyle ui.Style = ui.Style{
 	Fg:     Grreen,
 	Italic: true,
 }
+
+var SystemErrorStyle ui.Style = ui.Style{
+	Fg:     Red,
+	Italic: true,
+}

@@ -3,6 +3,7 @@ package tools
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -18,7 +19,7 @@ func listFiles(path string) []string {
 		paths   []string = []string{}
 	)
 	if entires, err = os.ReadDir(path); err != nil {
-		panic(err)
+		fmt.Println(GetStyledError(err.Error()))
 	}
 	for _, entry := range entires {
 		if !entry.IsDir() {
@@ -47,6 +48,7 @@ func removeFileCacheForDir(path string) {
 		entries []os.DirEntry
 	)
 	if entries, err = os.ReadDir(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return
 	}
 	for _, entry := range entries {
@@ -76,6 +78,7 @@ func GetFileList(path string) []string {
 func MoveContent(oPath string, nPath string) bool {
 	var err error
 	if err = os.Rename(oPath, nPath); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -84,6 +87,7 @@ func MoveContent(oPath string, nPath string) bool {
 func CreateDir(path string) bool {
 	var err error
 	if err = os.Mkdir(path, 0755); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -95,6 +99,7 @@ func RemoveDir(path string) bool {
 	)
 	removeFileCacheForDir(path)
 	if err = os.RemoveAll(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -106,6 +111,7 @@ func CreateFile(path string) bool {
 		file *os.File
 	)
 	if file, err = os.Create(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	defer file.Close()
@@ -115,6 +121,7 @@ func CreateFile(path string) bool {
 func RemoveFile(path string) bool {
 	var err error
 	if err = os.Remove(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	delete(rollBackMap, path)
@@ -128,6 +135,7 @@ func ReadFileContent(path string) string {
 		contents string = global.EmptyString
 	)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return contents
 	}
 
@@ -145,10 +153,12 @@ func AppendContentAtTail(path string, content string) bool {
 		newContents string
 	)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	newContents = string(data) + global.LineBreakString + content
 	if err = os.WriteFile(path, []byte(newContents), 0644); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -162,6 +172,7 @@ func SearchFileContent(path string, content string) [][]int {
 		positions [][]int = [][]int{}
 	)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return positions
 	}
 	regex = regexp.MustCompile(regexp.QuoteMeta(content))
@@ -177,6 +188,7 @@ func ReplaceFileContentByPosition(path string, position []int, content string) b
 		strBulider strings.Builder
 	)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	dataStr = string(data)
@@ -184,6 +196,7 @@ func ReplaceFileContentByPosition(path string, position []int, content string) b
 	strBulider.WriteString(content)
 	strBulider.WriteString(dataStr[position[1]:])
 	if err = os.WriteFile(path, []byte(strBulider.String()), 0644); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -197,12 +210,14 @@ func DeleteFileContentByPosition(path string, position []int) bool {
 		strBulider strings.Builder
 	)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	dataStr = string(data)
 	strBulider.WriteString(dataStr[:position[0]])
 	strBulider.WriteString(dataStr[position[1]:])
 	if err = os.WriteFile(path, []byte(strBulider.String()), 0644); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -214,10 +229,12 @@ func DeleteFileContent(path string) bool {
 		file *os.File
 	)
 	if file, err = os.OpenFile(path, os.O_WRONLY|os.O_TRUNC, 0644); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	defer file.Close()
 	if _, err := file.WriteString(global.EmptyString); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
@@ -229,6 +246,7 @@ func RenewFileCache(path string) bool {
 		data []byte
 	)
 	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	rollBackMap[path] = string(data)
@@ -241,10 +259,12 @@ func FileContentRollBack(path string) bool {
 		file *os.File
 	)
 	if file, err = os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	defer file.Close()
 	if _, err := file.WriteString(rollBackMap[path]); err != nil {
+		fmt.Println(GetStyledError(err.Error()))
 		return false
 	}
 	return true
