@@ -3,7 +3,8 @@ package conf
 import "os/exec"
 
 func EnvDetect() string {
-	if exec.Command("bash", "-c", "uname -s").Run().Error() != "" {
+	var err error
+	if err = exec.Command("bash", "-c", "uname -s").Run(); err != nil {
 		return Windows
 	}
 	return Linux
