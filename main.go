@@ -69,7 +69,7 @@ func main() {
 						} else if input != global.EmptyString {
 							input = strings.TrimSpace(input)
 							cmdToJudge = strings.Split(input, global.SpaceString)
-							if len(cmdToJudge) > 2 && cmdToJudge[0] == global.Cmd {
+							if len(cmdToJudge) > 1 && cmdToJudge[0] == global.Cmd {
 								if cmdTool, ok = cmd.CmdTools[cmdToJudge[1]]; ok {
 									cmdTool(input)
 								}
