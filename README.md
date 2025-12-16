@@ -303,7 +303,7 @@ go run main.go
 
 ```
 asashishi-agent/
-├── main.go                    # 程序主入口文件
+├── main.go                   # 程序主入口文件
 ├── config.json               # 用户配置文件
 ├── build.bat                 # Windows 构建脚本
 ├── build.sh                  # Linux/macOS 构建脚本
@@ -311,7 +311,7 @@ asashishi-agent/
 ├── run-test.sh               # Linux/macOS 测试运行脚本
 ├── go.mod                    # Go 模块定义文件
 ├── go.sum                    # Go 依赖校验文件
-├── .gitignore               # Git 忽略配置文件
+├── .gitignore                # Git 忽略配置文件
 ├── LICENSE                   # MIT 许可证文件
 │
 ├── agent/                    # AI 代理核心模块
@@ -366,7 +366,7 @@ agent/ (AI 代理核心)
     ├── UI 渲染 (ui/)
     └── 日志记录 (log/)
     ↓
-用户输出
+程序输出
 ```
 
 ### 🎯 核心设计原则
