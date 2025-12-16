@@ -24,8 +24,13 @@ type LLMConfig struct {
 	DirExcepts             []string `json:"dir_excepts"`
 }
 
+type Environment struct {
+	System string
+}
+
 type EnvConfig struct {
 	LLMConfig  `json:"llm"`
 	ProcConfig `json:"proc"`
 	InfoConfig `json:"info"`
+	Environment
 }

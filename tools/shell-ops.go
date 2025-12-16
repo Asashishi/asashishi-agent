@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"asashishi-agent/conf"
 	"asashishi-agent/global"
 	"bufio"
 	"bytes"
@@ -16,6 +17,28 @@ var Commands []string = []string{}
 
 func killChildProcessGroup(pid string) {
 	exec.Command("taskkill", "/PID", pid, "/F", "/T").Run()
+}
+
+func buildShell() *exec.Cmd {
+	var (
+		shell           *exec.Cmd
+		fomatedCommands string
+	)
+	if conf.Env.System == conf.Windows {
+		fomatedCommands = WindowsInitialCommand
+		for _, cmd := range Commands {
+			fomatedCommands += fmt.Sprintf("; if ($?) { %s }", cmd)
+		}
+		shell = exec.Command("powershell", "-Command", fomatedCommands)
+	} else {
+		fomatedCommands = LinuxInitialCommand
+		for _, cmd := range Commands {
+			fomatedCommands += fmt.Sprintf(" && %s", cmd)
+		}
+		shell = exec.Command("bash", "-c", fomatedCommands)
+	}
+	Commands = []string{}
+	return shell
 }
 
 func GetCommands() []string {
@@ -39,17 +62,11 @@ func ClearCommands() bool {
 
 func InterActiveExecute() string {
 	var (
-		err             error
-		fomatedCommands string
-		shell           *exec.Cmd
-		buffer          bytes.Buffer
+		err    error
+		shell  *exec.Cmd
+		buffer bytes.Buffer
 	)
-	fomatedCommands = InitialCommand
-	for _, cmd := range Commands {
-		fomatedCommands = fmt.Sprintf("%s; if ($?) { %s }", fomatedCommands, cmd)
-	}
-	Commands = []string{}
-	shell = exec.Command("powershell", "-Command", fomatedCommands)
+	shell = buildShell()
 	shell.Stdin = os.Stdin
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
@@ -63,20 +80,14 @@ func NoInterActiveExecute() string {
 	fmt.Println(PressEnterToBackToChat)
 	defer fmt.Println(Exit)
 	var (
-		stopFlag        bool
-		err             error
-		fomatedCommands string
-		shell           *exec.Cmd
-		buffer          bytes.Buffer
-		wg              sync.WaitGroup
+		stopFlag bool
+		err      error
+		shell    *exec.Cmd
+		buffer   bytes.Buffer
+		wg       sync.WaitGroup
 	)
 	stopFlag = false
-	fomatedCommands = InitialCommand
-	for _, cmd := range Commands {
-		fomatedCommands = fmt.Sprintf("%s; if ($?) { %s }", fomatedCommands, cmd)
-	}
-	Commands = []string{}
-	shell = exec.Command("powershell", "-Command", fomatedCommands)
+	shell = buildShell()
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
 	wg.Add(1)
