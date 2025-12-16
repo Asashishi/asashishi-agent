@@ -52,7 +52,7 @@ func main() {
 			case msg = <-cli.StreamChan:
 				fmt.Printf(global.AIOutput, msg)
 			case err = <-cli.ErrorChan:
-				panic(err)
+				panic(global.GetStyledError(err.Error()))
 			default:
 				if !isWaitInput {
 					isWaitInput = true

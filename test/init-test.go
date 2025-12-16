@@ -15,51 +15,51 @@ func RunTest() {
 
 	// FileOps
 	if len(tools.GetFileList(global.EmptyString)) < 1 {
-		panic(ExceptionAtGetFlieList)
+		panic(global.GetStyledError(ExceptionAtGetFlieList))
 	} else if !tools.CreateDir(CreateDirParam) {
-		panic(ExceptionAtCreateDir)
+		panic(global.GetStyledError(ExceptionAtCreateDir))
 	} else if !tools.CreateFile(CreateFileParam) {
-		panic(WrontAtCreateFile)
+		panic(global.GetStyledError(WrontAtCreateFile))
 	} else if !tools.MoveContent(CreateFileParam, MoveContentParam) {
-		panic(ExceptionAtMoveContent)
+		panic(global.GetStyledError(ExceptionAtMoveContent))
 	} else if !tools.AppendContentAtTail(MoveContentParam, AppendContentAtTailParam) {
-		panic(ExceptionAtAppendContentAtTail)
+		panic(global.GetStyledError(ExceptionAtAppendContentAtTail))
 	} else if tools.ReadFileContent(MoveContentParam) == global.EmptyString {
-		panic(ExceptionAtReadFileContent)
+		panic(global.GetStyledError(ExceptionAtReadFileContent))
 	} else if !tools.RenewFileCache(MoveContentParam) {
-		panic(ExceptionAtRenewFileCache)
+		panic(global.GetStyledError(ExceptionAtRenewFileCache))
 	} else if !tools.FileContentRollBack(MoveContentParam) {
-		panic(ExceptionAtFileContentRollBack)
+		panic(global.GetStyledError(ExceptionAtFileContentRollBack))
 	} else if position := tools.SearchFileContent(MoveContentParam, SearchFileContentParam); len(position) == 0 {
-		panic(ExceptionAtSearchFileContent)
+		panic(global.GetStyledError(ExceptionAtSearchFileContent))
 	} else if !tools.ReplaceFileContentByPosition(MoveContentParam, position[0], SearchFileContentParam) {
-		panic(ExceptionAtReplaceFileContentByPosition)
+		panic(global.GetStyledError(ExceptionAtReplaceFileContentByPosition))
 	} else if !tools.DeleteFileContentByPosition(MoveContentParam, position[0]) {
-		panic(ExceptionAtDeleteFileContentByPosition)
+		panic(global.GetStyledError(ExceptionAtDeleteFileContentByPosition))
 	} else if !tools.DeleteFileContent(MoveContentParam) {
-		panic(ExceptionAtDeleteFileContent)
+		panic(global.GetStyledError(ExceptionAtDeleteFileContent))
 	} else if !tools.RemoveFile(MoveContentParam) {
-		panic(ExceptionAtRemoveFile)
+		panic(global.GetStyledError(ExceptionAtRemoveFile))
 	} else if !tools.RemoveDir(CreateDirParam) {
-		panic(ExceptionAtRemoveDir)
+		panic(global.GetStyledError(ExceptionAtRemoveDir))
 	}
 
 	// ShellOps
 	// 此处不单独测试跑命令的交互环境
 	if !tools.AddCommands(AddCommandsParam) {
-		panic(ExceptionAtAddCommands)
+		panic(global.GetStyledError(ExceptionAtAddCommands))
 	} else if len(tools.GetCommands()) < 1 {
-		panic(ExceptionAtGetCommands)
+		panic(global.GetStyledError(ExceptionAtGetCommands))
 	} else if tools.AddCommands(AddCommandsParam) && !tools.PopCommands(1) && len(tools.GetCommands()) == 1 {
-		panic(ExceptionAtPopCommands)
+		panic(global.GetStyledError(ExceptionAtPopCommands))
 	} else if !tools.ClearCommands() {
-		panic(ExceptionAtClearCommands)
+		panic(global.GetStyledError(ExceptionAtClearCommands))
 	}
 
 	// NetOps
 	if len(tools.WebContentSearch(WebContentSearchParam)) < 1 {
-		panic(ExceptionAtWebContentSearch)
+		panic(global.GetStyledError(ExceptionAtWebContentSearch))
 	}
 
-	fmt.Println(CompleteComment)
+	fmt.Println(global.GetStyledSuccess(CompleteComment))
 }
