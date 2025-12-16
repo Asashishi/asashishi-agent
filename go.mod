@@ -2,12 +2,12 @@ module asashishi-agent
 
 go 1.25.5
 
-require github.com/openai/openai-go/v3 v3.8.1
-
 require (
-	github.com/alecthomas/chroma/v2 v2.20.0 // indirect
-	github.com/dlclark/regexp2 v1.11.5 // indirect
+	github.com/alecthomas/chroma/v2 v2.20.0
+	github.com/openai/openai-go/v3 v3.8.1
 )
+
+require github.com/dlclark/regexp2 v1.11.5 // indirect
 
 require (
 	github.com/tidwall/gjson v1.14.4 // indirect
