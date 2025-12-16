@@ -36,3 +36,8 @@ var InputStyle ui.Style = ui.Style{
 var AIOutputStyle ui.Style = ui.Style{
 	Fg: LiteBlue,
 }
+
+var SystemSuccesStyle ui.Style = ui.Style{
+	Fg:     Grreen,
+	Italic: true,
+}
