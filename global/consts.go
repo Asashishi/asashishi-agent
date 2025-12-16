@@ -1,5 +1,6 @@
 package global
 
+const Cmd string = "cmd"
 const BitK int64 = 1024
 const FloatK float64 = 1000
 const TestParam string = "rt"
