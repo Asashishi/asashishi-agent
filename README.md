@@ -203,7 +203,8 @@ go run main.go
     "proc": {
         "backup": true,
         "backup_excepts": ["log", "backup\\files", "node_modules"],
-        "tick_per_sec": 90
+        "tick_per_sec": 90,
+        "terminal_code_style": "monokai"
     },
     "llm": {
         "api_key": "sk-your-api-key-here",
@@ -231,6 +232,81 @@ go run main.go
 | `llm.use_web_search`  | 是否启用联网搜索                      | `true`（需要最新信息时）                   |
 | `proc.backup_excepts` | 备份排除目录                          | `["log", "backup\\files", "node_modules"]` |
 | `llm.files_excepts`   | 文件操作排除目录                      | `["node_modules", "backup\\files"]`        |
+| `proc.terminal_code_style` | **终端代码高亮主题** - 使用 Chroma 语法高亮库 | `"monokai"`（默认）                      |
+
+### 🎨 终端代码高亮主题
+
+Asashishi Agent 使用 [Chroma-v2](https://github.com/alecthomas/chroma) 语法高亮库来美化终端中的代码显示。通过 `terminal_code_style` 配置项，您可以选择不同的主题风格。
+
+#### 可用主题列表
+
+Chroma 支持以下主题（完整列表可通过 `chroma/styles` 包获取）：
+
+**经典主题** 🎭
+- `monokai` - Monokai 主题（默认）
+- `monokaiLight` - Monokai 浅色主题
+- `dracula` - Dracula 主题
+- `solarizedDark` - Solarized 深色主题
+- `solarizedLight` - Solarized 浅色主题
+- `github` - GitHub 风格主题
+- `githubDark` - GitHub 深色主题
+
+**现代主题** ✨
+- `nord` - Nord 主题
+- `gruvbox` - Gruvbox 主题
+- `gruvboxLight` - Gruvbox 浅色主题
+- `catppuccinLatte` - Catppuccin Latte 主题
+- `catppuccinFrappe` - Catppuccin Frappe 主题
+- `catppuccinMacchiato` - Catppuccin Macchiato 主题
+- `catppuccinMocha` - Catppuccin Mocha 主题
+- `rosePine` - Rose Pine 主题
+- `rosePineMoon` - Rose Pine Moon 主题
+- `rosePineDawn` - Rose Pine Dawn 主题
+
+**编程主题** 💻
+- `vim` - Vim 风格主题
+- `emacs` - Emacs 风格主题
+- `xcode` - Xcode 风格主题
+- `xcodeDark` - Xcode 深色主题
+- `visualStudio` - Visual Studio 风格主题
+- `pygments` - Pygments 默认主题
+
+**其他主题** 🎨
+- `abap` - ABAP 主题
+- `algol` - Algol 主题
+- `arduino` - Arduino 主题
+- `autumn` - Autumn 主题
+- `borland` - Borland 主题
+- `colorful` - Colorful 主题
+- `friendly` - Friendly 主题
+- `fruity` - Fruity 主题
+- `pastie` - Pastie 主题
+- `tango` - Tango 主题
+- `trac` - Trac 主题
+
+#### 配置示例
+
+```json
+{
+    "proc": {
+        "terminal_code_style": "dracula"
+    }
+}
+```
+
+#### 主题预览建议
+
+1. **深色终端背景**：推荐使用 `monokai`、`dracula`、`nord`、`githubDark`
+2. **浅色终端背景**：推荐使用 `monokaiLight`、`solarizedLight`、`github`、`catppuccinLatte`
+3. **低对比度**：推荐使用 `gruvbox`、`rosePine`、`solarizedDark`
+4. **高对比度**：推荐使用 `vim`、`emacs`、`xcode`
+
+#### 自定义主题
+
+如需使用自定义主题，您可以：
+1. 参考 Chroma 官方文档创建 XML 主题文件
+2. 将主题文件放置在项目目录中
+3. 在配置中指定主题名称
 
 Asashishi Agent 提供了一系列快捷命令，可以在交互模式下快速执行常用操作。所有快捷命令都以 `cmd` 开头。
 
@@ -534,6 +610,7 @@ upx --best --lzma asashishi-agent.exe
 ## 🧩 三方库集成
 
 [OpenAI](https://openai.com/)
+[Chroma-v2](https://github.com/alecthomas/chroma)
 
 ## 📞 支持与反馈
 
