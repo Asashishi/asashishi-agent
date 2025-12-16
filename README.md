@@ -13,17 +13,20 @@
 ## ✨ 核心特性
 
 ### 🤖 智能交互
+
 - **自然语言编程** - 使用自然语言描述需求，自动生成代码和项目结构
 - **多语言支持** - 专精于 JavaScript/TypeScript、Python、HTML/CSS 项目开发
 - **智能规划** - 自动分析需求并制定详细的操作计划
 
 ### 🛠️ 强大工具集
+
 - **文件操作** - 完整的文件/目录创建、读取、修改、删除、重命名功能
 - **Shell 集成** - 安全的命令组管理和执行，支持 PowerShell
 - **网络搜索** - 联网获取最新库信息和 API 文档（可选）
 - **自动备份** - 支持启动时备份，支持文件内容操作自动回滚
 
 ### ⚡ 高效开发
+
 - **快速项目初始化** - 一键创建标准化项目结构
 - **智能依赖管理** - 自动处理 npm/pip 依赖安装
 - **代码规范检查** - 遵循最新的编码标准和最佳实践
@@ -32,6 +35,7 @@
 ## 🚀 快速开始
 
 ### 系统要求
+
 - **Go 1.25.5+** - [下载地址](https://golang.org/dl/)
 - **Windows 10/11**（支持其他平台，但需要调整构建脚本）
 - **OpenAI 兼容 API 密钥**（如 DeepSeek、OpenAI 等）
@@ -39,26 +43,129 @@
 ### 安装方式
 
 #### 方式一：从源码构建（推荐）
+
+##### 🖥️ Windows 系统构建
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/asashishi/asashishi-agent.git
+cd asashishi-agent
+
+# 2. 安装依赖工具（Windows 图标资源工具）
+go install github.com/akavel/rsrc@latest
+
+# 3. 下载 UPX（可选，用于压缩可执行文件）
+# 前往 https://upx.github.io/ 下载并添加到 PATH
+
+# 4. 使用构建脚本（推荐）
+./build.bat
+
+# 或手动执行构建命令
+go build -ldflags="-s -w -H=windowsgui" -trimpath -o asashishi-agent.exe
+
+# 5. 使用 UPX 压缩（可选）
+upx --best --lzma asashishi-agent.exe
+```
+
+##### 🐧 Linux/macOS 系统构建
+
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/asashishi/asashishi-agent.git
 cd asashishi-agent
 
 # 2. 安装依赖工具
-go install github.com/akavel/rsrc@latest  # Windows 图标资源工具
-# 下载 UPX：https://upx.github.io/（可选，用于压缩可执行文件）
+go mod tidy
 
-# 3. 构建项目
-./build.bat  # Windows
+# 3. 使用构建脚本
+chmod +x build.sh
+./build.sh
+
 # 或手动执行构建命令
+go build -ldflags="-s -w" -trimpath -o asashishi-agent
+
+# 4. 使用 UPX 压缩（可选）
+upx --best --lzma asashishi-agent
 ```
 
+##### 📦 构建选项说明
+
+| 构建选项                     | 说明                           | 推荐值                                                          |
+| ---------------------------- | ------------------------------ | --------------------------------------------------------------- |
+| `-ldflags="-s -w"`         | 移除调试信息，减小文件大小     | 推荐使用                                                        |
+| `-ldflags="-H=windowsgui"` | Windows 隐藏控制台窗口         | Windows 专用                                                    |
+| `-trimpath`                | 移除构建路径信息，提高可移植性 | 推荐使用                                                        |
+| `-o`                       | 指定输出文件名                 | `asashishi-agent.exe` (Windows)`<br>asashishi-agent` (Unix) |
+
+##### 🔧 构建脚本功能
+
+**build.bat (Windows) / build.sh (Unix)** 提供以下功能：
+
+1. **自动依赖检查** - 检查 Go 版本和必要工具
+2. **图标资源嵌入** - 自动嵌入程序图标（Windows）
+3. **优化构建** - 使用推荐的构建参数
+4. **版本信息** - 嵌入版本和构建时间信息
+5. **清理功能** - 可选的清理中间文件
+
+##### 🚀 快速构建命令
+
+```bash
+# Windows 快速构建（使用默认配置）
+go build -o asashishi-agent.exe
+
+# Linux/macOS 快速构建
+go build -o asashishi-agent
+
+# 开发模式构建（保留调试信息）
+go build -gcflags="all=-N -l" -o asashishi-agent-dev
+```
+
+##### 🛠️ 开发环境设置
+
+```bash
+# 1. 验证 Go 环境
+go version  # 确保 >= 1.25.5
+
+# 2. 获取项目依赖
+go mod download
+go mod verify
+
+# 3. 运行测试（如有）
+go test ./...
+
+# 4. 格式化代码
+gofmt -w .
+
+# 5. 静态分析
+go vet ./...
+```
+
+##### 📝 构建注意事项
+
+1. **Go 版本要求**：必须使用 Go 1.25.5 或更高版本
+2. **网络连接**：首次构建需要下载依赖，确保网络畅通
+3. **磁盘空间**：构建过程需要约 100MB 临时空间
+4. **权限要求**：需要写入当前目录的权限
+5. **防病毒软件**：某些防病毒软件可能误报，请添加例外
+
+##### 🔍 构建问题排查
+
+如果构建失败，请检查：
+
+1. **Go 版本**：`go version` 确认版本符合要求
+2. **依赖工具**：确保 `rsrc` 工具已正确安装
+3. **网络代理**：如有需要，设置 Go 代理 `go env -w GOPROXY=...`
+4. **环境变量**：检查 `GOPATH` 和 `GOROOT` 设置
+5. **查看错误**：仔细阅读构建错误信息，通常包含具体原因
+
 #### 方式二：下载预编译版本
+
 前往 [Releases](https://github.com/asashishi/asashishi-agent/releases) 页面下载最新版本的可执行文件。
 
 ### 基本配置
 
 1. **编辑配置文件** - 项目已包含 `config.json` 文件，直接编辑即可：
+
 ```json
 {
     "llm": {
@@ -70,11 +177,12 @@ go install github.com/akavel/rsrc@latest  # Windows 图标资源工具
 ```
 
 2. **配置说明**：
+
    - `api_key`: **必填** - 您的 OpenAI 兼容 API 密钥
    - `base_url`: API 服务地址，默认为 DeepSeek
    - `model_name`: 使用的 AI 模型名称
-
 3. **启动程序**
+
 ```bash
 ./asashishi-agent.exe
 # 或
@@ -84,6 +192,7 @@ go run main.go
 ## ⚙️ 详细配置
 
 ### 配置文件结构
+
 ```json
 {
     "info": {
@@ -94,7 +203,8 @@ go run main.go
     "proc": {
         "backup": true,
         "backup_excepts": ["log", "backup\\files", "node_modules"],
-        "tick_per_sec": 90
+        "tick_per_sec": 90,
+        "terminal_code_style": "monokai"
     },
     "llm": {
         "api_key": "sk-your-api-key-here",
@@ -112,18 +222,98 @@ go run main.go
 
 ### 关键配置说明
 
-| 配置项 | 说明 | 推荐值 |
-|--------|------|--------|
-| `llm.api_key` | **必填** - OpenAI 兼容 API 密钥 | 从服务商获取 |
-| `llm.base_url` | API 服务地址 | `https://api.deepseek.com/v1` |
-| `llm.model_name` | 使用的 AI 模型 | `deepseek-chat` |
-| `llm.temperature` | 创造力参数 (0.0-2.0) | `0.5`（平衡） |
-| `proc.backup` | 是否启用启动时备份 | `true`（生产环境） |
-| `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
-| `proc.backup_excepts` | 备份排除目录 | `["log", "backup\\files", "node_modules"]` |
-| `llm.files_excepts` | 文件操作排除目录 | `["node_modules", "backup\\files"]` |## 📖 使用示例
+| 配置项                  | 说明                                  | 推荐值                                       |
+| ----------------------- | ------------------------------------- | -------------------------------------------- |
+| `llm.api_key`         | **必填** - OpenAI 兼容 API 密钥 | 从服务商获取                                 |
+| `llm.base_url`        | API 服务地址                          | `https://api.deepseek.com/v1`              |
+| `llm.model_name`      | 使用的 AI 模型                        | `deepseek-chat`                            |
+| `llm.temperature`     | 创造力参数 (0.0-2.0)                  | `0.5`（平衡）                              |
+| `proc.backup`         | 是否启用启动时备份                    | `true`（生产环境）                         |
+| `llm.use_web_search`  | 是否启用联网搜索                      | `true`（需要最新信息时）                   |
+| `proc.backup_excepts` | 备份排除目录                          | `["log", "backup\\files", "node_modules"]` |
+| `llm.files_excepts`   | 文件操作排除目录                      | `["node_modules", "backup\\files"]`        |
+| `proc.terminal_code_style` | **终端代码高亮主题** - 使用 Chroma 语法高亮库 | `"monokai"`（默认）                      |
+
+### 🎨 终端代码高亮主题
+
+Asashishi Agent 使用 [Chroma-v2](https://github.com/alecthomas/chroma) 语法高亮库来美化终端中的代码显示。通过 `terminal_code_style` 配置项，您可以选择不同的主题风格。
+
+#### 主题预览建议
+
+1. **深色终端背景**：推荐使用 `monokai`、`dracula`、`nord`、`githubDark`
+2. **浅色终端背景**：推荐使用 `monokaiLight`、`solarizedLight`、`github`、`catppuccinLatte`
+3. **低对比度**：推荐使用 `gruvbox`、`rosePine`、`solarizedDark`
+4. **高对比度**：推荐使用 `vim`、`emacs`、`xcode`
+
+#### 自定义主题
+
+如需使用自定义主题，您可以：
+1. 参考 Chroma 官方文档创建 XML 主题文件
+2. 将主题文件放置在项目目录中
+3. 在配置中指定主题名称
+
+Asashishi Agent 提供了一系列快捷命令，可以在交互模式下快速执行常用操作。所有快捷命令都以 `cmd` 开头。
+
+### 📝 使用示例
+
+#### 🚀 程序快捷命令
+
+| 命令                      | 说明                                            | 示例                   |
+| ------------------------- | ----------------------------------------------- | ---------------------- |
+| `cmd -exit`             | **退出程序** - 安全退出 Asashishi Agent   | `cmd -exit`          |
+| `cmd -cls`              | **清空屏幕** - 清除终端屏幕上的所有内容   | `cmd -cls`           |
+| `cmd -rfile <filepath>` | **读取文件** - 读取并语法高亮显示文件内容 | `cmd -rfile main.go` |
+
+#### 退出程序
+
+```bash
+# 输入以下命令退出程序
+cmd -exit
+```
+
+#### 清空终端屏幕
+
+```bash
+# 输入以下命令清空屏幕
+cmd -cls
+```
+
+#### 查看文件内容
+
+```bash
+# 查看主程序文件（带语法高亮）
+cmd -rfile main.go
+
+# 查看配置文件
+cmd -rfile config.json
+
+# 查看 Go 模块文件
+cmd -rfile go.mod
+```
+
+### 🔧 命令格式说明
+
+- **前缀要求**：所有快捷命令必须以 `cmd` 开头
+- **空格分隔**：命令各部分用空格分隔
+- **文件路径**：`-rfile` 命令需要完整的文件路径或相对路径
+- **实时响应**：命令执行后立即生效，无需等待 AI 处理
+
+### 💡 使用技巧
+
+1. **快速清理**：使用 `cmd -cls` 可以快速清理杂乱的终端输出
+2. **代码审查**：使用 `cmd -rfile` 可以快速查看代码文件，支持语法高亮
+3. **安全退出**：使用 `cmd -exit` 可以安全退出程序，避免强制关闭
+
+### ⚠️ 注意事项
+
+- 快捷命令仅在交互模式下可用
+- 文件路径需要正确，否则会显示错误信息
+- `-rfile` 命令支持大多数编程语言的语法高亮
+
+## 📖 使用编码功能示例
 
 ### 示例 1：创建 TypeScript 项目
+
 ```
 用户：创建一个 TypeScript 项目，包含 Express 服务器和基础路由
 
@@ -137,6 +327,7 @@ go run main.go
 ```
 
 ### 示例 2：修改现有代码
+
 ```
 用户：在现有的 user.service.ts 中添加用户验证功能
 
@@ -149,6 +340,7 @@ go run main.go
 ```
 
 ### 示例 3：执行系统命令
+
 ```
 用户：安装项目依赖并启动开发服务器
 
@@ -163,100 +355,115 @@ go run main.go
 
 ```
 asashishi-agent/
-├── main.go                    # 程序入口
+├── main.go                   # 程序主入口文件
 ├── config.json               # 用户配置文件
 ├── build.bat                 # Windows 构建脚本
-├── run-test.bat              # 测试运行脚本
-├── go.mod                    # Go 模块定义
-├── go.sum                    # 依赖校验文件
-├── .gitignore               # Git 忽略配置
-├── LICENSE                   # MIT 许可证
+├── build.sh                  # Linux/macOS 构建脚本
+├── run-test.bat              # Windows 测试运行脚本
+├── run-test.sh               # Linux/macOS 测试运行脚本
+├── go.mod                    # Go 模块定义文件
+├── go.sum                    # Go 依赖校验文件
+├── .gitignore                # Git 忽略配置文件
+├── LICENSE                   # MIT 许可证文件
 │
 ├── agent/                    # AI 代理核心模块
-│   ├── init-agent.go        # 代理初始化
-│   ├── consts.go            # 常量定义
-│   ├── tool-switch.go       # 工具调用路由
-│   ├── types.go             # 类型定义
-│   ├── use-tool.go          # 工具使用逻辑
-│   ├── utils.go             # 工具函数
-│   └── styled-text.go       # 样式化文本处理
-│
 ├── tools/                    # 工具实现模块
-│   ├── init-tool.go         # 工具初始化
-│   ├── flie-ops.go          # 文件操作实现
-│   ├── shell-ops.go         # Shell 操作实现
-│   ├── net-ops.go           # 网络操作实现
-│   ├── time-ops.go          # 时间工具实现
-│   └── consts.go            # 工具常量定义
-│
 ├── conf/                     # 配置管理模块
-│   ├── init-conf.go         # 配置初始化
-│   ├── types.go             # 配置类型定义
-│   └── consts.go            # 配置常量定义
-│
 ├── backup/                   # 备份系统模块
-│   ├── init-backup.go       # 备份初始化
-│   ├── consts.go            # 备份常量定义
-│   └── styled-text.go       # 样式化文本处理
-│
 ├── global/                   # 全局功能模块
-│   ├── consts.go            # 全局常量定义
-│   ├── utils.go             # 全局工具函数
-│   ├── colors.go            # 颜色定义
-│   ├── styles.go            # 样式定义
-│   └── styled-text.go       # 样式化文本处理
-│
 ├── test/                     # 测试模块
-│   ├── init-test.go         # 测试初始化
-│   └── consts.go            # 测试常量定义
-│
 ├── cmd/                      # 快捷命令模块
-│   ├── init-cmd.go          # 初始化Hash
-│   └── consts.go            # 命令行常量定义
-│
 ├── ui/                       # 用户界面模块
-│   ├── init-color.go        # 颜色初始化
-│   ├── types.go             # UI 类型定义
-│   └── consts.go            # UI 常量定义
-│
 ├── log/                      # 操作日志目录
-│   └── *.md                 # 时间戳命名的日志文件
-│
 └── resources/                # 资源文件目录
-    └── app.ico              # 程序图标
 ```
 
-### 📁 模块说明
+### 📁 模块功能概览
 
-| 模块 | 功能描述 | 关键文件 |
-|------|----------|----------|
-| **agent/** | AI 代理核心，处理与 LLM 的交互和工具调用 | `init-agent.go`, `tool-switch.go`, `use-tool.go` |
-| **tools/** | 工具实现，提供文件、Shell、网络等操作能力 | `flie-ops.go`, `shell-ops.go`, `net-ops.go` |
-| **conf/** | 配置管理，读取和验证用户配置 | `init-conf.go`, `types.go` |
-| **backup/** | 备份系统，在重要操作前自动备份文件 | `init-backup.go` |
-| **global/** | 全局功能，提供跨模块使用的常量和工具 | `consts.go`, `utils.go`, `colors.go`, `styles.go` |
-| **test/** | 测试模块，提供测试初始化功能 | `init-test.go` |
-| **cmd/** | 命令行模块，处理命令行参数和交互 | `init-cmd.go` |
-| **ui/** | 用户界面模块，处理颜色和样式输出 | `init-color.go`, `types.go` |
-| **log/** | 日志记录，保存所有操作的详细日志 | `YYYYMMDDhhmmss.md` 格式文件 |
+| 模块                 | 功能描述     | 关键职责                               |
+| -------------------- | ------------ | -------------------------------------- |
+| **agent/**     | AI 代理核心  | 处理与 LLM 的交互、工具调用和智能规划  |
+| **tools/**     | 工具实现     | 提供文件、Shell、网络、时间等操作能力  |
+| **conf/**      | 配置管理     | 读取、验证和提供用户配置               |
+| **backup/**    | 备份系统     | 在重要操作前自动备份文件，支持回滚     |
+| **global/**    | 全局功能     | 提供跨模块使用的常量、工具和样式       |
+| **test/**      | 测试模块     | 提供测试初始化和验证功能               |
+| **cmd/**       | 命令行模块   | 处理命令行参数和用户交互               |
+| **ui/**        | 用户界面模块 | 处理终端颜色、样式和输出格式化         |
+| **log/**       | 日志记录     | 保存所有操作的详细日志，便于调试和审计 |
+| **resources/** | 资源文件     | 存储程序图标等静态资源                 |
 
-### 🔄 数据流架构
+### 🔄 系统架构与数据流
 
 ```
-用户输入 → cmd/ → agent/ → 工具调用 → 操作执行 → 结果返回 → 日志记录
-    ↓           ↓           ↓           ↓           ↓           ↓
-配置验证 → 智能规划 → 安全检查 → 备份保护 → 状态更新 → UI 渲染
+用户输入
+    ↓
+cmd/ (命令行解析)
+    ↓
+agent/ (AI 代理核心)
+    ├── 配置验证 (conf/)
+    ├── 智能规划 (agent/)
+    ├── 工具调用 (tools/)
+    └── 安全检查 (global/)
+    ↓
+工具执行
+    ├── 文件操作 (tools/)
+    ├── Shell 命令 (tools/)
+    ├── 网络搜索 (tools/)
+    └── 时间工具 (tools/)
+    ↓
+结果处理
+    ├── 备份保护 (backup/)
+    ├── 状态更新 (agent/)
+    ├── UI 渲染 (ui/)
+    └── 日志记录 (log/)
+    ↓
+程序输出
 ```
 
-### 🎯 设计原则
+### 🎯 核心设计原则
 
-1. **模块化设计** - 每个模块职责单一，便于维护和扩展
-2. **单向数据流** - 严格遵循 DDD 原则，避免循环依赖
-3. **错误隔离** - 模块间错误不传播，确保系统稳定性
-4. **日志驱动** - 所有操作都有详细日志，便于调试和审计
-5. **UI 分离** - 用户界面逻辑与业务逻辑分离，便于定制和扩展## 🔧 开发指南
+1. **模块化设计** 📦
+
+   - 每个模块职责单一，高内聚低耦合
+   - 清晰的接口定义，便于维护和扩展
+   - 模块间通过明确定义的接口通信
+2. **单向数据流** 🔄
+
+   - 严格遵循领域驱动设计(DDD)原则
+   - 避免循环依赖，确保数据流向清晰
+   - 输入 → 处理 → 输出 的线性流程
+3. **错误隔离与恢复** 🛡️
+
+   - 模块间错误不传播，确保系统稳定性
+   - 自动备份和回滚机制
+   - 详细的错误日志记录
+4. **日志驱动开发** 📝
+
+   - 所有操作都有详细的时间戳日志
+   - 日志格式统一，便于分析和审计
+   - 支持操作追溯和问题排查
+5. **UI 与业务逻辑分离** 🎨
+
+   - 用户界面逻辑独立于业务逻辑
+   - 支持不同的输出格式和样式
+   - 便于定制和扩展用户界面
+6. **安全第一** 🔒
+
+   - 所有操作前进行安全检查
+   - 文件操作限制在当前工作目录
+   - 网络操作验证来源和完整性
+
+### 🏆 技术亮点
+
+- **智能工具路由**：根据用户需求自动选择合适的工具
+- **自动备份系统**：重要操作前自动备份，支持一键回滚
+- **跨平台支持**：提供 Windows 和 Unix-like 系统的构建脚本
+- **可扩展架构**：易于添加新的工具和功能模块
+- **详细日志系统**：所有操作都有完整记录，便于调试
 
 ### 环境设置
+
 ```bash
 # 1. 安装 Go 1.25.5+
 go version
@@ -269,6 +476,7 @@ go install github.com/akavel/rsrc@latest
 ```
 
 ### 构建说明
+
 ```bash
 # Windows 构建（使用 build.bat）
 ./build.bat
@@ -281,6 +489,7 @@ upx --best --lzma asashishi-agent.exe
 ```
 
 ### 代码规范
+
 - 遵循 Go 官方代码规范
 - 使用 `gofmt` 格式化代码
 - 添加必要的注释和文档
@@ -291,11 +500,13 @@ upx --best --lzma asashishi-agent.exe
 我们欢迎各种形式的贡献！请参考以下步骤：
 
 ### 报告问题
+
 1. 在 [Issues](https://github.com/asashishi/asashishi-agent/issues) 页面搜索是否已有类似问题
 2. 创建新 issue，详细描述问题、复现步骤和期望行为
 3. 提供相关日志和系统信息
 
 ### 提交代码
+
 1. Fork 本仓库
 2. 创建功能分支 (`git checkout -b feature/amazing-feature`)
 3. 提交更改 (`git commit -m 'Add some amazing feature'`)
@@ -303,6 +514,7 @@ upx --best --lzma asashishi-agent.exe
 5. 创建 Pull Request
 
 ### 开发规范
+
 - 保持代码简洁和可读性
 - 添加适当的测试用例
 - 更新相关文档
@@ -311,34 +523,38 @@ upx --best --lzma asashishi-agent.exe
 ## ❓ 常见问题
 
 ### Q: 程序无法启动或报错？
+
 **A:** 检查以下事项：
+
 1. `config.json` 中的 API 密钥是否正确
 2. 网络连接是否正常（如需访问 API）
 3. 是否有文件读写权限
 4. 查看 `log/` 目录下的详细错误日志
 
 ### Q: 如何备份我的项目？
+
 **A:** 在 `config.json` 中设置 `"backup": true`，程序会在启动时自动备份文件到 `backup/files/` 目录。
 
 ### Q: 联网搜索功能消耗多少 token？
-**A:** 网页内容会经过摘要处理，但仍会消耗一定 token。建议仅在需要最新信息时启用，或使用 `"use_web_search": false` 关闭。
+
+**A:** 网页内容会经过摘要处理，会消耗一定 token (根据网页内容大小, 通常在 110k 左右/次, 摘要由独立上下文处理，主上下文消耗在 10k 左右/次)。建议仅在需要最新信息时启用，或使用 `"use_web_search": false` 关闭。
 
 ### Q: 支持哪些 AI 模型？
+
 **A:** 支持所有 OpenAI 兼容 API，包括：
+
 - DeepSeek Chat
 - OpenAI GPT 系列
 - 其他兼容 OpenAI API 的服务
-
-### Q: 可以在 Linux/macOS 上运行吗？
-**A:** 虽然可以，但需要调整构建脚本和部分Shell操作代码以及系统提示词。核心 Go 代码是跨平台的。
-- 近期内没有进一步支持 linux 平台的计划, 但仍是项目计划的一部分
 
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
 ## 🧩 三方库集成
+
 [OpenAI](https://openai.com/)
+[Chroma-v2](https://github.com/alecthomas/chroma)
 
 ## 📞 支持与反馈
 
@@ -348,5 +564,6 @@ upx --best --lzma asashishi-agent.exe
 
 ---
 
-**✨ 开始您的智能编程之旅！** 
+**✨ 开始您的智能编程之旅！**
+
 - 如有任何问题或建议，欢迎参与项目贡献或提交反馈。

@@ -42,5 +42,4 @@ const WebContentSearchParam string = "https://github.com/Asashishi/asashishi-age
 
 const ExceptionAtWebContentSearch string = "WebContentSearch"
 
-// Complete
-const CompleteComment string = "\nAll Test Past!"
+const CompleteComment string = "✓  All Test Past!"

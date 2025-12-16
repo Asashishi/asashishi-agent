@@ -30,10 +30,11 @@ func main() {
 		firstInput  bool
 		isWaitInput bool
 		err         error
-		cmdTool     func()
 		msg         string
 		input       string
+		cmdToJudge  []string
 		reader      *bufio.Reader
+		cmdTool     func(...any) any
 		cli         agent.AgentClient = agent.AgentClient{}
 	)
 	cli.Init(
@@ -51,7 +52,7 @@ func main() {
 			case msg = <-cli.StreamChan:
 				fmt.Printf(global.AIOutput, msg)
 			case err = <-cli.ErrorChan:
-				panic(err)
+				panic(global.GetStyledError(err.Error()))
 			default:
 				if !isWaitInput {
 					isWaitInput = true
@@ -67,8 +68,11 @@ func main() {
 							return
 						} else if input != global.EmptyString {
 							input = strings.TrimSpace(input)
-							if cmdTool, ok = cmd.CmdTools[input]; ok {
-								cmdTool()
+							cmdToJudge = strings.Split(input, global.SpaceString)
+							if len(cmdToJudge) > 1 && cmdToJudge[0] == global.Cmd {
+								if cmdTool, ok = cmd.CmdTools[cmdToJudge[1]]; ok {
+									cmdTool(input)
+								}
 							} else {
 								fmt.Println(global.Loading)
 								cli.StreamChat(input)

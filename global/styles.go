@@ -10,11 +10,6 @@ var LoadingStyle ui.Style = ui.Style{
 	Fg:        White,
 }
 
-var SystemCommentStyle ui.Style = ui.Style{
-	Italic: true,
-	Fg:     Grey,
-}
-
 var BannerStyle ui.Style = ui.Style{
 	Italic: true,
 	Fg:     Teal,
@@ -35,4 +30,22 @@ var InputStyle ui.Style = ui.Style{
 
 var AIOutputStyle ui.Style = ui.Style{
 	Fg: LiteBlue,
+}
+
+var SystemCommentStyle ui.Style = ui.Style{
+	Bold:   true,
+	Italic: true,
+	Fg:     Grey,
+}
+
+var SystemSuccesStyle ui.Style = ui.Style{
+	Fg:     Grreen,
+	Bold:   true,
+	Italic: true,
+}
+
+var SystemErrorStyle ui.Style = ui.Style{
+	Fg:     Red,
+	Bold:   true,
+	Italic: true,
 }

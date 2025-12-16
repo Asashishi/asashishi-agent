@@ -31,17 +31,17 @@ func BackupFiles() {
 		timestamp      string          = tools.GetFormatedTime()
 	)
 	if rootPath, err = os.Getwd(); err != nil {
-		panic(err)
+		panic(global.GetStyledError(err.Error()))
 	}
 	targetPath = filepath.Join(rootPath, "backup", "files")
 	targetFile = filepath.Join(rootPath, "backup", "files", fmt.Sprintf("%s.zip", timestamp))
-	info, err = os.Stat(targetPath)
-	if info == nil || !info.IsDir() || err != nil {
+	if info, err = os.Stat(targetPath); info == nil || !info.IsDir() || err != nil {
 		if err = os.MkdirAll(targetPath, 0777); err != nil {
-			panic(err)
+			panic(global.GetStyledError(err.Error()))
 		}
-	} else if zipFile, err = os.Create(targetFile); err != nil {
-		panic(err)
+	}
+	if zipFile, err = os.Create(targetFile); err != nil {
+		panic(global.GetStyledError(err.Error()))
 	}
 	zipWriter = zip.NewWriter(zipFile)
 
@@ -126,7 +126,7 @@ func BackupFiles() {
 		}
 	}
 	if err = filepath.Walk(rootPath, countTotalFileNumber); err != nil {
-		panic(err)
+		panic(global.GetStyledError(err.Error()))
 	} else if totalFiles > 0 {
 		fmt.Println(StartBackupComment)
 	} else {
@@ -134,7 +134,7 @@ func BackupFiles() {
 		return
 	}
 	if err = filepath.Walk(rootPath, fileHanldeFunc); err != nil {
-		panic(err)
+		panic(global.GetStyledError(err.Error()))
 	}
 	fmt.Println(BackupCompletedComment)
 }

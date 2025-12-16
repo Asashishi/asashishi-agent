@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"asashishi-agent/conf"
 	"asashishi-agent/global"
 	"bufio"
 	"bytes"
@@ -9,13 +10,77 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"sync"
 )
 
 var Commands []string = []string{}
 
-func killChildProcessGroup(pid string) {
-	exec.Command("taskkill", "/PID", pid, "/F", "/T").Run()
+func readProcessChildren(pid int) []int {
+	var (
+		err      error
+		data     []byte
+		path     string
+		textData []string
+		children []int = []int{}
+	)
+	path = fmt.Sprintf("/proc/%d/task/%d/children", pid, pid)
+	if data, err = os.ReadFile(path); err != nil {
+		fmt.Println(global.GetStyledError(err.Error()))
+		return children
+	}
+	if textData = strings.Split(strings.TrimSpace(string(data)), global.SpaceString); len(textData) == 0 {
+		return children
+	}
+	for _, s := range textData {
+		if s == "" {
+			continue
+		}
+		if cpid, err := strconv.Atoi(s); err == nil {
+			children = append(children, cpid)
+		} else {
+			fmt.Println(global.GetStyledError(err.Error()))
+		}
+	}
+	return children
+}
+
+func killProcessTree(pid int) {
+	var childrens []int = readProcessChildren(pid)
+	for _, c := range childrens {
+		killProcessTree(c)
+	}
+	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+}
+
+func killChildProcessGroup(pid int) {
+	if conf.Env.System == conf.Windows {
+		exec.Command("taskkill", "/PID", strconv.Itoa(pid), "/F", "/T").Run()
+	} else {
+		killProcessTree(pid)
+	}
+}
+
+func buildShell() *exec.Cmd {
+	var (
+		shell           *exec.Cmd
+		fomatedCommands string
+	)
+	if conf.Env.System == conf.Windows {
+		fomatedCommands = WindowsInitialCommand
+		for _, cmd := range Commands {
+			fomatedCommands += fmt.Sprintf("; if ($?) { %s }", cmd)
+		}
+		shell = exec.Command("powershell", "-Command", fomatedCommands)
+	} else {
+		fomatedCommands = LinuxInitialCommand
+		for _, cmd := range Commands {
+			fomatedCommands += fmt.Sprintf(" && %s", cmd)
+		}
+		shell = exec.Command("bash", "-c", fomatedCommands)
+	}
+	Commands = []string{}
+	return shell
 }
 
 func GetCommands() []string {
@@ -39,17 +104,11 @@ func ClearCommands() bool {
 
 func InterActiveExecute() string {
 	var (
-		err             error
-		fomatedCommands string
-		shell           *exec.Cmd
-		buffer          bytes.Buffer
+		err    error
+		shell  *exec.Cmd
+		buffer bytes.Buffer
 	)
-	fomatedCommands = InitialCommand
-	for _, cmd := range Commands {
-		fomatedCommands = fmt.Sprintf("%s; if ($?) { %s }", fomatedCommands, cmd)
-	}
-	Commands = []string{}
-	shell = exec.Command("powershell", "-Command", fomatedCommands)
+	shell = buildShell()
 	shell.Stdin = os.Stdin
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
@@ -63,20 +122,14 @@ func NoInterActiveExecute() string {
 	fmt.Println(PressEnterToBackToChat)
 	defer fmt.Println(Exit)
 	var (
-		stopFlag        bool
-		err             error
-		fomatedCommands string
-		shell           *exec.Cmd
-		buffer          bytes.Buffer
-		wg              sync.WaitGroup
+		stopFlag bool
+		err      error
+		shell    *exec.Cmd
+		buffer   bytes.Buffer
+		wg       sync.WaitGroup
 	)
 	stopFlag = false
-	fomatedCommands = InitialCommand
-	for _, cmd := range Commands {
-		fomatedCommands = fmt.Sprintf("%s; if ($?) { %s }", fomatedCommands, cmd)
-	}
-	Commands = []string{}
-	shell = exec.Command("powershell", "-Command", fomatedCommands)
+	shell = buildShell()
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
 	wg.Add(1)
@@ -86,7 +139,7 @@ func NoInterActiveExecute() string {
 		var reader *bufio.Reader = bufio.NewReader(os.Stdin)
 		reader.ReadString(global.LineBreakChar)
 		stopFlag = true
-		killChildProcessGroup(strconv.Itoa(shell.Process.Pid))
+		killChildProcessGroup(shell.Process.Pid)
 	}()
 	if err = shell.Run(); err != nil {
 		if stopFlag {

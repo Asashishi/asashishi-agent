@@ -1,6 +1,7 @@
 package global
 
 import (
+	"asashishi-agent/ui"
 	"fmt"
 	"time"
 )
@@ -17,5 +18,19 @@ func PrintAppBanner(version string) {
 func WaitNextFrame(tick float64) {
 	time.Sleep(
 		(time.Duration((FloatK / tick) * FloatK)) * time.Microsecond,
+	)
+}
+
+func GetStyledError(errString string) string {
+	return ui.WidthStyle(
+		errString,
+		SystemErrorStyle,
+	)
+}
+
+func GetStyledSuccess(sucStirng string) string {
+	return ui.WidthStyle(
+		sucStirng,
+		SystemSuccesStyle,
 	)
 }
