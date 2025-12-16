@@ -4,7 +4,7 @@ import "os/exec"
 
 func EnvDetect() string {
 	var err error
-	if err = exec.Command("bash", "-c", "uname -s").Run(); err != nil {
+	if err = exec.Command("uname").Run(); err != nil {
 		return Windows
 	}
 	return Linux
