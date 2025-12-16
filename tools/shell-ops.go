@@ -10,13 +10,53 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 	"sync"
 )
 
 var Commands []string = []string{}
 
-func killChildProcessGroup(pid string) {
-	exec.Command("taskkill", "/PID", pid, "/F", "/T").Run()
+func readProcessChildren(pid int) []int {
+	var (
+		err      error
+		data     []byte
+		path     string
+		textData []string
+		children []int = []int{}
+	)
+	path = fmt.Sprintf("/proc/%d/task/%d/children", pid, pid)
+	if data, err = os.ReadFile(path); err != nil {
+		return children
+	}
+	if textData = strings.Split(strings.TrimSpace(string(data)), global.SpaceString); len(textData) == 0 {
+		return children
+	}
+	for _, s := range textData {
+		if s == "" {
+			continue
+		}
+		if cpid, err := strconv.Atoi(s); err == nil {
+			children = append(children, cpid)
+		}
+	}
+	return children
+}
+
+func killProcessTree(pid int) {
+
+	var childrens []int = readProcessChildren(pid)
+	for _, c := range childrens {
+		killProcessTree(c)
+	}
+	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
+}
+
+func killChildProcessGroup(pid int) {
+	if conf.Env.System == conf.Windows {
+		exec.Command("taskkill", "/PID", strconv.Itoa(pid), "/F", "/T").Run()
+	} else {
+		killProcessTree(pid)
+	}
 }
 
 func buildShell() *exec.Cmd {
@@ -97,7 +137,7 @@ func NoInterActiveExecute() string {
 		var reader *bufio.Reader = bufio.NewReader(os.Stdin)
 		reader.ReadString(global.LineBreakChar)
 		stopFlag = true
-		killChildProcessGroup(strconv.Itoa(shell.Process.Pid))
+		killChildProcessGroup(shell.Process.Pid)
 	}()
 	if err = shell.Run(); err != nil {
 		if stopFlag {
