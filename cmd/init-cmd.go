@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"fmt"
 	"os"
 	"os/exec"
@@ -31,7 +32,7 @@ var CmdTools = CmdMap[any, any]{
 		if param, ok = cmd[0].(string); !ok {
 			fmt.Println(ExceptionAtReadFile)
 			return nil
-		} else if dParam = strings.Split(param, " "); len(dParam) < 3 {
+		} else if dParam = strings.Split(param, global.SpaceString); len(dParam) < 3 {
 			fmt.Println(ExceptionAtReadFile)
 			return nil
 		}
