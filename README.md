@@ -203,7 +203,8 @@ go run main.go
     "proc": {
         "backup": true,
         "backup_excepts": ["log", "backup\\files", "node_modules"],
-        "tick_per_sec": 90
+        "tick_per_sec": 90,
+        "terminal_code_style": "monokai"
     },
     "llm": {
         "api_key": "sk-your-api-key-here",
@@ -501,6 +502,7 @@ upx --best --lzma asashishi-agent.exe
 ## 🧩 三方库集成
 
 [OpenAI](https://openai.com/)
+[Chroma-v2](https://github.com/alecthomas/chroma)
 
 ## 📞 支持与反馈
 
