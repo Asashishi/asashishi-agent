@@ -26,7 +26,7 @@ func readProcessChildren(pid int) []int {
 	)
 	path = fmt.Sprintf("/proc/%d/task/%d/children", pid, pid)
 	if data, err = os.ReadFile(path); err != nil {
-		fmt.Println(GetStyledError(err.Error()))
+		fmt.Println(global.GetStyledError(err.Error()))
 		return children
 	}
 	if textData = strings.Split(strings.TrimSpace(string(data)), global.SpaceString); len(textData) == 0 {
@@ -39,7 +39,7 @@ func readProcessChildren(pid int) []int {
 		if cpid, err := strconv.Atoi(s); err == nil {
 			children = append(children, cpid)
 		} else {
-			fmt.Println(GetStyledError(err.Error()))
+			fmt.Println(global.GetStyledError(err.Error()))
 		}
 	}
 	return children
