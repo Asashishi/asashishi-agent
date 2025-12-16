@@ -35,12 +35,12 @@ func BackupFiles() {
 	}
 	targetPath = filepath.Join(rootPath, "backup", "files")
 	targetFile = filepath.Join(rootPath, "backup", "files", fmt.Sprintf("%s.zip", timestamp))
-	info, err = os.Stat(targetPath)
-	if info == nil || !info.IsDir() || err != nil {
+	if info, err = os.Stat(targetPath); info == nil || !info.IsDir() || err != nil {
 		if err = os.MkdirAll(targetPath, 0777); err != nil {
 			panic(err)
 		}
-	} else if zipFile, err = os.Create(targetFile); err != nil {
+	}
+	if zipFile, err = os.Create(targetFile); err != nil {
 		panic(err)
 	}
 	zipWriter = zip.NewWriter(zipFile)
