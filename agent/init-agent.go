@@ -4,6 +4,7 @@ import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
 	"context"
+	"fmt"
 	"strings"
 
 	"github.com/openai/openai-go/v3"
@@ -59,6 +60,7 @@ func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 			},
 		},
 	); err != nil {
+		fmt.Println(global.GetStyledError(err.Error()))
 		return ""
 	}
 	return resp.Choices[0].Message.Content
