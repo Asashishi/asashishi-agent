@@ -41,6 +41,3 @@ const ExceptionAtClearCommands string = "ClearCommands"
 const WebContentSearchParam string = "https://github.com/Asashishi/asashishi-agent"
 
 const ExceptionAtWebContentSearch string = "WebContentSearch"
-
-// Complete
-const CompleteComment string = "\nAll Test Past!"
