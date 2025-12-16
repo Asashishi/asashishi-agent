@@ -39,19 +39,118 @@
 ### 安装方式
 
 #### 方式一：从源码构建（推荐）
+
+##### 🖥️ Windows 系统构建
+
+```bash
+# 1. 克隆仓库
+git clone https://github.com/asashishi/asashishi-agent.git
+cd asashishi-agent
+
+# 2. 安装依赖工具（Windows 图标资源工具）
+go install github.com/akavel/rsrc@latest
+
+# 3. 下载 UPX（可选，用于压缩可执行文件）
+# 前往 https://upx.github.io/ 下载并添加到 PATH
+
+# 4. 使用构建脚本（推荐）
+./build.bat
+
+# 或手动执行构建命令
+go build -ldflags="-s -w -H=windowsgui" -trimpath -o asashishi-agent.exe
+
+# 5. 使用 UPX 压缩（可选）
+upx --best --lzma asashishi-agent.exe
+```
+
+##### 🐧 Linux/macOS 系统构建
+
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/asashishi/asashishi-agent.git
 cd asashishi-agent
 
 # 2. 安装依赖工具
-go install github.com/akavel/rsrc@latest  # Windows 图标资源工具
-# 下载 UPX：https://upx.github.io/（可选，用于压缩可执行文件）
+go mod tidy
 
-# 3. 构建项目
-./build.bat  # Windows
+# 3. 使用构建脚本
+chmod +x build.sh
+./build.sh
+
 # 或手动执行构建命令
+go build -ldflags="-s -w" -trimpath -o asashishi-agent
+
+# 4. 使用 UPX 压缩（可选）
+upx --best --lzma asashishi-agent
 ```
+
+##### 📦 构建选项说明
+
+| 构建选项 | 说明 | 推荐值 |
+|----------|------|--------|
+| `-ldflags="-s -w"` | 移除调试信息，减小文件大小 | 推荐使用 |
+| `-ldflags="-H=windowsgui"` | Windows 隐藏控制台窗口 | Windows 专用 |
+| `-trimpath` | 移除构建路径信息，提高可移植性 | 推荐使用 |
+| `-o` | 指定输出文件名 | `asashishi-agent.exe` (Windows)<br>`asashishi-agent` (Unix) |
+
+##### 🔧 构建脚本功能
+
+**build.bat (Windows) / build.sh (Unix)** 提供以下功能：
+1. **自动依赖检查** - 检查 Go 版本和必要工具
+2. **图标资源嵌入** - 自动嵌入程序图标（Windows）
+3. **优化构建** - 使用推荐的构建参数
+4. **版本信息** - 嵌入版本和构建时间信息
+5. **清理功能** - 可选的清理中间文件
+
+##### 🚀 快速构建命令
+
+```bash
+# Windows 快速构建（使用默认配置）
+go build -o asashishi-agent.exe
+
+# Linux/macOS 快速构建
+go build -o asashishi-agent
+
+# 开发模式构建（保留调试信息）
+go build -gcflags="all=-N -l" -o asashishi-agent-dev
+```
+
+##### 🛠️ 开发环境设置
+
+```bash
+# 1. 验证 Go 环境
+go version  # 确保 >= 1.25.5
+
+# 2. 获取项目依赖
+go mod download
+go mod verify
+
+# 3. 运行测试（如有）
+go test ./...
+
+# 4. 格式化代码
+gofmt -w .
+
+# 5. 静态分析
+go vet ./...
+```
+
+##### 📝 构建注意事项
+
+1. **Go 版本要求**：必须使用 Go 1.25.5 或更高版本
+2. **网络连接**：首次构建需要下载依赖，确保网络畅通
+3. **磁盘空间**：构建过程需要约 100MB 临时空间
+4. **权限要求**：需要写入当前目录的权限
+5. **防病毒软件**：某些防病毒软件可能误报，请添加例外
+
+##### 🔍 构建问题排查
+
+如果构建失败，请检查：
+1. **Go 版本**：`go version` 确认版本符合要求
+2. **依赖工具**：确保 `rsrc` 工具已正确安装
+3. **网络代理**：如有需要，设置 Go 代理 `go env -w GOPROXY=...`
+4. **环境变量**：检查 `GOPATH` 和 `GOROOT` 设置
+5. **查看错误**：仔细阅读构建错误信息，通常包含具体原因
 
 #### 方式二：下载预编译版本
 前往 [Releases](https://github.com/asashishi/asashishi-agent/releases) 页面下载最新版本的可执行文件。
@@ -163,98 +262,157 @@ go run main.go
 
 ```
 asashishi-agent/
-├── main.go                    # 程序入口
+├── main.go                    # 程序主入口文件
 ├── config.json               # 用户配置文件
 ├── build.bat                 # Windows 构建脚本
-├── run-test.bat              # 测试运行脚本
-├── go.mod                    # Go 模块定义
-├── go.sum                    # 依赖校验文件
-├── .gitignore               # Git 忽略配置
-├── LICENSE                   # MIT 许可证
+├── build.sh                  # Linux/macOS 构建脚本
+├── run-test.bat              # Windows 测试运行脚本
+├── run-test.sh               # Linux/macOS 测试运行脚本
+├── go.mod                    # Go 模块定义文件
+├── go.sum                    # Go 依赖校验文件
+├── .gitignore               # Git 忽略配置文件
+├── LICENSE                   # MIT 许可证文件
 │
 ├── agent/                    # AI 代理核心模块
-│   ├── init-agent.go        # 代理初始化
-│   ├── consts.go            # 常量定义
-│   ├── tool-switch.go       # 工具调用路由
-│   ├── types.go             # 类型定义
-│   ├── use-tool.go          # 工具使用逻辑
-│   ├── utils.go             # 工具函数
+│   ├── init-agent.go        # 代理初始化逻辑
+│   ├── consts.go            # 代理常量定义
+│   ├── tool-switch.go       # 工具调用路由和分发
+│   ├── types.go             # 代理类型定义
+│   ├── use-tool.go          # 工具使用核心逻辑
+│   ├── utils.go             # 代理工具函数
 │   └── styled-text.go       # 样式化文本处理
 │
 ├── tools/                    # 工具实现模块
-│   ├── init-tool.go         # 工具初始化
-│   ├── flie-ops.go          # 文件操作实现
-│   ├── shell-ops.go         # Shell 操作实现
-│   ├── net-ops.go           # 网络操作实现
-│   ├── time-ops.go          # 时间工具实现
+│   ├── init-tool.go         # 工具初始化逻辑
+│   ├── flie-ops.go          # 文件操作实现（创建、读取、修改、删除）
+│   ├── shell-ops.go         # Shell 命令操作实现
+│   ├── net-ops.go           # 网络操作实现（网页搜索）
+│   ├── time-ops.go          # 时间相关工具实现
 │   └── consts.go            # 工具常量定义
 │
 ├── conf/                     # 配置管理模块
-│   ├── init-conf.go         # 配置初始化
+│   ├── init-conf.go         # 配置初始化逻辑
 │   ├── types.go             # 配置类型定义
-│   └── consts.go            # 配置常量定义
+│   ├── consts.go            # 配置常量定义
+│   └── utils.go             # 配置工具函数
 │
 ├── backup/                   # 备份系统模块
-│   ├── init-backup.go       # 备份初始化
+│   ├── init-backup.go       # 备份初始化逻辑
 │   ├── consts.go            # 备份常量定义
-│   └── styled-text.go       # 样式化文本处理
+│   ├── styled-text.go       # 备份系统样式化文本
+│   └── files/               # 备份文件存储目录
+│       └── *.bak            # 备份文件（自动生成）
 │
 ├── global/                   # 全局功能模块
 │   ├── consts.go            # 全局常量定义
 │   ├── utils.go             # 全局工具函数
-│   ├── colors.go            # 颜色定义
-│   ├── styles.go            # 样式定义
-│   └── styled-text.go       # 样式化文本处理
+│   ├── colors.go            # 终端颜色定义
+│   ├── styles.go            # 终端样式定义
+│   └── styled-text.go       # 全局样式化文本处理
 │
 ├── test/                     # 测试模块
-│   ├── init-test.go         # 测试初始化
-│   └── consts.go            # 测试常量定义
+│   ├── init-test.go         # 测试初始化逻辑
+│   ├── consts.go            # 测试常量定义
+│   └── styled-text.go       # 测试样式化文本
 │
-├── cmd/                      # 快捷命令模块
-│   ├── init-cmd.go          # 初始化Hash
+├── cmd/                      # 命令行模块
+│   ├── init-cmd.go          # 命令行初始化逻辑
 │   └── consts.go            # 命令行常量定义
 │
 ├── ui/                       # 用户界面模块
-│   ├── init-color.go        # 颜色初始化
+│   ├── init-ui.go           # UI 初始化逻辑
 │   ├── types.go             # UI 类型定义
 │   └── consts.go            # UI 常量定义
 │
 ├── log/                      # 操作日志目录
-│   └── *.md                 # 时间戳命名的日志文件
+│   └── YYYYMMDDhhmmss.md    # 时间戳命名的日志文件（自动生成）
 │
 └── resources/                # 资源文件目录
-    └── app.ico              # 程序图标
+    └── app.ico              # 程序图标文件
 ```
 
-### 📁 模块说明
+### 📁 模块详细说明
 
-| 模块 | 功能描述 | 关键文件 |
-|------|----------|----------|
-| **agent/** | AI 代理核心，处理与 LLM 的交互和工具调用 | `init-agent.go`, `tool-switch.go`, `use-tool.go` |
-| **tools/** | 工具实现，提供文件、Shell、网络等操作能力 | `flie-ops.go`, `shell-ops.go`, `net-ops.go` |
-| **conf/** | 配置管理，读取和验证用户配置 | `init-conf.go`, `types.go` |
-| **backup/** | 备份系统，在重要操作前自动备份文件 | `init-backup.go` |
-| **global/** | 全局功能，提供跨模块使用的常量和工具 | `consts.go`, `utils.go`, `colors.go`, `styles.go` |
-| **test/** | 测试模块，提供测试初始化功能 | `init-test.go` |
-| **cmd/** | 命令行模块，处理命令行参数和交互 | `init-cmd.go` |
-| **ui/** | 用户界面模块，处理颜色和样式输出 | `init-color.go`, `types.go` |
-| **log/** | 日志记录，保存所有操作的详细日志 | `YYYYMMDDhhmmss.md` 格式文件 |
+| 模块 | 功能描述 | 关键文件 | 依赖关系 |
+|------|----------|----------|----------|
+| **agent/** | AI 代理核心，处理与 LLM 的交互、工具调用和智能规划 | `init-agent.go` - 代理初始化<br>`tool-switch.go` - 工具路由<br>`use-tool.go` - 工具执行 | 依赖 tools/, conf/, global/ |
+| **tools/** | 工具实现，提供文件、Shell、网络、时间等操作能力 | `flie-ops.go` - 文件操作<br>`shell-ops.go` - Shell 命令<br>`net-ops.go` - 网络搜索 | 依赖 global/ |
+| **conf/** | 配置管理，读取、验证和提供用户配置 | `init-conf.go` - 配置加载<br>`types.go` - 配置结构<br>`utils.go` - 配置工具 | 独立模块 |
+| **backup/** | 备份系统，在重要操作前自动备份文件，支持回滚 | `init-backup.go` - 备份初始化<br>`files/` - 备份存储 | 依赖 global/ |
+| **global/** | 全局功能，提供跨模块使用的常量、工具和样式 | `consts.go` - 全局常量<br>`utils.go` - 工具函数<br>`colors.go` - 颜色定义 | 基础模块 |
+| **test/** | 测试模块，提供测试初始化和验证功能 | `init-test.go` - 测试初始化 | 依赖 global/ |
+| **cmd/** | 命令行模块，处理命令行参数和用户交互 | `init-cmd.go` - 命令行初始化 | 依赖 global/ |
+| **ui/** | 用户界面模块，处理终端颜色、样式和输出格式化 | `init-ui.go` - UI 初始化<br>`types.go` - UI 类型 | 依赖 global/ |
+| **log/** | 日志记录，保存所有操作的详细日志，便于调试和审计 | `*.md` - 时间戳日志文件 | 自动生成 |
+| **resources/** | 资源文件，存储程序图标等静态资源 | `app.ico` - 程序图标 | 构建时使用 |
 
-### 🔄 数据流架构
+### 🔄 系统架构与数据流
 
 ```
-用户输入 → cmd/ → agent/ → 工具调用 → 操作执行 → 结果返回 → 日志记录
-    ↓           ↓           ↓           ↓           ↓           ↓
-配置验证 → 智能规划 → 安全检查 → 备份保护 → 状态更新 → UI 渲染
+用户输入
+    ↓
+cmd/ (命令行解析)
+    ↓
+agent/ (AI 代理核心)
+    ├── 配置验证 (conf/)
+    ├── 智能规划 (agent/)
+    ├── 工具调用 (tools/)
+    └── 安全检查 (global/)
+    ↓
+工具执行
+    ├── 文件操作 (tools/flie-ops.go)
+    ├── Shell 命令 (tools/shell-ops.go)
+    ├── 网络搜索 (tools/net-ops.go)
+    └── 时间工具 (tools/time-ops.go)
+    ↓
+结果处理
+    ├── 备份保护 (backup/)
+    ├── 状态更新 (agent/)
+    ├── UI 渲染 (ui/)
+    └── 日志记录 (log/)
+    ↓
+用户输出
 ```
 
-### 🎯 设计原则
+### 🎯 核心设计原则
 
-1. **模块化设计** - 每个模块职责单一，便于维护和扩展
-2. **单向数据流** - 严格遵循 DDD 原则，避免循环依赖
-3. **错误隔离** - 模块间错误不传播，确保系统稳定性
-4. **日志驱动** - 所有操作都有详细日志，便于调试和审计
-5. **UI 分离** - 用户界面逻辑与业务逻辑分离，便于定制和扩展## 🔧 开发指南
+1. **模块化设计** 📦
+   - 每个模块职责单一，高内聚低耦合
+   - 清晰的接口定义，便于维护和扩展
+   - 模块间通过明确定义的接口通信
+
+2. **单向数据流** 🔄
+   - 严格遵循领域驱动设计(DDD)原则
+   - 避免循环依赖，确保数据流向清晰
+   - 输入 → 处理 → 输出 的线性流程
+
+3. **错误隔离与恢复** 🛡️
+   - 模块间错误不传播，确保系统稳定性
+   - 自动备份和回滚机制
+   - 详细的错误日志记录
+
+4. **日志驱动开发** 📝
+   - 所有操作都有详细的时间戳日志
+   - 日志格式统一，便于分析和审计
+   - 支持操作追溯和问题排查
+
+5. **UI 与业务逻辑分离** 🎨
+   - 用户界面逻辑独立于业务逻辑
+   - 支持不同的输出格式和样式
+   - 便于定制和扩展用户界面
+
+6. **安全第一** 🔒
+   - 所有操作前进行安全检查
+   - 文件操作限制在当前工作目录
+   - 网络操作验证来源和完整性
+
+### 🏆 技术亮点
+
+- **智能工具路由**：根据用户需求自动选择合适的工具
+- **自动备份系统**：重要操作前自动备份，支持一键回滚
+- **跨平台支持**：提供 Windows 和 Unix-like 系统的构建脚本
+- **可扩展架构**：易于添加新的工具和功能模块
+- **详细日志系统**：所有操作都有完整记录，便于调试
 
 ### 环境设置
 ```bash
