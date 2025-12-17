@@ -62,7 +62,7 @@ func ClearCommands() bool {
 	return true
 }
 
-func InterActiveExecute() string {
+func InteractiveExecute() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
@@ -100,7 +100,7 @@ func InterActiveExecute() string {
 	return buffer.String()
 }
 
-func NoInterActiveExecute() string {
+func NoInteractiveExecute() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (

@@ -57,8 +57,8 @@ func RunTest() {
 	}
 
 	// NetOps
-	if len(tools.WebContentSearch(WebContentSearchParam)) < 1 {
-		panic(global.GetStyledError(ExceptionAtWebContentSearch))
+	if len(tools.WebPageSearch(WebPageSearchParam)) < 1 {
+		panic(global.GetStyledError(ExceptionAtWebPageSearch))
 	}
 
 	fmt.Println(global.GetStyledSuccess(CompleteComment))

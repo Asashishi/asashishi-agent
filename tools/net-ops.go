@@ -19,7 +19,7 @@ var SkipTags map[string]bool = map[string]bool{
 	"nav": true, "footer": true, "aside": true, "header": true,
 }
 
-func WebContentSearch(url string) string {
+func WebPageSearch(url string) string {
 	var (
 		err         error
 		body        []byte

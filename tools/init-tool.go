@@ -439,7 +439,7 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 	{
 		OfFunction: &openai.ChatCompletionFunctionToolParam{
 			Function: shared.FunctionDefinitionParam{
-				Name: "InterActiveExecute",
+				Name: "InteractiveExecute",
 				Description: openai.String(`
 					1. 此函数用于对交互式程序(如需要用户执行输入进行操作的程序)执行命令组，在使用之前需要通过 GetCommands 或其他命令组操作来获取具体有哪些命令组
 					2. 执行此函数后会自动清空命令组内容，无需使用其他函数清理，如有其他操作则需要再次添加命令进组后使用
@@ -456,7 +456,7 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 	{
 		OfFunction: &openai.ChatCompletionFunctionToolParam{
 			Function: shared.FunctionDefinitionParam{
-				Name: "NoInterActiveExecute",
+				Name: "NoInteractiveExecute",
 				Description: openai.String(`
 					1. 此函数用于对非交互式程序(如 Web 服务)执行命令组，在使用之前需要通过 GetCommands 或其他命令组操作来获取具体有哪些命令组
 					2. 执行此函数后会自动清空命令组内容，无需使用其他函数清理，如有其他操作则需要再次添加命令进组后使用
@@ -476,7 +476,7 @@ var NetOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolUn
 	{
 		OfFunction: &openai.ChatCompletionFunctionToolParam{
 			Function: shared.FunctionDefinitionParam{
-				Name: "WebContentSearch",
+				Name: "WebPageSearch",
 				Description: openai.String(`
 					1. 此函数用于获取相关网页的所有不含标签的文本内容
 					3. 通常，你可能需要根据文本内容提取符合用户输入的某些信息来连续调用这个函数
