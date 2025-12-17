@@ -38,8 +38,8 @@ const ExceptionAtPopCommands string = "PopCommands"
 const ExceptionAtClearCommands string = "ClearCommands"
 
 // NetOps
-const WebPageSearchParam string = "https://github.com/Asashishi/asashishi-agent"
+const HttpSearchParam string = "https://github.com/Asashishi/asashishi-agent"
 
-const ExceptionAtWebPageSearch string = "WebPageSearch"
+const ExceptionAtHttpSearch string = "HttpSearch"
 
 const CompleteComment string = "✓  All Test Past!"

@@ -476,7 +476,7 @@ var NetOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolUn
 	{
 		OfFunction: &openai.ChatCompletionFunctionToolParam{
 			Function: shared.FunctionDefinitionParam{
-				Name: "WebPageSearch",
+				Name: "HttpSearch",
 				Description: openai.String(`
 					1. 此函数用于获取相关网页的所有不含标签的文本内容
 					3. 通常，你可能需要根据文本内容提取符合用户输入的某些信息来连续调用这个函数

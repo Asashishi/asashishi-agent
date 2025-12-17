@@ -15,7 +15,7 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		message = tools.GetFormatedTime()
 
 	// netOps
-	case "WebPageSearch":
+	case "HttpSearch":
 		var (
 			args struct {
 				ForceNewSearch bool   `json:"force"`
@@ -25,7 +25,7 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 			searchResult string
 		)
 		json.Unmarshal([]byte(arguments), &args)
-		searchResult = tools.WebPageSearch(args.Url)
+		searchResult = tools.HttpSearch(args.Url)
 		fmt.Println(ProcessingDataClean)
 		if searchResult == global.EmptyString {
 			message = searchResult
