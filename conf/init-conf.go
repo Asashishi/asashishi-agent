@@ -16,7 +16,6 @@ func InitConfig() {
 		file    *os.File
 		decoder *json.Decoder
 	)
-	Env.Version = Version
 	if EnvDetect() == Windows {
 		Env.System = Windows
 		Env.SysPrompt = fmt.Sprintf(SysPrompt, Windows, PowerShell)
@@ -35,4 +34,5 @@ func InitConfig() {
 	if err = decoder.Decode(&Env); err != nil {
 		panic(err)
 	}
+	Env.Version = Version
 }
