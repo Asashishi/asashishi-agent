@@ -7,6 +7,7 @@ type InfoConfig struct {
 
 type ProcConfig struct {
 	BackUp            bool     `json:"backup"`
+	WebMode           bool     `json:"web_mode"`
 	TickPerSec        float64  `json:"tick_per_sec"`
 	TerminalCodeStyle string   `json:"terminal_code_style"`
 	BackUpExcepts     []string `json:"backup_excepts"`
