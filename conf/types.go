@@ -1,8 +1,8 @@
 package conf
 
 type InfoConfig struct {
+	Version string
 	AppName string `json:"name"`
-	Version string `json:"version"`
 }
 
 type ProcConfig struct {
