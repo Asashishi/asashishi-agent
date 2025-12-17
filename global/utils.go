@@ -34,3 +34,10 @@ func GetStyledSuccess(sucStirng string) string {
 		SystemSuccesStyle,
 	)
 }
+
+func GetStyledSystemComent(comentString string) string {
+	return ui.WidthStyle(
+		comentString,
+		SystemCommentStyle,
+	)
+}

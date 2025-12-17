@@ -1,21 +1,9 @@
 package backup
 
-import (
-	"asashishi-agent/global"
-	"asashishi-agent/ui"
-)
+import "asashishi-agent/global"
 
-var NoFileToBackupComment string = global.LineBreakString + ui.WidthStyle(
-	"-- No files to backup --",
-	global.SystemCommentStyle,
-)
+var NoFileToBackupComment string = global.GetStyledSystemComent("-- No files to backup --")
 
-var StartBackupComment string = global.LineBreakString + ui.WidthStyle(
-	"-- Start Backup",
-	global.SystemCommentStyle,
-)
+var StartBackupComment string = global.GetStyledSystemComent("-- Start Backup")
 
-var BackupCompletedComment string = ui.WidthStyle(
-	"All Completed! --",
-	global.SystemCommentStyle,
-)
+var BackupCompletedComment string = global.GetStyledSystemComent("All Completed! --")

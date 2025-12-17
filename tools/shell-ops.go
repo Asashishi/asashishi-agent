@@ -119,8 +119,8 @@ func InterActiveExecute() string {
 }
 
 func NoInterActiveExecute() string {
-	fmt.Println(PressEnterToBackToChat)
-	defer fmt.Println(Exit)
+	defer fmt.Println(global.GetStyledSystemComent(Exit))
+	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
 		stopFlag bool
 		err      error
