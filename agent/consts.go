@@ -14,3 +14,4 @@ const DataCleanSysPrompt string = `
 4. 返回 ai 友好的易于理解的文本
 `
 const DataCleanUserPrompt string = "\n详细内容摘要, 如果内容包含代码, 保留缩进正确的代码示例"
+const ContextOutofRange string = "Context out of range, new session launched"

@@ -30,18 +30,6 @@ func (cli *AgentClient) Init(
 	)
 }
 
-func (cli *AgentClient) SetContextToLastUserPrompt() {
-	for i := len(cli.MsgContext) - 1; i >= 0; i-- {
-		if cli.MsgContext[i].OfUser != nil {
-			cli.MsgContext = append(
-				[]openai.ChatCompletionMessageParamUnion{openai.SystemMessage(conf.Env.SysPrompt)},
-				cli.MsgContext[i:]...,
-			)
-			return
-		}
-	}
-}
-
 func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 	var (
 		err  error
@@ -88,7 +76,9 @@ func (cli *AgentClient) StreamChat(prompt string) {
 	for stream.Next() {
 		chunk = stream.Current()
 		if chunk.Usage.PromptTokens > conf.Env.ContextLength*global.BitK {
-			cli.SetContextToLastUserPrompt()
+			fmt.Println(global.SpaceString + global.GetStyledSystemComent(ContextOutofRange))
+			cli.MsgContext = []openai.ChatCompletionMessageParamUnion{openai.SystemMessage(conf.Env.SysPrompt)}
+			return
 		}
 		if len(chunk.Choices) > 0 {
 			for _, choice := range chunk.Choices {
