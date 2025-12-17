@@ -11,8 +11,7 @@ var LoadingStyle ui.Style = ui.Style{
 }
 
 var BannerStyle ui.Style = ui.Style{
-	Italic: true,
-	Fg:     Teal,
+	Fg: Teal,
 }
 
 var VersionStyle ui.Style = ui.Style{
