@@ -2,9 +2,47 @@ package global
 
 import (
 	"asashishi-agent/ui"
+	"bufio"
 	"fmt"
+	"io"
+	"os"
 	"time"
 )
+
+var UInput *GlobalUInput = &GlobalUInput{
+	IsChildProcess:    false,
+	ProcessStdin:      make(chan string),
+	ChildProcessStdin: make(chan string),
+}
+
+func InitGlobalUInput() {
+	var (
+		err    error
+		str    string
+		reader *bufio.Reader
+	)
+	reader = bufio.NewReader(os.Stdin)
+	for {
+		if str, err = reader.ReadString('\n'); err != nil {
+			if err == io.EOF {
+				fmt.Println()
+				os.Exit(0)
+			}
+			panic(GetStyledError(err.Error()))
+		}
+		if UInput.IsChildProcess {
+			UInput.ChildProcessStdin <- str
+		} else {
+			UInput.ProcessStdin <- str
+		}
+	}
+}
+
+func WaitNextFrame(tick float64) {
+	time.Sleep(
+		(time.Duration((FloatK / tick) * FloatK)) * time.Microsecond,
+	)
+}
 
 func SetTerminalTitle() {
 	fmt.Printf(TilteEscape, AppTitle)
@@ -13,12 +51,6 @@ func SetTerminalTitle() {
 func PrintAppBanner(version string) {
 	var styledVersion string = fmt.Sprintf(Version, version)
 	fmt.Printf(AppBanner, styledVersion)
-}
-
-func WaitNextFrame(tick float64) {
-	time.Sleep(
-		(time.Duration((FloatK / tick) * FloatK)) * time.Microsecond,
-	)
 }
 
 func GetStyledError(errString string) string {

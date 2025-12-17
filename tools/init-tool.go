@@ -441,7 +441,7 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 			Function: shared.FunctionDefinitionParam{
 				Name: "InterActiveExecute",
 				Description: openai.String(`
-					1. 此函数用于对交互式程序((如命令行操作的程序)执行命令组，在使用之前需要通过 GetCommands 或其他命令组操作来获取具体有哪些命令组
+					1. 此函数用于对交互式程序(如需要用户执行输入进行操作的程序)执行命令组，在使用之前需要通过 GetCommands 或其他命令组操作来获取具体有哪些命令组
 					2. 执行此函数后会自动清空命令组内容，无需使用其他函数清理，如有其他操作则需要再次添加命令进组后使用
 					3. 执行完成后会以字符串形式返回输出执行结果，可以据此纠错或判断是否完成操作
 					`),

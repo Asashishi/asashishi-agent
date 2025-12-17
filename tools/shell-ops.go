@@ -3,61 +3,21 @@ package tools
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
-	"bufio"
 	"bytes"
 	"fmt"
 	"io"
 	"os"
 	"os/exec"
 	"strconv"
-	"strings"
-	"sync"
 )
 
 var Commands []string = []string{}
-
-func readProcessChildren(pid int) []int {
-	var (
-		err      error
-		data     []byte
-		path     string
-		textData []string
-		children []int = []int{}
-	)
-	path = fmt.Sprintf("/proc/%d/task/%d/children", pid, pid)
-	if data, err = os.ReadFile(path); err != nil {
-		fmt.Println(global.GetStyledError(err.Error()))
-		return children
-	}
-	if textData = strings.Split(strings.TrimSpace(string(data)), global.SpaceString); len(textData) == 0 {
-		return children
-	}
-	for _, s := range textData {
-		if s == "" {
-			continue
-		}
-		if cpid, err := strconv.Atoi(s); err == nil {
-			children = append(children, cpid)
-		} else {
-			fmt.Println(global.GetStyledError(err.Error()))
-		}
-	}
-	return children
-}
-
-func killProcessTree(pid int) {
-	var childrens []int = readProcessChildren(pid)
-	for _, c := range childrens {
-		killProcessTree(c)
-	}
-	exec.Command("kill", "-9", strconv.Itoa(pid)).Run()
-}
 
 func killChildProcessGroup(pid int) {
 	if conf.Env.System == conf.Windows {
 		exec.Command("taskkill", "/PID", strconv.Itoa(pid), "/F", "/T").Run()
 	} else {
-		killProcessTree(pid)
+		exec.Command("kill", "-9", fmt.Sprintf("-%d", pid)).Run()
 	}
 }
 
@@ -104,15 +64,35 @@ func ClearCommands() bool {
 
 func InterActiveExecute() string {
 	var (
-		err    error
-		shell  *exec.Cmd
-		buffer bytes.Buffer
+		err       error
+		shell     *exec.Cmd
+		buffer    bytes.Buffer
+		stdinPipe io.WriteCloser
 	)
 	shell = buildShell()
-	shell.Stdin = os.Stdin
+	if stdinPipe, err = shell.StdinPipe(); err != nil {
+		return err.Error()
+	}
+	global.UInput.IsChildProcess = true
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
-	if err = shell.Run(); err != nil {
+	go func() {
+		var msg string
+		for {
+			select {
+			case msg = <-global.UInput.ChildProcessStdin:
+				stdinPipe.Write([]byte(msg))
+			default:
+				if !global.UInput.IsChildProcess {
+					break
+				}
+				global.WaitNextFrame(conf.Env.TickPerSec)
+			}
+		}
+	}()
+	err = shell.Run()
+	global.UInput.IsChildProcess = false
+	if err != nil {
 		return err.Error()
 	}
 	return buffer.String()
@@ -126,22 +106,32 @@ func NoInterActiveExecute() string {
 		err      error
 		shell    *exec.Cmd
 		buffer   bytes.Buffer
-		wg       sync.WaitGroup
 	)
 	stopFlag = false
 	shell = buildShell()
+	global.UInput.IsChildProcess = true
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
-	wg.Add(1)
-	defer wg.Wait()
 	go func() {
-		defer wg.Done()
-		var reader *bufio.Reader = bufio.NewReader(os.Stdin)
-		reader.ReadString(global.LineBreakChar)
-		stopFlag = true
-		killChildProcessGroup(shell.Process.Pid)
+		var msg string
+		for {
+			select {
+			case msg = <-global.UInput.ChildProcessStdin:
+				if msg != "" {
+					stopFlag = true
+					killChildProcessGroup(shell.Process.Pid)
+				}
+			default:
+				if !global.UInput.IsChildProcess {
+					break
+				}
+				global.WaitNextFrame(conf.Env.TickPerSec)
+			}
+		}
 	}()
-	if err = shell.Run(); err != nil {
+	err = shell.Run()
+	global.UInput.IsChildProcess = false
+	if err != nil {
 		if stopFlag {
 			return buffer.String() + StopedByUser
 		}

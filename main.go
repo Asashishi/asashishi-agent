@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"strings"
 
@@ -22,19 +21,18 @@ func init() {
 		backup.BackupFiles()
 	}
 	global.PrintAppBanner(conf.Env.Version)
+	go global.InitGlobalUInput()
 }
-
 func main() {
 	var (
 		ok          bool
 		firstInput  bool
-		isWaitInput bool
 		err         error
 		msg         string
 		input       string
 		cmdToJudge  []string
-		reader      *bufio.Reader
 		cmdTool     func(...any) any
+		isWaitInput bool              = true
 		cli         agent.AgentClient = agent.AgentClient{}
 	)
 	cli.Init(
@@ -53,33 +51,31 @@ func main() {
 				fmt.Printf(global.AIOutput, msg)
 			case err = <-cli.ErrorChan:
 				panic(global.GetStyledError(err.Error()))
-			default:
-				if !isWaitInput {
-					isWaitInput = true
-					go func() {
-						if !firstInput && conf.Env.BackUp {
-							fmt.Print(global.Input)
-							firstInput = true
-						} else {
-							fmt.Print(global.InputWidthLineBreakFirst)
-						}
-						reader = bufio.NewReader(os.Stdin)
-						if input, err = reader.ReadString(global.LineBreakChar); err != nil {
-							return
-						} else if input != global.EmptyString {
-							input = strings.TrimSpace(input)
-							cmdToJudge = strings.Split(input, global.SpaceString)
-							if len(cmdToJudge) > 1 && cmdToJudge[0] == global.Cmd {
-								if cmdTool, ok = cmd.CmdTools[cmdToJudge[1]]; ok {
-									cmdTool(input)
-								}
-							} else {
-								fmt.Println(global.Loading)
-								cli.StreamChat(input)
+			case input = <-global.UInput.ProcessStdin:
+				go func() {
+					if input != global.EmptyString {
+						input = strings.TrimSpace(input)
+						cmdToJudge = strings.Split(input, global.SpaceString)
+						if len(cmdToJudge) > 1 && cmdToJudge[0] == global.Cmd {
+							if cmdTool, ok = cmd.CmdTools[cmdToJudge[1]]; ok {
+								cmdTool(input)
 							}
-							isWaitInput = false
+						} else {
+							fmt.Println(global.Loading)
+							cli.StreamChat(input)
 						}
-					}()
+						isWaitInput = true
+					}
+				}()
+			default:
+				if isWaitInput {
+					if !firstInput && conf.Env.BackUp {
+						fmt.Print(global.Input)
+						firstInput = true
+					} else {
+						fmt.Print(global.InputWidthLineBreakFirst)
+					}
+					isWaitInput = false
 				}
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			}

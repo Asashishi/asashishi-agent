@@ -18,7 +18,9 @@ var CmdTools = CmdMap[any, any]{
 		if conf.Env.System == conf.Windows {
 			exec.Command("powershell", "-Command", Clear).Run()
 		} else {
-			exec.Command("bash", "-c", Clear).Run()
+			var shell *exec.Cmd = exec.Command("clear")
+			shell.Stdout = os.Stdout
+			shell.Run()
 		}
 		return nil
 	},
