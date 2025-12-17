@@ -13,22 +13,18 @@ import (
 )
 
 func (cli *AgentClient) Init(
-	apiKey string,
-	baseUrl string,
-	modelName string,
-	sysPrompt string,
 	toolList []openai.ChatCompletionToolUnionParam,
 ) {
 	cli.ToolsList = toolList
-	cli.ModelName = modelName
+	cli.ModelName = conf.Env.ModelName
 	cli.ErrorChan = make(chan error)
 	cli.StreamChan = make(chan string)
 	cli.Context = context.Background()
 	cli.MsgContext = make([]openai.ChatCompletionMessageParamUnion, 1)
-	cli.MsgContext[0] = openai.SystemMessage(sysPrompt)
+	cli.MsgContext[0] = openai.SystemMessage(conf.Env.SysPrompt)
 	cli.LlmClient = openai.NewClient(
-		option.WithAPIKey(apiKey),
-		option.WithBaseURL(baseUrl),
+		option.WithAPIKey(conf.Env.ApiKey),
+		option.WithBaseURL(conf.Env.BaseURL),
 		option.WithJSONSet("temperature", conf.Env.Temperature),
 		option.WithJSONSet("max_tokens", conf.Env.MaxResponseTokenLength),
 	)
@@ -37,7 +33,10 @@ func (cli *AgentClient) Init(
 func (cli *AgentClient) SetContextToLastUserPrompt() {
 	for i := len(cli.MsgContext) - 1; i >= 0; i-- {
 		if cli.MsgContext[i].OfUser != nil {
-			cli.MsgContext = cli.MsgContext[i:]
+			cli.MsgContext = append(
+				[]openai.ChatCompletionMessageParamUnion{openai.SystemMessage(conf.Env.SysPrompt)},
+				cli.MsgContext[i:]...,
+			)
 			return
 		}
 	}

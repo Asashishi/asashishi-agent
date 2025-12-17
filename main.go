@@ -35,13 +35,7 @@ func main() {
 		isWaitInput bool              = true
 		cli         agent.AgentClient = agent.AgentClient{}
 	)
-	cli.Init(
-		conf.Env.ApiKey,
-		conf.Env.BaseURL,
-		conf.Env.ModelName,
-		conf.Env.SysPrompt,
-		tools.GetToolsInfo(),
-	)
+	cli.Init(tools.GetToolsInfo())
 	if len(os.Args) > 1 && os.Args[1] == global.TestParam {
 		test.RunTest()
 	} else {
