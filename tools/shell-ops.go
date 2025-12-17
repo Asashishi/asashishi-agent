@@ -63,6 +63,8 @@ func ClearCommands() bool {
 }
 
 func InterActiveExecute() string {
+	defer fmt.Println(global.GetStyledSystemComent(Exit))
+	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
 		err       error
 		shell     *exec.Cmd
