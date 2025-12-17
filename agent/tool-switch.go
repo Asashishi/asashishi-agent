@@ -215,7 +215,7 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 		} else {
 			message = NeedRetry
 		}
-	case "InterActiveExcute":
+	case "InterActiveExecute":
 		message = tools.InterActiveExecute()
 	case "NoInterActiveExecute":
 		message = tools.NoInterActiveExecute()

@@ -23,8 +23,8 @@ func killChildProcessGroup(pid int) {
 
 func buildShell() *exec.Cmd {
 	var (
-		shell           *exec.Cmd
 		fomatedCommands string
+		shell           *exec.Cmd
 	)
 	if conf.Env.System == conf.Windows {
 		fomatedCommands = WindowsInitialCommand
@@ -113,14 +113,11 @@ func NoInterActiveExecute() string {
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
 	go func() {
-		var msg string
 		for {
 			select {
-			case msg = <-global.UInput.ChildProcessStdin:
-				if msg != "" {
-					stopFlag = true
-					killChildProcessGroup(shell.Process.Pid)
-				}
+			case <-global.UInput.ChildProcessStdin:
+				stopFlag = true
+				killChildProcessGroup(shell.Process.Pid)
 			default:
 				if !global.UInput.IsChildProcess {
 					break
