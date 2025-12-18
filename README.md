@@ -1,4 +1,4 @@
-# Asashishi Agent - 智能编程助手 CLI
+# Asashishi Agent - 智能编程助手
 
 [![Go Version](https://img.shields.io/badge/Go-1.25.5+-00ADD8?style=flat-square&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=flat-square)](LICENSE)
@@ -8,7 +8,7 @@
   <img src="https://raw.githubusercontent.com/Asashishi/asashishi-agent/refs/heads/main/resources/app.ico" alt="Logo" />
 </p>
 
-**Asashishi Agent** 是一个基于 Go 语言开发的智能编程助手命令行工具，通过自然语言交互帮助开发者进行项目开发、代码生成和文件管理。支持 OpenAI 兼容 API（如 DeepSeek），提供完整的文件操作、Shell 命令执行和网络搜索能力。
+**Asashishi Agent** 是一个基于 Go 语言开发的智能编程助手工具，通过自然语言交互帮助开发者进行项目开发、代码生成和文件管理。支持 OpenAI 兼容 API（如 DeepSeek），提供完整的文件操作、Shell 命令执行和网络搜索能力。
 
 ## ✨ 核心特性
 
@@ -196,26 +196,42 @@ go run main.go
 ```json
 {
     "info": {
-        "version": "3.2.7",
-        "owner": "YourName",
+        "version": "3.4.1",
         "name": "asashishi-agent.exe"
     },
     "proc": {
-        "backup": true,
-        "backup_excepts": ["log", "backup\\files", "node_modules"],
+        "backup": false,
+        "backup_excepts": [
+            "log",
+            ".git",
+            "build",
+            "backup\\files",
+            "node_modules"
+        ],
         "tick_per_sec": 90,
+        "web": {
+            "web_mode": false,
+            "http_port": 3000,
+            "websocket_route": "/ws",
+            "server_root_path": "web"
+        },
         "terminal_code_style": "monokai"
     },
     "llm": {
-        "api_key": "sk-your-api-key-here",
-        "base_url": "https://api.deepseek.com/v1",
-        "model_name": "deepseek-chat",
         "temperature": 0.5,
+        "dir_excepts": [
+            "build",
+            ".git",
+            "node_modules",
+            "backup\\files"
+        ],
+        "context_length": 128,
         "use_web_search": true,
         "show_toolcall_args": false,
-        "context_length": 128,
+        "model_name": "deepseek-chat",
         "max_response_token_length": 8192,
-        "files_excepts": ["node_modules", "backup\\files"]
+        "base_url": "https://api.deepseek.com/v1",
+        "api_key": "sk-your-api-key-here"
     }
 }
 ```
@@ -230,30 +246,35 @@ go run main.go
 | `llm.temperature` | 创造力参数 (0.0-2.0) | `0.5`（平衡） |
 | `proc.backup` | 是否启用启动时备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
+| `proc.web.web_mode` | 是否启用 Web 模式 | `false`（默认 CLI 模式） |
+| `proc.web.http_port` | Web 服务器端口 | `3000` |
+| `proc.web.websocket_route` | WebSocket 路由 | `/ws` |
+| `proc.web.server_root_path` | Web 静态文件目录 | `web` |
+| `llm.dir_excepts` | 文件操作排除目录 | `["build", ".git", "node_modules", "backup\\files"]` |
 
 ## 🛠️ 工具功能详解
 
 ### 📁 文件操作 (FileOps)
-- `GetFileList(path)` - 获取目录文件列表
-- `CreateFile(path)` / `RemoveFile(path)` - 创建/删除文件
-- `CreateDir(path)` / `RemoveDir(path)` - 创建/删除目录
-- `MoveContent(opath, npath)` - 重命名文件/目录
-- `ReadFileContent(path)` - 读取文件内容
-- `AppendContentAtTail(path, content)` - 在文件末尾追加内容
-- `AppendContentAtMiddle(path, stp, content)` - 在文件中间插入内容
-- `DeleteFileContent(path)` - 清空文件内容
-- `FileContentRollBack(path)` - 回滚到上次缓存状态
-- `RenewFileCache(path)` - 更新文件缓存
+- `GetFileList` - 获取目录文件列表
+- `CreateFile` / `RemoveFile` - 创建/删除文件
+- `CreateDir` / `RemoveDir` - 创建/删除目录
+- `MoveContent` - 重命名文件/目录
+- `ReadFileContent` - 读取文件内容
+- `AppendContentAtTail` - 在文件末尾追加内容
+- `AppendContentAtMiddle` - 在文件中间插入内容
+- `DeleteFileContent` - 清空文件内容
+- `FileContentRollBack` - 回滚到上次缓存状态
+- `RenewFileCache` - 更新文件缓存
 
 ### 💻 Shell 操作 (ShellOps)
-- `GetCommands()` - 获取当前命令组
-- `AddCommands(command)` - 添加命令到命令组
-- `PopCommands(num)` - 移除末尾命令
-- `ClearCommands()` - 清空命令组
-- `Excute()` - 执行命令组并返回结果
+- `GetCommands` - 获取当前命令组
+- `AddCommands` - 添加命令到命令组
+- `PopCommands` - 移除末尾命令
+- `ClearCommands` - 清空命令组
+- `Excute` - 执行命令组并返回结果
 
 ### 🌐 网络操作 (NetOps)
-- `WebContentSearch(url)` - 获取网页文本内容（需启用 `use_web_search`）
+- `HttpSearch` - 获取网页文本内容（需启用 `use_web_search`）
 
 ### ⏰ 时间工具
 - `GetFormatedTime()` - 获取格式化时间戳 (YYYYMMDDhhmmss)
@@ -322,13 +343,17 @@ asashishi-agent/
 ├── test/                     # 测试模块
 ├── cmd/                      # 快捷命令模块
 ├── ui/                       # 用户界面模块
+├── entry/                    # 程序入口模块（CLI/Web 模式）
+├── websocket/                # WebSocket 通信模块
+├── web/                      # Web 界面文件目录
+│   ├── index.html            # Web 主页面
+│   ├── example.html          # WebSocket 示例页面
+│   └── public/               # 静态资源目录
 ├── log/                      # 操作日志目录
 └── resources/                # 资源文件目录
 ```
 
-### 📁 模块功能概览
-
-| 模块                 | 功能描述     | 关键职责                               |
+### 📁 模块功能概览| 模块                 | 功能描述     | 关键职责                               |
 | -------------------- | ------------ | -------------------------------------- |
 | **agent/**     | AI 代理核心  | 处理与 LLM 的交互、工具调用和智能规划  |
 | **tools/**     | 工具实现     | 提供文件、Shell、网络、时间等操作能力  |
@@ -338,13 +363,16 @@ asashishi-agent/
 | **test/**      | 测试模块     | 提供测试初始化和验证功能               |
 | **cmd/**       | 命令行模块   | 处理命令行参数和用户交互               |
 | **ui/**        | 用户界面模块 | 处理终端颜色、样式和输出格式化         |
+| **entry/**     | 程序入口模块 | 提供 CLI 和 Web 两种启动模式           |
+| **websocket/** | WebSocket 模块 | 处理 WebSocket 通信和消息传递         |
+| **web/**       | Web 界面模块 | 提供 Web 界面和静态文件服务           |
 | **log/**       | 日志记录     | 保存所有操作的详细日志，便于调试和审计 |
 | **resources/** | 资源文件     | 存储程序图标等静态资源                 |
 
-### 🔄 系统架构与数据流
+### 🔄 系统架构与数据流```
 
-```
-用户输入
+CLI 模式数据流：
+用户输入 (命令行)
     ↓
 cmd/ (命令行解析)
     ↓
@@ -366,8 +394,34 @@ agent/ (AI 代理核心)
     ├── UI 渲染 (ui/)
     └── 日志记录 (log/)
     ↓
-程序输出
-```
+终端输出
+
+Web 模式数据流：
+用户输入 (Web 界面)
+    ↓
+websocket/ (WebSocket 通信)
+    ↓
+entry/ (Web 模式入口)
+    ↓
+agent/ (AI 代理核心)
+    ├── 配置验证 (conf/)
+    ├── 智能规划 (agent/)
+    ├── 工具调用 (tools/)
+    └── 安全检查 (global/)
+    ↓
+工具执行
+    ├── 文件操作 (tools/)
+    ├── Shell 命令 (tools/)
+    ├── 网络搜索 (tools/)
+    └── 时间工具 (tools/)
+    ↓
+结果处理
+    ├── 备份保护 (backup/)
+    ├── 状态更新 (agent/)
+    ├── WebSocket 响应 (websocket/)
+    └── 日志记录 (log/)
+    ↓
+Web 界面输出
 
 ### 🎯 核心设计原则
 
@@ -402,13 +456,15 @@ agent/ (AI 代理核心)
    - 文件操作限制在当前工作目录
    - 网络操作验证来源和完整性
 
-### 🏆 技术亮点
-
-- **智能工具路由**：根据用户需求自动选择合适的工具
+### 🏆 技术亮点- **智能工具路由**：根据用户需求自动选择合适的工具
 - **自动备份系统**：重要操作前自动备份，支持一键回滚
 - **跨平台支持**：提供 Windows 和 Unix-like 系统的构建脚本
 - **可扩展架构**：易于添加新的工具和功能模块
 - **详细日志系统**：所有操作都有完整记录，便于调试
+- **双模式运行**：支持 CLI 命令行和 Web 界面两种交互方式
+- **实时 WebSocket 通信**：Web 模式下提供实时双向通信
+- **完整测试套件**：内置全面的功能测试，确保系统稳定性
+- **自动打包发布**：构建脚本支持自动打包为 zip/tar.gz 格式
 
 ### 环境设置
 
@@ -497,6 +553,29 @@ upx --best --lzma asashishi-agent.exe
 - DeepSeek Chat
 - OpenAI GPT 系列
 - 其他兼容 OpenAI API 的服务
+
+### Q: 如何启用 Web 模式？
+**A:** 
+1. 在 `config.json` 中设置 `"proc.web.web_mode": true`，然后重启程序。程序将在指定端口（默认 3000）启动 Web 服务器，您可以通过浏览器访问 `http://localhost:3000` 使用 Web 界面
+2. 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web/example.html 下的示例实现 socket 回调和页面样式
+
+### Q: Web 模式支持哪些功能？
+**A:** Web 将模式支持所有 CLI 模式的功能
+
+### Q: 如何运行测试？
+
+**A:** 有两种方式运行测试：
+1. **使用测试脚本**：执行 `./run-test.bat` (Windows) 或 `./run-test.sh` (Linux/macOS)
+2. **命令行参数**：运行 `./asashishi-agent.exe rt` 或 `./asashishi-agent rt`
+
+### Q: 测试包含哪些内容？
+
+**A:** 测试套件包含：
+- 文件操作测试（创建、读取、修改、删除文件/目录）
+- Shell 命令组管理测试
+- 网络搜索测试
+- 时间工具测试
+- 所有工具功能的完整性验证
 
 ## 📄 许可证
 

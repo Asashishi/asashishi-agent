@@ -212,6 +212,7 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Name: "SearchFileContent",
 				Description: openai.String(`
 				1. 此函数用于查找一段内容在文件中出现的字符起始位置和结束位置
+				2. 传入的 content 参数必须是整段文件内容, 而不是断续的残句或标题
 				2. 内容可能出现多次, 函数会以数组的形式 如 [[9, 120], [309, 420]...] 的形式返回
 				3. 得到正确的位置后, 需要将位置传递给 ReplaceFileContentByPosition 或 DeleteFileContentByPosition 进行替换或删除操作
 				`),
@@ -238,8 +239,9 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Name: "ReplaceFileContentByPosition",
 				Description: openai.String(`
 				1. 此函数用于根据起始字符位置和结束字符位置来替换整段文件内容
-				2. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
-				3. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
+				2. 如果上下文已经包含文件内容, 则在修改前不用再重复读取整个文件内容
+				3. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
+				4. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
 				`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
@@ -271,8 +273,9 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Name: "DeleteFileContentByPosition",
 				Description: openai.String(`
 				1. 此函数用于根据起始字符位置和结束字符位置来删除整段文件内容
-				2. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
-				3. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
+				2. 如果上下文已经包含文件内容, 则在修改前不用再重复读取整个文件内容
+				3. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
+				4. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
 				`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
