@@ -589,7 +589,7 @@ upx --best --lzma asashishi-agent.exe
 [Chroma-V2](https://github.com/alecthomas/chroma)<br/>
 [Coder-Websocket](https://github.com/coder/websocket)<br/>
 
-## 📞 支持与反馈
+## 🌟 支持与反馈
 
 - **GitHub Issues**: [报告问题或请求功能](https://github.com/asashishi/asashishi-agent/issues)
 - **文档**: 查看本 README 和代码注释
