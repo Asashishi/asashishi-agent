@@ -365,7 +365,7 @@ asashishi-agent/
 | **cmd/**       | 命令行模块   | 处理命令行参数和用户交互               |
 | **ui/**        | 用户界面模块 | 处理终端颜色、样式和输出格式化         |
 | **entry/**     | 程序入口模块 | 提供 CLI 和 Web 两种启动模式           |
-| **websocket/** | WebSocket 模块 | 处理 WebSocket 通信和消息传递         |
+| **websocket/** | WebSocket 模块 | WebSocket 通信和消息传递的数据格式定义         |
 | **web/**       | Web 界面模块 | 提供 Web 界面和静态文件服务           |
 | **log/**       | 日志记录     | 保存所有操作的详细日志，便于调试和审计 |
 | **resources/** | 资源文件     | 存储程序图标等静态资源                 |
