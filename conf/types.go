@@ -5,7 +5,14 @@ type InfoConfig struct {
 	Version string `json:"version"`
 }
 
+type WebConfig struct {
+	WebMode        bool   `json:"web_mode"`
+	ServerPort     int16  `json:"server_port"`
+	ServerRootPath string `json:"server_root_path"`
+}
+
 type ProcConfig struct {
+	WebConfig         `json:"web"`
 	BackUp            bool     `json:"backup"`
 	TickPerSec        float64  `json:"tick_per_sec"`
 	TerminalCodeStyle string   `json:"terminal_code_style"`

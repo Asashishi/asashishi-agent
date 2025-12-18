@@ -1,11 +1,12 @@
 package conf
 
-const ConfigJsonName string = "config.json"
+const Version string = "3.3.2"
 
-const Linux string = "Linux/Unix"
 const Bash string = "Bash"
 const Windows string = "Windows"
+const Linux string = "Linux/Unix"
 const PowerShell string = "PowerShell"
+const ConfigJsonName string = "config.json"
 
 const SysPrompt string = `
 # 系统规则 (最高优先级)
