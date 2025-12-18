@@ -25,7 +25,7 @@ func WithCliMode() {
 			msg         string
 			input       string
 			cmdToJudge  []string
-			cmdTool     func(...string) error
+			cmdTool     func(...string)
 			isWaitInput bool              = true
 			cli         agent.AgentClient = agent.AgentClient{}
 		)
