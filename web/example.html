@@ -17,7 +17,7 @@
     // websocket connection
     let socket = new WebSocket("ws://localhost:3000/ws");
     socket.onopen = function() {
-      log("\n ✅ 已连接到 WebSocket 服务");
+      log("✅ 已连接到 WebSocket 服务");
     };
     socket.onmessage = function(event) {
       let data = JSON.parse(event.data)

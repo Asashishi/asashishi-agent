@@ -76,10 +76,11 @@ func WithWebMode() {
 
 		go func() {
 			var (
-				innerErr error
-				jsonMsg  []byte
-				msg      string
-				input    string
+				innerErr       error
+				jsonMsg        []byte
+				msg            string
+				input          string
+				processingFlag bool = false
 			)
 			for {
 				select {
@@ -116,7 +117,13 @@ func WithWebMode() {
 						panic(global.GetStyledError(err.Error()))
 					}
 				case input = <-global.UInput.ProcessStdin:
-					cli.StreamChat(input)
+					if !processingFlag {
+						processingFlag = true
+						go func() {
+							cli.StreamChat(input)
+							processingFlag = false
+						}()
+					}
 				default:
 					global.WaitNextFrame(conf.Env.TickPerSec)
 				}
