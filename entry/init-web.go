@@ -92,29 +92,34 @@ func WithWebMode() {
 						fmt.Println(global.GetStyledWarn(innerErr.Error()))
 					}
 					if conn != nil {
-						conn.Write(
+						if innerErr = conn.Write(
 							ctx,
 							ws.MessageText,
 							jsonMsg,
-						)
+						); innerErr != nil {
+							cli.StreamForceStop = true
+						}
 					} else {
-						fmt.Printf(global.AIOutput, msg)
+						// 改 panic 或其他处理
+						cli.StreamForceStop = true
 					}
-				case err = <-cli.ErrorChan:
+				case innerErr = <-cli.ErrorChan:
 					if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
-						Content: err.Error(),
+						Content: innerErr.Error(),
 						Type:    websocket.SysErrorType,
 					}); innerErr != nil {
 						fmt.Println(global.GetStyledWarn(innerErr.Error()))
 					}
 					if conn != nil {
-						conn.Write(
+						if innerErr = conn.Write(
 							ctx,
 							ws.MessageText,
 							jsonMsg,
-						)
+						); innerErr != nil {
+							fmt.Println(global.GetStyledWarn(innerErr.Error()))
+						}
 					} else {
-						panic(global.GetStyledError(err.Error()))
+						panic(global.GetStyledError(innerErr.Error()))
 					}
 				case input = <-global.UInput.ProcessStdin:
 					if !processingFlag {
