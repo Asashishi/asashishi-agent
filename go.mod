@@ -8,7 +8,7 @@ require (
 )
 
 require (
-	github.com/coder/websocket v1.8.14 // indirect
+	github.com/coder/websocket v1.8.14
 	github.com/dlclark/regexp2 v1.11.5 // indirect
 )
 
