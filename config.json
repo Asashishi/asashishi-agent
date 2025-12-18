@@ -14,7 +14,7 @@
         ],
         "tick_per_sec": 90,
         "web": {
-            "web_mode": true,
+            "web_mode": false,
             "http_port": 3000,
             "websocket_route": "/ws",
             "server_root_path": "web"

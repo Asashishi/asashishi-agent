@@ -14,24 +14,22 @@ import (
 )
 
 func WithCliMode() {
-
 	InitCli()
-
-	var (
-		ok          bool
-		firstInput  bool
-		err         error
-		msg         string
-		input       string
-		cmdToJudge  []string
-		cmdTool     func(...any) any
-		isWaitInput bool              = true
-		cli         agent.AgentClient = agent.AgentClient{}
-	)
-	cli.Init(context.Background(), tools.GetToolsInfo())
 	if len(os.Args) > 1 && os.Args[1] == global.TestParam {
 		test.RunTest()
 	} else {
+		var (
+			ok          bool
+			firstInput  bool
+			err         error
+			msg         string
+			input       string
+			cmdToJudge  []string
+			cmdTool     func(...any) any
+			isWaitInput bool              = true
+			cli         agent.AgentClient = agent.AgentClient{}
+		)
+		cli.Init(context.Background(), tools.GetToolsInfo())
 		for {
 			select {
 			case msg = <-cli.StreamChan:
