@@ -12,6 +12,8 @@
   <div id="log"></div>
   <script>
 
+    // 无论你是使用框架还是原生 html 按照以下内容为蓝本编写交互脚本即可
+
     // websocket connection
     let socket = new WebSocket("ws://localhost:3000/ws");
     socket.onopen = function() {
