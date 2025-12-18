@@ -12,7 +12,7 @@ func InitCli() {
 		backup.BackupFiles()
 	}
 	global.PrintAppBanner(conf.Env.Version)
-	go global.InitGlobalUInput()
+	go global.InitGlobalCliUInput()
 }
 
 func InitWeb() {
@@ -21,4 +21,5 @@ func InitWeb() {
 		backup.BackupFiles()
 	}
 	global.PrintAppBanner(conf.Env.Version)
+	go global.InitGlobalWebUInput()
 }

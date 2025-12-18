@@ -1,6 +1,7 @@
 package global
 
 import (
+	"asashishi-agent/conf"
 	"asashishi-agent/ui"
 	"bufio"
 	"fmt"
@@ -15,7 +16,7 @@ var UInput *GlobalUInput = &GlobalUInput{
 	ChildProcessStdin: make(chan string),
 }
 
-func InitGlobalUInput() {
+func InitGlobalCliUInput() {
 	var (
 		err    error
 		str    string
@@ -34,6 +35,23 @@ func InitGlobalUInput() {
 			UInput.ChildProcessStdin <- str
 		} else {
 			UInput.ProcessStdin <- str
+		}
+	}
+}
+
+func InitGlobalWebUInput() {
+	var str string
+	UInput.WebsocketReadChan = make(chan string)
+	for {
+		select {
+		case str = <-UInput.WebsocketReadChan:
+			if UInput.IsChildProcess {
+				UInput.ChildProcessStdin <- str
+			} else {
+				UInput.ProcessStdin <- str
+			}
+		default:
+			WaitNextFrame(conf.Env.TickPerSec)
 		}
 	}
 }
