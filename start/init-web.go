@@ -38,7 +38,7 @@ func WithWebMode() {
 	http.Handle(global.HttpRootPath, fileServer)
 
 	http.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
-		conn = GetWebsocketConn(writer, reader)
+		conn = GetWebsocketConn(conn, writer, reader)
 	})
 	defer conn.Close(ws.StatusInternalError, websocket.ProcessExit)
 

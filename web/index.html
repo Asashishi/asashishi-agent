@@ -7,5 +7,39 @@
   </title>
 </head>
 <body>
+  <h2>WebSocket 测试页面</h2>
+  <button id="sendBtn">发送消息</button>
+  <div id="log"></div>
+  <script>
+    let socket = new WebSocket("ws://localhost:3000/ws");
+    socket.onopen = function() {
+      log("✅ 已连接到 WebSocket 服务");
+    };
+    socket.onmessage = function(event) {
+      log("📩 收到消息: " + event.data);
+    };
+    socket.onclose = function() {
+      log("❌ 连接已关闭");
+    };
+    socket.onerror = function(error) {
+      log("⚠️ 出错: " + error);
+      socket = new WebSocket("ws://localhost:3000/ws");
+    };
+    function log(msg) {
+      const div = document.getElementById("log");
+      div.innerHTML += msg + "<br/>";
+    }
+    document.getElementById("sendBtn").onclick = function() {
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({
+            type: 'user_input',
+            content: "你好"
+        }));
+        log("➡️ 已发送: Hello Server");
+      } else {
+        log("⚠️ 连接未建立，无法发送");
+      }
+    };
+  </script>
 </body>
 </html>

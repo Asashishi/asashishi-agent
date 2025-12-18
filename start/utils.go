@@ -4,6 +4,8 @@ import (
 	"asashishi-agent/backup"
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"asashishi-agent/websocket"
+	"fmt"
 	"net/http"
 
 	ws "github.com/coder/websocket"
@@ -27,14 +29,13 @@ func InitWeb() {
 	go global.InitGlobalWebUInput()
 }
 
-func GetWebsocketConn(writer http.ResponseWriter, reader *http.Request) *ws.Conn {
-	var (
-		err  error
-		conn *ws.Conn
-	)
+func GetWebsocketConn(conn *ws.Conn, writer http.ResponseWriter, reader *http.Request) *ws.Conn {
+	var err error
+	if conn != nil {
+		conn.Close(ws.StatusInternalError, websocket.ClientExit)
+	}
 	if conn, err = ws.Accept(writer, reader, nil); err != nil {
-		conn = nil
-		return GetWebsocketConn(writer, reader)
+		fmt.Println(global.GetStyledWarn(err.Error()))
 	}
 	return conn
 }
