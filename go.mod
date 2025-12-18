@@ -7,7 +7,10 @@ require (
 	github.com/openai/openai-go/v3 v3.13.0
 )
 
-require github.com/dlclark/regexp2 v1.11.5 // indirect
+require (
+	github.com/coder/websocket v1.8.14
+	github.com/dlclark/regexp2 v1.11.5 // indirect
+)
 
 require (
 	github.com/tidwall/gjson v1.18.0 // indirect

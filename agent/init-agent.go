@@ -13,13 +13,14 @@ import (
 )
 
 func (cli *AgentClient) Init(
+	context context.Context,
 	toolList []openai.ChatCompletionToolUnionParam,
 ) {
+	cli.Context = context
 	cli.ToolsList = toolList
 	cli.ModelName = conf.Env.ModelName
 	cli.ErrorChan = make(chan error)
 	cli.StreamChan = make(chan string)
-	cli.Context = context.Background()
 	cli.MsgContext = make([]openai.ChatCompletionMessageParamUnion, 1)
 	cli.MsgContext[0] = openai.SystemMessage(conf.Env.SysPrompt)
 	cli.LlmClient = openai.NewClient(
@@ -47,8 +48,7 @@ func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 			},
 		},
 	); err != nil {
-		fmt.Println(global.GetStyledError(err.Error()))
-		return ""
+		panic(global.GetStyledError(err.Error()))
 	}
 	return resp.Choices[0].Message.Content
 }

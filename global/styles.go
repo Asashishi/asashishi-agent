@@ -48,3 +48,9 @@ var SystemErrorStyle ui.Style = ui.Style{
 	Bold:   true,
 	Italic: true,
 }
+
+var SystemWarnStyle ui.Style = ui.Style{
+	Fg:     Yelleow,
+	Bold:   true,
+	Italic: true,
+}

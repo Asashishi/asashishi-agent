@@ -7,7 +7,8 @@ type InfoConfig struct {
 
 type WebConfig struct {
 	WebMode        bool   `json:"web_mode"`
-	ServerPort     int16  `json:"server_port"`
+	HttpPort       int16  `json:"http_port"`
+	WebsocketRoute string `json:"websocket_route"`
 	ServerRootPath string `json:"server_root_path"`
 }
 

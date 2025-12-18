@@ -15,7 +15,8 @@
         "tick_per_sec": 90,
         "web": {
             "web_mode": false,
-            "server_port": 3000,
+            "http_port": 3000,
+            "websocket_route": "/ws",
             "server_root_path": "web"
         },
         "terminal_code_style": "monokai"

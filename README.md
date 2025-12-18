@@ -504,8 +504,9 @@ upx --best --lzma asashishi-agent.exe
 
 ## 🧩 三方库集成
 
-[OpenAI](https://openai.com/)
-[Chroma-v2](https://github.com/alecthomas/chroma)
+[OpenAI](https://openai.com/)<br/>
+[Chroma-V2](https://github.com/alecthomas/chroma)<br/>
+[Coder-Websocket](https://github.com/coder/websocket)<br/>
 
 ## 📞 支持与反馈
 

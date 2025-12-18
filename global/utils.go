@@ -1,6 +1,7 @@
 package global
 
 import (
+	"asashishi-agent/conf"
 	"asashishi-agent/ui"
 	"bufio"
 	"fmt"
@@ -15,7 +16,7 @@ var UInput *GlobalUInput = &GlobalUInput{
 	ChildProcessStdin: make(chan string),
 }
 
-func InitGlobalUInput() {
+func InitGlobalCliUInput() {
 	var (
 		err    error
 		str    string
@@ -38,6 +39,23 @@ func InitGlobalUInput() {
 	}
 }
 
+func InitGlobalWebUInput() {
+	var str string
+	UInput.WebsocketReadChan = make(chan string)
+	for {
+		select {
+		case str = <-UInput.WebsocketReadChan:
+			if UInput.IsChildProcess {
+				UInput.ChildProcessStdin <- str
+			} else {
+				UInput.ProcessStdin <- str
+			}
+		default:
+			WaitNextFrame(conf.Env.TickPerSec)
+		}
+	}
+}
+
 func WaitNextFrame(tick float64) {
 	time.Sleep(
 		(time.Duration((FloatK / tick) * FloatK)) * time.Microsecond,
@@ -51,6 +69,13 @@ func SetTerminalTitle() {
 func PrintAppBanner(version string) {
 	var styledVersion string = fmt.Sprintf(Version, version)
 	fmt.Printf(AppBanner, styledVersion)
+}
+
+func GetStyledWarn(warnString string) string {
+	return ui.WidthStyle(
+		warnString,
+		SystemWarnStyle,
+	)
 }
 
 func GetStyledError(errString string) string {
