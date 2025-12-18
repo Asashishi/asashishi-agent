@@ -37,6 +37,5 @@ var CmdTools = map[string]func(...string){
 		if err = RenderFileToTerminal(dParam[2]); err != nil {
 			fmt.Println(global.GetStyledWarn(ExceptionAtReadFile))
 		}
-		return
 	},
 }
