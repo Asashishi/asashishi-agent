@@ -54,10 +54,10 @@ func WithWebMode() {
 		)
 		for {
 			if _, recved, err = conn.Read(ctx); err != nil {
-				fmt.Println(global.GetStyledError(err.Error()))
+				fmt.Println(global.GetStyledWarn(err.Error()))
 				continue
 			} else if err = json.Unmarshal(recved, &data); err != nil {
-				fmt.Println(global.GetStyledError(err.Error()))
+				fmt.Println(global.GetStyledWarn(err.Error()))
 				continue
 			} else if data.Type == websocket.UserInputType {
 				global.UInput.WebsocketReadChan <- data.Content
@@ -77,7 +77,7 @@ func WithWebMode() {
 					Content: msg,
 					Type:    websocket.AIOutputType,
 				}); err != nil {
-					fmt.Println(global.GetStyledError(innerErr.Error()))
+					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				}
 				conn.Write(
 					ctx,
@@ -89,7 +89,7 @@ func WithWebMode() {
 					Content: err.Error(),
 					Type:    websocket.SysErrorType,
 				}); innerErr != nil {
-					fmt.Println(global.GetStyledError(innerErr.Error()))
+					panic(global.GetStyledError(innerErr.Error()))
 				}
 				conn.Write(
 					ctx,

@@ -47,8 +47,7 @@ func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 			},
 		},
 	); err != nil {
-		fmt.Println(global.GetStyledError(err.Error()))
-		return ""
+		panic(global.GetStyledError(err.Error()))
 	}
 	return resp.Choices[0].Message.Content
 }

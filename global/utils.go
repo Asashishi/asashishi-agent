@@ -71,6 +71,13 @@ func PrintAppBanner(version string) {
 	fmt.Printf(AppBanner, styledVersion)
 }
 
+func GetStyledWarn(warnString string) string {
+	return ui.WidthStyle(
+		warnString,
+		SystemWarnStyle,
+	)
+}
+
 func GetStyledError(errString string) string {
 	return ui.WidthStyle(
 		errString,

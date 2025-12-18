@@ -36,7 +36,7 @@ func WithCliMode() {
 			case msg = <-cli.StreamChan:
 				fmt.Printf(global.AIOutput, msg)
 			case err = <-cli.ErrorChan:
-				fmt.Println(global.GetStyledError(err.Error()))
+				panic(global.GetStyledError(err.Error()))
 			case input = <-global.UInput.ProcessStdin:
 				go func() {
 					if input != global.EmptyString {
