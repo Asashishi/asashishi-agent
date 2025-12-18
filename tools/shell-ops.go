@@ -62,6 +62,8 @@ func ClearCommands() bool {
 	return true
 }
 
+// web 模式待修改 使用 channel 将 io.MultiWriter 的输出接到另一个无缓冲管道
+
 func InteractiveExecute() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
