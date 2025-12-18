@@ -16,7 +16,7 @@
         "web": {
             "web_mode": true,
             "http_port": 3000,
-            "websocket_port": 3080,
+            "websocket_route": "/ws",
             "server_root_path": "web"
         },
         "terminal_code_style": "monokai"

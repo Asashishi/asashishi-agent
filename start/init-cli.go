@@ -7,6 +7,7 @@ import (
 	"asashishi-agent/global"
 	"asashishi-agent/test"
 	"asashishi-agent/tools"
+	"context"
 	"fmt"
 	"os"
 	"strings"
@@ -27,7 +28,7 @@ func WithCliMode() {
 		isWaitInput bool              = true
 		cli         agent.AgentClient = agent.AgentClient{}
 	)
-	cli.Init(tools.GetToolsInfo())
+	cli.Init(context.Background(), tools.GetToolsInfo())
 	if len(os.Args) > 1 && os.Args[1] == global.TestParam {
 		test.RunTest()
 	} else {

@@ -29,22 +29,27 @@ func WithWebMode() {
 		ctx        context.Context
 		cli        agent.AgentClient = agent.AgentClient{}
 	)
-
-	cli.Init(tools.GetToolsInfo())
+	ctx = context.Background()
+	cli.Init(ctx, tools.GetToolsInfo())
 
 	if dirPath, err = os.Getwd(); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
 	fileServer = http.FileServer(http.Dir(filepath.Join(dirPath, conf.Env.ServerRootPath)))
-	http.Handle("/", fileServer)
+	http.Handle(global.HttpRootPath, fileServer)
+
+	http.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
+		if conn, err = ws.Accept(writer, reader, nil); err != nil {
+			panic(global.GetStyledError(err.Error()))
+		}
+	})
+	defer conn.Close(ws.StatusInternalError, websocket.ProcessExit)
 
 	fmt.Println(
 		global.GetStyledSuccess(
 			fmt.Sprintf(global.WebServerStartComment, conf.Env.HttpPort),
 		),
 	)
-	ctx, conn = websocket.WebSocketServerInit()
-	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
 	go func() {
 		var (
@@ -53,7 +58,9 @@ func WithWebMode() {
 			data   websocket.WebsocketMsg
 		)
 		for {
-			if _, recved, err = conn.Read(ctx); err != nil {
+			if conn == nil {
+				global.WaitNextFrame(conf.Env.TickPerSec)
+			} else if _, recved, err = conn.Read(ctx); err != nil {
 				fmt.Println(global.GetStyledWarn(err.Error()))
 				continue
 			} else if err = json.Unmarshal(recved, &data); err != nil {
