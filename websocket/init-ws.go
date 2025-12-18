@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"asashishi-agent/conf"
+	"asashishi-agent/global"
 	"context"
 	"fmt"
 
@@ -16,7 +17,7 @@ func WebSocketServerInit() (context.Context, *ws.Conn) {
 	)
 	ctx = context.Background()
 	if conn, _, err = ws.Dial(ctx, fmt.Sprintf(WebsocketURL, conf.Env.WebsocketPort), nil); err != nil {
-		panic(err)
+		panic(global.GetStyledError(err.Error()))
 	}
 	return ctx, conn
 }
