@@ -2,7 +2,7 @@ package main
 
 import (
 	"asashishi-agent/conf"
-	"asashishi-agent/start"
+	"asashishi-agent/entry"
 )
 
 func init() {
@@ -11,8 +11,8 @@ func init() {
 
 func main() {
 	if conf.Env.WebMode {
-		start.WithWebMode()
+		entry.WithWebMode()
 	} else {
-		start.WithCliMode()
+		entry.WithCliMode()
 	}
 }
