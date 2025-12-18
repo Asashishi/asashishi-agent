@@ -4,14 +4,20 @@ import (
 	"asashishi-agent/global"
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 func WithWebMode() {
 	var (
 		err        error
+		dirPath    string
 		fileServer http.Handler
 	)
-	fileServer = http.FileServer(http.Dir("../web"))
+	if dirPath, err = os.Getwd(); err != nil {
+		panic(global.GetStyledError(err.Error()))
+	}
+	fileServer = http.FileServer(http.Dir(filepath.Join(dirPath, "web")))
 	http.Handle("/", fileServer)
 
 	fmt.Println(
