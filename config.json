@@ -14,6 +14,7 @@
             "node_modules"
         ],
         "tick_per_sec": 90,
+        "web_mode": false,
         "terminal_code_style": "monokai"
     },
     "llm": {

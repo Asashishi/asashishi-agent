@@ -7,7 +7,7 @@ import (
 
 func main() {
 	if conf.Env.WebMode {
-
+		start.WithWebMode()
 	} else {
 		start.WithCliMode()
 	}
