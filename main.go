@@ -5,8 +5,12 @@ import (
 	"asashishi-agent/start"
 )
 
+func init() {
+	conf.InitConfig()
+}
+
 func main() {
-	if conf.Env.WebMode {
+	if conf.Env.WebPageMode {
 		start.WithWebMode()
 	} else {
 		start.WithCliMode()

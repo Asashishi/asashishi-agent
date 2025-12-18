@@ -1,7 +1,6 @@
 {
     "info": {
         "version": "3.3.2",
-        "owner": "Asashishi",
         "name": "asashishi-agent.exe"
     },
     "proc": {
@@ -14,7 +13,7 @@
             "node_modules"
         ],
         "tick_per_sec": 90,
-        "web_mode": false,
+        "web_page_mode": false,
         "terminal_code_style": "monokai"
     },
     "llm": {

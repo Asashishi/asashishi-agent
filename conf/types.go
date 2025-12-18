@@ -1,13 +1,13 @@
 package conf
 
 type InfoConfig struct {
-	Version string
 	AppName string `json:"name"`
+	Version string `json:"version"`
 }
 
 type ProcConfig struct {
 	BackUp            bool     `json:"backup"`
-	WebMode           bool     `json:"web_mode"`
+	WebPageMode       bool     `json:"web_page_mode"`
 	TickPerSec        float64  `json:"tick_per_sec"`
 	TerminalCodeStyle string   `json:"terminal_code_style"`
 	BackUpExcepts     []string `json:"backup_excepts"`

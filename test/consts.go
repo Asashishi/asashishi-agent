@@ -42,4 +42,4 @@ const HttpSearchParam string = "https://github.com/Asashishi/asashishi-agent"
 
 const ExceptionAtHttpSearch string = "HttpSearch"
 
-const CompleteComment string = "✓  All Test Past!"
+const CompleteComment string = "✓ All Test Past!"

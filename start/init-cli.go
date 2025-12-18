@@ -16,7 +16,6 @@ import (
 func WithCliMode() {
 
 	global.SetTerminalTitle()
-	conf.InitConfig()
 	if conf.Env.BackUp {
 		backup.BackupFiles()
 	}
