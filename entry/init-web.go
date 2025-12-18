@@ -62,6 +62,7 @@ func WithWebMode() {
 					global.WaitNextFrame(conf.Env.TickPerSec)
 				} else if _, recved, err = conn.Read(ctx); err != nil {
 					conn = nil
+					cli.StreamForceStop = true
 					fmt.Println(global.GetStyledWarn(err.Error()))
 					continue
 				} else if err = json.Unmarshal(recved, &data); err != nil {
@@ -88,7 +89,7 @@ func WithWebMode() {
 					if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 						Content: msg,
 						Type:    websocket.AIOutputType,
-					}); err != nil {
+					}); innerErr != nil {
 						fmt.Println(global.GetStyledWarn(innerErr.Error()))
 					}
 					if conn != nil {
@@ -100,7 +101,6 @@ func WithWebMode() {
 							cli.StreamForceStop = true
 						}
 					} else {
-						// 改 panic 或其他处理
 						cli.StreamForceStop = true
 					}
 				case innerErr = <-cli.ErrorChan:

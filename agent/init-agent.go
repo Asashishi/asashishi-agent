@@ -62,7 +62,6 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		chunk               openai.ChatCompletionChunk
 		stream              *ssestream.Stream[openai.ChatCompletionChunk]
 	)
-
 	if prompt != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.UserMessage(prompt))
 	}
@@ -87,7 +86,6 @@ func (cli *AgentClient) StreamChat(prompt string) {
 					if cli.StreamForceStop {
 						stream.Close()
 						cli.StreamForceStop = false
-						cli.MsgContext = []openai.ChatCompletionMessageParamUnion{openai.SystemMessage(conf.Env.SysPrompt)}
 						return
 					}
 					cli.StreamChan <- choice.Delta.Content
@@ -115,7 +113,13 @@ func (cli *AgentClient) StreamChat(prompt string) {
 			}
 		}
 	}
+
 	stream.Close()
+	if cli.StreamForceStop {
+		cli.StreamForceStop = false
+		return
+	}
+
 	assistantMsg = assistantMsgBuilder.String()
 	if assistantMsg != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMsg))
