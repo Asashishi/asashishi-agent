@@ -2,7 +2,6 @@ package start
 
 import (
 	"asashishi-agent/agent"
-	"asashishi-agent/backup"
 	"asashishi-agent/cmd"
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
@@ -15,12 +14,7 @@ import (
 
 func WithCliMode() {
 
-	global.SetTerminalTitle()
-	if conf.Env.BackUp {
-		backup.BackupFiles()
-	}
-	global.PrintAppBanner(conf.Env.Version)
-	go global.InitGlobalUInput()
+	InitCli()
 
 	var (
 		ok          bool

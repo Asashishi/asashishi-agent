@@ -10,7 +10,7 @@ func init() {
 }
 
 func main() {
-	if conf.Env.WebPageMode {
+	if conf.Env.WebMode {
 		start.WithWebMode()
 	} else {
 		start.WithCliMode()
