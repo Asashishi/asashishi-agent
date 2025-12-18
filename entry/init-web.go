@@ -1,4 +1,4 @@
-package start
+package entry
 
 import (
 	"asashishi-agent/agent"
@@ -62,6 +62,7 @@ func WithWebMode() {
 					global.WaitNextFrame(conf.Env.TickPerSec)
 				} else if _, recved, err = conn.Read(ctx); err != nil {
 					conn = nil
+					cli.StreamForceStop = true
 					fmt.Println(global.GetStyledWarn(err.Error()))
 					continue
 				} else if err = json.Unmarshal(recved, &data); err != nil {
@@ -76,10 +77,11 @@ func WithWebMode() {
 
 		go func() {
 			var (
-				innerErr error
-				jsonMsg  []byte
-				msg      string
-				input    string
+				innerErr       error
+				jsonMsg        []byte
+				msg            string
+				input          string
+				processingFlag bool = false
 			)
 			for {
 				select {
@@ -87,36 +89,46 @@ func WithWebMode() {
 					if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 						Content: msg,
 						Type:    websocket.AIOutputType,
-					}); err != nil {
+					}); innerErr != nil {
 						fmt.Println(global.GetStyledWarn(innerErr.Error()))
 					}
 					if conn != nil {
-						conn.Write(
+						if innerErr = conn.Write(
 							ctx,
 							ws.MessageText,
 							jsonMsg,
-						)
+						); innerErr != nil {
+							cli.StreamForceStop = true
+						}
 					} else {
-						fmt.Printf(global.AIOutput, msg)
+						cli.StreamForceStop = true
 					}
-				case err = <-cli.ErrorChan:
+				case innerErr = <-cli.ErrorChan:
 					if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
-						Content: err.Error(),
+						Content: innerErr.Error(),
 						Type:    websocket.SysErrorType,
 					}); innerErr != nil {
 						fmt.Println(global.GetStyledWarn(innerErr.Error()))
 					}
 					if conn != nil {
-						conn.Write(
+						if innerErr = conn.Write(
 							ctx,
 							ws.MessageText,
 							jsonMsg,
-						)
+						); innerErr != nil {
+							fmt.Println(global.GetStyledWarn(innerErr.Error()))
+						}
 					} else {
-						panic(global.GetStyledError(err.Error()))
+						panic(global.GetStyledError(innerErr.Error()))
 					}
 				case input = <-global.UInput.ProcessStdin:
-					cli.StreamChat(input)
+					if !processingFlag {
+						processingFlag = true
+						go func() {
+							cli.StreamChat(input)
+							processingFlag = false
+						}()
+					}
 				default:
 					global.WaitNextFrame(conf.Env.TickPerSec)
 				}
