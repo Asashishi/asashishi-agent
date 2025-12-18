@@ -1,8 +1,11 @@
 package websocket
 
 const WebsocketURL string = "ws://localhost:%d/ws"
+
 const ProcessExit string = "Process Exit"
 const ClientExit string = "Client Exit"
+
+// Input Type
 const AIOutputType string = "ai_msg"
 const SystMsgType string = "sys_msg"
 const SystWarnType string = "sys_warn"
