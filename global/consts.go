@@ -11,3 +11,6 @@ const LineBreakString string = "\n"
 const LineBreakChar byte = '\n'
 const TilteEscape string = "\033]0;%s\007"
 const AppTitle string = "Asashishi Agent Cli"
+const WebServerPort int16 = 3000
+const WebServerRootPath string = "web"
+const WebServerStartComment string = "✓ Server started at http://localhost:%d"

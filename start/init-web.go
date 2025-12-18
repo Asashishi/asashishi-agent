@@ -17,16 +17,16 @@ func WithWebMode() {
 	if dirPath, err = os.Getwd(); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
-	fileServer = http.FileServer(http.Dir(filepath.Join(dirPath, "web")))
+	fileServer = http.FileServer(http.Dir(filepath.Join(dirPath, global.WebServerRootPath)))
 	http.Handle("/", fileServer)
 
 	fmt.Println(
 		global.GetStyledSuccess(
-			fmt.Sprintf(WebServerStartComment, WebServerPort),
+			fmt.Sprintf(global.WebServerStartComment, global.WebServerPort),
 		),
 	)
 
-	if err = http.ListenAndServe(fmt.Sprintf(":%d", WebServerPort), nil); err != nil {
+	if err = http.ListenAndServe(fmt.Sprintf(":%d", global.WebServerPort), nil); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
 }
