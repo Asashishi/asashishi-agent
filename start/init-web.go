@@ -22,7 +22,6 @@ func WithWebMode() {
 
 	var (
 		err        error
-		msg        string
 		dirPath    string
 		conn       *ws.Conn
 		fileServer http.Handler
@@ -39,9 +38,7 @@ func WithWebMode() {
 	http.Handle(global.HttpRootPath, fileServer)
 
 	http.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
-		if conn, err = ws.Accept(writer, reader, nil); err != nil {
-			panic(global.GetStyledError(err.Error()))
-		}
+		conn = GetWebsocketConn(writer, reader)
 	})
 	defer conn.Close(ws.StatusInternalError, websocket.ProcessExit)
 
@@ -67,7 +64,7 @@ func WithWebMode() {
 				fmt.Println(global.GetStyledWarn(err.Error()))
 				continue
 			} else if data.Type == websocket.UserInputType {
-				global.UInput.WebsocketReadChan <- data.Content
+				cli.StreamChat(data.Content)
 			}
 		}
 	}()
@@ -76,6 +73,7 @@ func WithWebMode() {
 		var (
 			innerErr error
 			jsonMsg  []byte
+			msg      string
 		)
 		for {
 			select {
@@ -86,23 +84,31 @@ func WithWebMode() {
 				}); err != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				}
-				conn.Write(
-					ctx,
-					ws.MessageText,
-					jsonMsg,
-				)
+				if conn != nil {
+					conn.Write(
+						ctx,
+						ws.MessageText,
+						jsonMsg,
+					)
+				} else {
+					fmt.Printf(global.AIOutput, msg)
+				}
 			case err = <-cli.ErrorChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 					Content: err.Error(),
 					Type:    websocket.SysErrorType,
 				}); innerErr != nil {
-					panic(global.GetStyledError(innerErr.Error()))
+					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				}
-				conn.Write(
-					ctx,
-					ws.MessageText,
-					jsonMsg,
-				)
+				if conn != nil {
+					conn.Write(
+						ctx,
+						ws.MessageText,
+						jsonMsg,
+					)
+				} else {
+					panic(global.GetStyledError(err.Error()))
+				}
 			default:
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			}

@@ -16,6 +16,7 @@ func (cli *AgentClient) Init(
 	context context.Context,
 	toolList []openai.ChatCompletionToolUnionParam,
 ) {
+	cli.Context = context
 	cli.ToolsList = toolList
 	cli.ModelName = conf.Env.ModelName
 	cli.ErrorChan = make(chan error)
