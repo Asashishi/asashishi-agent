@@ -42,13 +42,15 @@
       }
     }
     // input
-    document.getElementById("sendBtn").onclick = () => {
+    const btnSend = document.getElementById("sendBtn");
+    btnSend.onclick = () => {
       if (socket && socket.readyState === WebSocket.OPEN) {
         /**
          * @typedef {Object} User
          * @property {string} type 输入类型, 见 ./websocket/consts.go 中的 // Input Type 网页端目前输入仅需使用 user_input
          * @property {string} content 输入内容
          */
+        btnSend.innerText = ""
         socket.send(JSON.stringify({
             type: 'user_input',
             content: document.getElementById("uInput")?.value,
@@ -58,6 +60,7 @@
         console.error("\n ⚠️ 连接未建立，无法发送");
       }
     };
+
     // clear
     document.getElementById("clearBtn").onclick = () => {
         document.getElementById("scp").innerText = "";
