@@ -90,7 +90,7 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 		}
 		if innerErr != nil {
 			errContent = innerErr.Error()
-			if innerErr != io.EOF || innerErr.Error() != PipeClosedExpectedly {
+			if innerErr != io.EOF {
 				fmt.Println(global.GetStyledWarn(errContent))
 			}
 			break
