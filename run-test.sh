@@ -1,3 +1,3 @@
 #!/bin/bash
 
-./asashishi-agent rt
+go test ./...
