@@ -85,15 +85,15 @@ func WriteAIRespToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent
 			ws.MessageText,
 			jsonMsg,
 		); err != nil {
-			cli.StreamForceStop = true
+			cli.CurrStrem.Close()
 			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 		}
 	} else {
-		cli.StreamForceStop = true
+		cli.CurrStrem.Close()
 	}
 }
 
-func WriteAIErrorToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, aiErr error) {
+func WriteAIErrorToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
 	var err error
 	if conn != nil {
 		if err = conn.Write(
@@ -102,10 +102,8 @@ func WriteAIErrorToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agen
 			jsonMsg,
 		); err != nil {
 			fmt.Println(global.GetStyledWarn(err.Error()))
-
 		}
 	}
-	panic(global.GetStyledError(aiErr.Error()))
 }
 
 func WriteScpOutputToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
