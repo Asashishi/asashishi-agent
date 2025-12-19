@@ -41,7 +41,7 @@ func WithWebMode() {
 	mux.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
 		conn = websocket.GetWebsocketConn(conn, writer, reader)
 	})
-	defer conn.Close(ws.StatusInternalError, websocket.ProcessExit)
+	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
 	fmt.Println(
 		global.GetStyledSuccess(
@@ -59,6 +59,7 @@ func WithWebMode() {
 			if conn == nil {
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			} else if _, recved, err = conn.Read(ctx); err != nil {
+				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 				conn = nil
 				cli.StreamForceStop = true
 				fmt.Println(global.GetStyledWarn(err.Error()))
