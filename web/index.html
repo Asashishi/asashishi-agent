@@ -20,6 +20,8 @@
       console.log("✅ 已连接到 WebSocket 服务");
     };
     socket.onmessage = function(event) {
+      const input = document.getElementById("uInput")
+      input.value = "";
       let data = JSON.parse(event.data)
       print(data);
     };
@@ -54,7 +56,6 @@
             type: 'user_input',
             content: input.value,
         }));
-        setTimeout(() => input.value = "", 500);
         console.log("\n ➡️ 已发送: Hello Server");
       } else {
         console.error("\n ⚠️ 连接未建立，无法发送");
