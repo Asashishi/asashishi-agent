@@ -5,7 +5,14 @@ type InfoConfig struct {
 	Version string `json:"version"`
 }
 
+type WebCrosConfig struct {
+	AllowOrigin  string `json:"allow_origin"`
+	AllowHeaders string `json:"allow_headers"`
+	AllowMethods string `json:"allow_methods"`
+}
+
 type WebConfig struct {
+	WebCrosConfig  `json:"cros"`
 	WebMode        bool   `json:"web_mode"`
 	ServerListen   string `json:"server_listen"`
 	WebsocketRoute string `json:"websocket_route"`

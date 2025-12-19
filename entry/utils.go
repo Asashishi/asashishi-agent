@@ -8,6 +8,7 @@ import (
 	"asashishi-agent/global"
 	"context"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"strings"
 
@@ -38,6 +39,20 @@ func OpenBrowser(url string) {
 	} else {
 		exec.Command("xdg-open", url).Run()
 	}
+}
+
+func WithCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, reader *http.Request) {
+		// 设置允许所有跨域
+		writer.Header().Set(ServerAllowOrigin, conf.Env.AllowOrigin)
+		writer.Header().Set(ServerAllowHeaders, conf.Env.AllowHeaders)
+		writer.Header().Set(ServerAllowMethods, conf.Env.AllowMethods)
+		if reader.Method == http.MethodOptions {
+			writer.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(writer, reader)
+	})
 }
 
 func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {
