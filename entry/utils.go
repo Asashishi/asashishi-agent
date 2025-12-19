@@ -9,7 +9,7 @@ import (
 func InitCli() {
 	global.SetTerminalTitle()
 	if conf.Env.BackUp {
-		backup.BackupFiles()
+		backup.BackupFiles(conf.Env.System)
 	}
 	global.PrintAppBanner(conf.Env.Version)
 	go global.InitGlobalCliUInput()
@@ -18,7 +18,7 @@ func InitCli() {
 func InitWeb() {
 	global.SetTerminalTitle()
 	if conf.Env.BackUp {
-		backup.BackupFiles()
+		backup.BackupFiles(conf.Env.System)
 	}
 	global.PrintAppBanner(conf.Env.Version)
 	go global.InitGlobalWebUInput()

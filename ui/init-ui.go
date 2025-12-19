@@ -5,7 +5,7 @@ import (
 	"strconv"
 )
 
-func hexToANSI(hex string) string {
+func HexToANSI(hex string) string {
 	var (
 		R   int64
 		G   int64
@@ -59,10 +59,10 @@ func WidthStyle(content string, style Style) string {
 		styled += Strikethrough
 	}
 	if style.Fg != "" {
-		styled += FgColorBase + hexToANSI(style.Fg)
+		styled += FgColorBase + HexToANSI(style.Fg)
 	}
 	if style.Bg != "" {
-		styled += BgColorBase + hexToANSI(style.Bg)
+		styled += BgColorBase + HexToANSI(style.Bg)
 	}
 	return styled + content + Reset
 }

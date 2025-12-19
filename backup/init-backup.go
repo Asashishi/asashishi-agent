@@ -7,6 +7,7 @@ import (
 	"asashishi-agent/tools"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,7 +15,7 @@ import (
 
 const BarWidth float64 = 67
 
-func BackupFiles() {
+func BackupFiles(env string) {
 	var (
 		err            error
 		rootPath       string
@@ -38,7 +39,11 @@ func BackupFiles() {
 	var countTotalFileNumber = func(path string, info os.FileInfo, err error) error {
 		var filePathStr []string
 		for _, except := range conf.Env.BackUpExcepts {
-			filePathStr = strings.Split(path, global.Backslash)
+			if env == conf.Windows {
+				filePathStr = strings.Split(path, global.Backslash)
+			} else {
+				filePathStr = strings.Split(path, global.Slash)
+			}
 			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], global.Backslash), except) {
 				return nil
 			}
@@ -69,7 +74,11 @@ func BackupFiles() {
 			return innerErr
 		}
 		for _, except := range conf.Env.BackUpExcepts {
-			filePathStr = strings.Split(path, global.Backslash)
+			if env == conf.Windows {
+				filePathStr = strings.Split(path, global.Backslash)
+			} else {
+				filePathStr = strings.Split(path, global.Slash)
+			}
 			if strings.Contains(strings.Join(filePathStr[0:len(filePathStr)-1], global.Backslash), except) || relPath == conf.Env.AppName {
 				innerErr = nil
 				return innerErr
@@ -101,12 +110,12 @@ func BackupFiles() {
 				filled = int((percent / 100) * BarWidth)
 				fmt.Printf(
 					ProcessBar,
-					strings.Repeat(Processed, filled)+strings.Repeat(global.SpaceString, int(BarWidth)-filled),
+					strings.Repeat(Processed, filled)+strings.Repeat(global.SpaceString, int(math.Max(float64(int(BarWidth)-filled), 0))),
 					percent,
 					completedFiles,
 					totalFiles,
 				)
-				if percent == 100 {
+				if percent >= 100 {
 					fmt.Printf("\n")
 				}
 				return nil
