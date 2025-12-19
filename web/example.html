@@ -2,12 +2,15 @@
 </head>
 <body>
   <h2>WebSocket Eaxmple</h2>
+  <div>
+  <label for="username">Input</label>
+  <input type="text" id="uInput" required />
   <button id="sendBtn">Send</button>
-  <div id="log">
+   <button id="clearBtn">Clear</button>
   </div>
-
-  <!-- 用于有原生换行的文本 -->
-  <div id="ascii" style="white-space: pre-line;">
+  <div id="ai">
+  </div>
+  <div id="scp">
   </div>
 
   <script>
@@ -27,7 +30,7 @@
       console.log("\n ❌ 连接已关闭");
     };
     socket.onerror = function(error) {
-      console.log("\n ⚠️ 出错: " + error);
+      console.error("\n ⚠️ 出错: " + error);
       // 如果是无关紧要的出错(如网络) 重连可以解决问题 服务器仅维护一个 socket 对象 不支持多个连接 如果需要可以自己改写
       socket = new WebSocket("ws://localhost:3000/ws");
     };
@@ -35,16 +38,16 @@
     // output
     function print(data) {
       if (data.type === "exec_output") {
-        const div = document.getElementById("ascii");
+        const div = document.getElementById("scp");
         div.innerText += data.content + "\n";
       } else {
-        const div = document.getElementById("log");
+        const div = document.getElementById("ai");
         div.innerText += data.content;
       }
     }
 
     // input
-    document.getElementById("sendBtn").onclick = function() {
+    document.getElementById("sendBtn").onclick = () => {
       if (socket && socket.readyState === WebSocket.OPEN) {
 
         /**
@@ -54,13 +57,20 @@
          */
         socket.send(JSON.stringify({
             type: 'user_input',
-            content: "请调用一下命令行 随便等待一下用户输入或者执行一些内容 使用交互式执行"
+            content: document.getElementById("uInput")?.value,
         }));
         console.log("\n ➡️ 已发送: Hello Server");
       } else {
-        console.log("\n ⚠️ 连接未建立，无法发送");
+        console.error("\n ⚠️ 连接未建立，无法发送");
       }
     };
+
+    // clear
+    document.getElementById("clearBtn").onclick = () => {
+        document.getElementById("scp").innerText = "";
+        document.getElementById("ai").innerText = "";
+    }
+
   </script>
 </body>
 </html>
