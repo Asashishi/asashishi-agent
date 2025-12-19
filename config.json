@@ -15,10 +15,11 @@
         ],
         "tick_per_sec": 90,
         "web": {
-            "web_mode": false,
-            "http_port": 3000,
+            "web_mode": true,
             "websocket_route": "/ws",
-            "server_root_path": "web"
+            "server_root_path": "web",
+            "server_listen": "127.0.0.1:3000",
+            "server_base_url": "http://127.0.0.1:3000"
         },
         "terminal_code_style": "monokai"
     },

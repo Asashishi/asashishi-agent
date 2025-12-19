@@ -43,7 +43,7 @@ func WithWebMode() {
 
 	fmt.Println(
 		global.GetStyledSuccess(
-			fmt.Sprintf(global.WebServerStartComment, conf.Env.HttpPort),
+			fmt.Sprintf(global.WebServerStartComment, conf.Env.ServerBaseURL),
 		),
 	)
 
@@ -115,8 +115,8 @@ func WithWebMode() {
 			}
 		}
 	}()
-
-	if err = http.ListenAndServe(fmt.Sprintf(":%d", conf.Env.HttpPort), nil); err != nil {
+	go OpenBrowser(conf.Env.ServerBaseURL)
+	if err = http.ListenAndServe(fmt.Sprintf("%s", conf.Env.ServerListen), nil); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
 }

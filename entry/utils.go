@@ -8,6 +8,7 @@ import (
 	"asashishi-agent/global"
 	"context"
 	"fmt"
+	"os/exec"
 	"strings"
 
 	ws "github.com/coder/websocket"
@@ -29,6 +30,14 @@ func InitWeb() {
 	}
 	global.PrintAppBanner(conf.Env.Version)
 	go global.InitGlobalWebUInput()
+}
+
+func OpenBrowser(url string) {
+	if conf.Env.System == conf.Windows {
+		exec.Command("rundll32", "url.dll,FileProtocolHandler", url).Run()
+	} else {
+		exec.Command("xdg-open", url).Run()
+	}
 }
 
 func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {

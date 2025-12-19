@@ -13,4 +13,4 @@ const LineBreakChar byte = '\n'
 const TilteEscape string = "\033]0;%s\007"
 const AppTitle string = "Asashishi Agent"
 const HttpRootPath string = "/"
-const WebServerStartComment string = "\n✓ Server started at http://localhost:%d"
+const WebServerStartComment string = "\n✓ Server started at %s"

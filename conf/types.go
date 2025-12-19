@@ -7,9 +7,10 @@ type InfoConfig struct {
 
 type WebConfig struct {
 	WebMode        bool   `json:"web_mode"`
-	HttpPort       int16  `json:"http_port"`
+	ServerListen   string `json:"server_listen"`
 	WebsocketRoute string `json:"websocket_route"`
 	ServerRootPath string `json:"server_root_path"`
+	ServerBaseURL  string `json:"server_base_url"`
 }
 
 type ProcConfig struct {
@@ -27,7 +28,7 @@ type LLMConfig struct {
 	ShowToolCallArgs       bool  `json:"show_toolcall_args"`
 	SysPrompt              string
 	ApiKey                 string   `json:"api_key"`
-	BaseURL                string   `json:"base_url"`
+	ModleBaseURL           string   `json:"model_base_url"`
 	ModelName              string   `json:"model_name"`
 	Temperature            float64  `json:"temperature"`
 	DirExcepts             []string `json:"dir_excepts"`
