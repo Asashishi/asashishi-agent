@@ -566,9 +566,8 @@ upx --best --lzma asashishi-agent.exe
 
 ### Q: 如何运行测试？
 
-**A:** 有两种方式运行测试：
+**A:** 运行测试：
 1. **使用测试脚本**：执行 `./run-test.bat` (Windows) 或 `./run-test.sh` (Linux/macOS)
-2. **命令行参数**：运行 `./asashishi-agent.exe rt` 或 `./asashishi-agent rt`
 
 ### Q: 测试包含哪些内容？
 
