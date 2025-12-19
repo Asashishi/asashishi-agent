@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+var Commands []string = []string{}
 var UInput *GlobalUInput = &GlobalUInput{
 	IsChildProcess:    false,
 	ProcessStdin:      make(chan string),

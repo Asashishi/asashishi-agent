@@ -1,9 +1,3 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>
-    Asashishi Agent
   </title>
 </head>
 <body>
@@ -40,8 +34,6 @@
 
     // output
     function print(data) {
-      // 区分类型进行输出
-      // exec_output 见 ./websocket/consts.go 中的 // Input Type
       if (data.type === "exec_output") {
         const div = document.getElementById("ascii");
         div.innerText += data.content + "\n";
@@ -62,7 +54,7 @@
          */
         socket.send(JSON.stringify({
             type: 'user_input',
-            content: "请调用一下命令行 等待一下用户输入或者执行一些内容 使用交互式执行"
+            content: "请调用一下命令行 随便等待一下用户输入或者执行一些内容 使用交互式执行"
         }));
         console.log("\n ➡️ 已发送: Hello Server");
       } else {
