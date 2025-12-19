@@ -4,12 +4,20 @@
   <h2>WebSocket Example</h2>
   <div>
   <label for="username">Input</label>
-  <input type="text" id="uInput" required />
-  <button id="sendBtn">Send</button>
-   <button id="clearBtn">Clear</button>
+  <div>
+    <textarea type="text" id="uInput" rows="10", cols="50"></textarea>
   </div>
+  <br />
+  <button id="sendBtn">Send</button>
+  </div>
+  <br />
+  <label for="username">AI: </label>
+  <button id="clearBtnAI">Clear</button>
   <div id="ai">
   </div>
+  <br />
+  <label for="username">SCP: </label>
+  <button id="clearBtnSCP">Clear</button>
   <div id="scp">
   </div>
   <script>
@@ -62,9 +70,11 @@
       }
     };
     // clear
-    document.getElementById("clearBtn").onclick = () => {
-        document.getElementById("scp").innerText = "";
+    document.getElementById("clearBtnAI").onclick = () => {
         document.getElementById("ai").innerText = "";
+    }
+    document.getElementById("clearBtnSCP").onclick = () => {
+        document.getElementById("scp").innerText = "";
     }
   </script>
 </body>
