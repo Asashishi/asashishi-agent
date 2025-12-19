@@ -8,7 +8,7 @@
   <img src="https://raw.githubusercontent.com/Asashishi/asashishi-agent/refs/heads/main/resources/app.ico" alt="Logo" />
 </p>
 
-**Asashishi Agent** 是一个基于 Go 语言开发的智能编程助手工具，通过自然语言交互帮助开发者进行项目开发、代码生成和文件管理。支持 OpenAI 兼容 API（如 DeepSeek），提供完整的文件操作、Shell 命令执行和网络搜索能力。
+**Asashishi Agent** 是一个基于 Go 语言开发的智能编程助手工具，通过自然语言交互帮助开发者进行项目开发、代码生成和文件管理。支持 OpenAI 兼容 API（如 DeepSeek），提供完整的文件操作、Shell 命令执行和网络搜索能力。支持 CLI 命令行和 Web 界面双模式运行。
 
 ## ✨ 核心特性
 
@@ -31,6 +31,8 @@
 - **智能依赖管理** - 自动处理 npm/pip 依赖安装
 - **代码规范检查** - 遵循最新的编码标准和最佳实践
 - **完整日志记录** - 所有操作详细记录，便于追溯和调试
+- **双模式运行** - 支持 CLI 命令行和 Web 界面两种交互方式
+- **实时 WebSocket 通信** - Web 模式下提供实时双向通信
 
 ## 🚀 快速开始
 
@@ -170,7 +172,7 @@ go vet ./...
 {
     "llm": {
         "api_key": "sk-your-api-key-here",
-        "base_url": "https://api.deepseek.com/v1",
+        "model_base_url": "https://api.deepseek.com/v1",
         "model_name": "deepseek-chat"
     }
 }
@@ -179,7 +181,7 @@ go vet ./...
 2. **配置说明**：
 
    - `api_key`: **必填** - 您的 OpenAI 兼容 API 密钥
-   - `base_url`: API 服务地址，默认为 DeepSeek
+   - `model_base_url`: API 服务地址，默认为 DeepSeek
    - `model_name`: 使用的 AI 模型名称
 3. **启动程序**
 
@@ -196,7 +198,7 @@ go run main.go
 ```json
 {
     "info": {
-        "version": "3.4.1",
+        "version": "3.4.2",
         "name": "asashishi-agent.exe"
     },
     "proc": {
@@ -211,9 +213,10 @@ go run main.go
         "tick_per_sec": 90,
         "web": {
             "web_mode": false,
-            "http_port": 3000,
             "websocket_route": "/ws",
-            "server_root_path": "web"
+            "server_root_path": "web",
+            "server_listen": "127.0.0.1:3000",
+            "server_base_url": "http://127.0.0.1:3000"
         },
         "terminal_code_style": "monokai"
     },
@@ -230,7 +233,7 @@ go run main.go
         "show_toolcall_args": false,
         "model_name": "deepseek-chat",
         "max_response_token_length": 8192,
-        "base_url": "https://api.deepseek.com/v1",
+        "model_base_url": "https://api.deepseek.com/v1",
         "api_key": "sk-your-api-key-here"
     }
 }
@@ -241,13 +244,14 @@ go run main.go
 | 配置项 | 说明 | 推荐值 |
 |--------|------|--------|
 | `llm.api_key` | **必填** - OpenAI 兼容 API 密钥 | 从服务商获取 |
-| `llm.base_url` | API 服务地址 | `https://api.deepseek.com/v1` |
+| `llm.model_base_url` | API 服务地址 | `https://api.deepseek.com/v1` |
 | `llm.model_name` | 使用的 AI 模型 | `deepseek-chat` |
 | `llm.temperature` | 创造力参数 (0.0-2.0) | `0.5`（平衡） |
 | `proc.backup` | 是否启用启动时备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
 | `proc.web.web_mode` | 是否启用 Web 模式 | `false`（默认 CLI 模式） |
-| `proc.web.http_port` | Web 服务器端口 | `3000` |
+| `proc.web.server_listen` | Web 服务器监听地址 | `127.0.0.1:3000` |
+| `proc.web.server_base_url` | Web 服务器基础URL | `http://127.0.0.1:3000` |
 | `proc.web.websocket_route` | WebSocket 路由 | `/ws` |
 | `proc.web.server_root_path` | Web 静态文件目录 | `web` |
 | `llm.dir_excepts` | 文件操作排除目录 | `["build", ".git", "node_modules", "backup\\files"]` |
@@ -340,14 +344,11 @@ asashishi-agent/
 ├── conf/                     # 配置管理模块
 ├── backup/                   # 备份系统模块
 ├── global/                   # 全局功能模块
-├── test/                     # 测试模块
 ├── cmd/                      # 快捷命令模块
 ├── ui/                       # 用户界面模块
 ├── entry/                    # 程序入口模块（CLI/Web 模式）
 ├── websocket/                # WebSocket 通信模块
 ├── web/                      # Web 界面文件目录
-│   ├── index.html            # Web 主页面
-│   ├── example.html          # WebSocket 示例页面
 │   └── public/               # 静态资源目录
 ├── log/                      # 操作日志目录
 └── resources/                # 资源文件目录
@@ -361,7 +362,6 @@ asashishi-agent/
 | **conf/**      | 配置管理     | 读取、验证和提供用户配置               |
 | **backup/**    | 备份系统     | 在重要操作前自动备份文件，支持回滚     |
 | **global/**    | 全局功能     | 提供跨模块使用的常量、工具和样式       |
-| **test/**      | 测试模块     | 提供测试初始化和验证功能               |
 | **cmd/**       | 命令行模块   | 处理命令行参数和用户交互               |
 | **ui/**        | 用户界面模块 | 处理终端颜色、样式和输出格式化         |
 | **entry/**     | 程序入口模块 | 提供 CLI 和 Web 两种启动模式           |
@@ -558,8 +558,8 @@ upx --best --lzma asashishi-agent.exe
 
 ### Q: 如何启用 Web 模式？
 **A:** 
-1. 在 `config.json` 中设置 `"proc.web.web_mode": true`，然后重启程序。程序将在指定端口（默认 3000）启动 Web 服务器，您可以通过浏览器访问 `http://localhost:3000` 使用 Web 界面
-2. 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web/index.html 下的示例实现 socket 回调和页面样式
+- 在 `config.json` 中设置 `"proc.web.web_mode": true`，然后重启程序。程序将在指定端口（默认 3000）启动 Web 服务器，您可以通过浏览器访问 `http://localhost:3000` 使用 Web 界面
+- 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web/index.html 下的示例实现 socket 回调和页面样式
 
 ### Q: Web 模式支持哪些功能？
 **A:** Web 将模式支持所有 CLI 模式的功能
