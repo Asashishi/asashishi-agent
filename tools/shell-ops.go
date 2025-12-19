@@ -172,7 +172,7 @@ func InteractiveExecuteWeb() string {
 	var (
 		err       error
 		shell     *exec.Cmd
-		buffer    *bytes.Buffer
+		buffer    bytes.Buffer
 		stdinPipe io.WriteCloser
 		reader    *io.PipeReader
 		writer    *io.PipeWriter
@@ -185,8 +185,8 @@ func InteractiveExecuteWeb() string {
 	reader, writer = io.Pipe()
 	defer writer.Close()
 	defer reader.Close()
-	shell.Stdout = io.MultiWriter(os.Stdout, writer)
-	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
 	go handleScpInteractiveInput(stdinPipe)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()
@@ -202,7 +202,7 @@ func NoInteractiveExecuteWeb() string {
 		stopFlag bool
 		err      error
 		shell    *exec.Cmd
-		buffer   *bytes.Buffer
+		buffer   bytes.Buffer
 		reader   *io.PipeReader
 		writer   *io.PipeWriter
 	)
@@ -213,8 +213,8 @@ func NoInteractiveExecuteWeb() string {
 	reader, writer = io.Pipe()
 	defer reader.Close()
 	defer writer.Close()
-	shell.Stdout = io.MultiWriter(os.Stdout, writer)
-	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
 	go handleScpExit(&stopFlag, shell)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()
