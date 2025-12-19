@@ -9,6 +9,7 @@
             "log",
             ".git",
             "build",
+            "backup/files",
             "backup\\files",
             "node_modules"
         ],
@@ -27,6 +28,7 @@
             "build",
             ".git",
             "node_modules",
+            "backup/files",
             "backup\\files"
         ],
         "context_length": 128,

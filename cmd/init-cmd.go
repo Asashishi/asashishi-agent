@@ -9,12 +9,11 @@ import (
 	"strings"
 )
 
-var CmdTools = map[string]func(...string) error{
-	"-exit": func(cmd ...string) error {
+var CmdTools = map[string]func(...string){
+	"-exit": func(cmd ...string) {
 		os.Exit(0)
-		return nil
 	},
-	"-cls": func(cmd ...string) error {
+	"-cls": func(cmd ...string) {
 		if conf.Env.System == conf.Windows {
 			exec.Command("powershell", "-Command", Clear).Run()
 		} else {
@@ -22,23 +21,21 @@ var CmdTools = map[string]func(...string) error{
 			shell.Stdout = os.Stdout
 			shell.Run()
 		}
-		return nil
 	},
-	"-rfile": func(cmd ...string) error {
+	"-rfile": func(cmd ...string) {
 		var (
 			err    error
 			dParam []string
 		)
 		if cmd[0] == "" {
 			fmt.Println(global.GetStyledWarn(ExceptionAtReadFile))
-			return nil
+			return
 		} else if dParam = strings.Split(cmd[0], global.SpaceString); len(dParam) < 3 {
 			fmt.Println(global.GetStyledWarn(ExceptionAtReadFile))
-			return nil
+			return
 		}
 		if err = RenderFileToTerminal(dParam[2]); err != nil {
 			fmt.Println(global.GetStyledWarn(ExceptionAtReadFile))
 		}
-		return nil
 	},
 }
