@@ -60,11 +60,8 @@ func WithWebMode() {
 				conn = nil
 				cli.StreamForceStop = true
 				fmt.Println(global.GetStyledWarn(err.Error()))
-				continue
 			} else if err = json.Unmarshal(recved, &data); err != nil {
-				conn = nil
 				fmt.Println(global.GetStyledWarn(err.Error()))
-				continue
 			} else if data.Type == websocket.UserInputType {
 				global.UInput.WebsocketReadChan <- data.Content
 			}
@@ -88,17 +85,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				}
-				if conn != nil {
-					if innerErr = conn.Write(
-						ctx,
-						ws.MessageText,
-						jsonMsg,
-					); innerErr != nil {
-						cli.StreamForceStop = true
-					}
-				} else {
-					cli.StreamForceStop = true
-				}
+				WriteAIRespToWebsocketOutput(ctx, conn, &cli, jsonMsg)
 			case msg = <-global.ScpOutputChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 					Content: msg,
@@ -106,15 +93,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				}
-				if conn != nil {
-					if innerErr = conn.Write(
-						ctx,
-						ws.MessageText,
-						jsonMsg,
-					); innerErr != nil {
-						fmt.Println(global.GetStyledWarn(innerErr.Error()))
-					}
-				}
+				WriteScpOutputToWebsocketOutput(ctx, conn, &cli, jsonMsg)
 			case innerErr = <-cli.ErrorChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 					Content: innerErr.Error(),
@@ -122,17 +101,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				}
-				if conn != nil {
-					if innerErr = conn.Write(
-						ctx,
-						ws.MessageText,
-						jsonMsg,
-					); innerErr != nil {
-						fmt.Println(global.GetStyledWarn(innerErr.Error()))
-					}
-				} else {
-					panic(global.GetStyledError(innerErr.Error()))
-				}
+				WriteAIErrorToWebsocketOutput(ctx, conn, &cli, jsonMsg, innerErr)
 			case input = <-global.UInput.ProcessStdin:
 				if !processingFlag {
 					processingFlag = true

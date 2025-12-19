@@ -1,9 +1,16 @@
 package entry
 
 import (
+	"asashishi-agent/agent"
 	"asashishi-agent/backup"
+	"asashishi-agent/cmd"
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"context"
+	"fmt"
+	"strings"
+
+	ws "github.com/coder/websocket"
 )
 
 func InitCli() {
@@ -22,4 +29,68 @@ func InitWeb() {
 	}
 	global.PrintAppBanner(conf.Env.Version)
 	go global.InitGlobalWebUInput()
+}
+
+func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {
+	var (
+		ok         bool
+		cmdToJudge []string
+		cmdTool    func(...string)
+	)
+	if input != global.EmptyString {
+		input = strings.TrimSpace(input)
+		cmdToJudge = strings.Split(input, global.SpaceString)
+		if len(cmdToJudge) > 1 && cmdToJudge[0] == global.Cmd {
+			if cmdTool, ok = cmd.CmdTools[cmdToJudge[1]]; ok {
+				cmdTool(input)
+			}
+		} else {
+			fmt.Println(global.Loading)
+			cli.StreamChat(input)
+		}
+		*isWaitInput = true
+	}
+}
+
+func WriteAIRespToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
+	var err error
+	if conn != nil {
+		if err = conn.Write(
+			ctx,
+			ws.MessageText,
+			jsonMsg,
+		); err != nil {
+			cli.StreamForceStop = true
+		}
+	} else {
+		cli.StreamForceStop = true
+	}
+}
+
+func WriteAIErrorToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, aiErr error) {
+	var err error
+	if conn != nil {
+		if err = conn.Write(
+			ctx,
+			ws.MessageText,
+			jsonMsg,
+		); err != nil {
+			fmt.Println(global.GetStyledWarn(err.Error()))
+
+		}
+	}
+	panic(global.GetStyledError(aiErr.Error()))
+}
+
+func WriteScpOutputToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
+	var err error
+	if conn != nil {
+		if err = conn.Write(
+			ctx,
+			ws.MessageText,
+			jsonMsg,
+		); err != nil {
+			fmt.Println(global.GetStyledWarn(err.Error()))
+		}
+	}
 }
