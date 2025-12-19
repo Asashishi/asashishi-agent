@@ -6,6 +6,7 @@ import (
 	"asashishi-agent/cmd"
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"asashishi-agent/websocket"
 	"context"
 	"fmt"
 	"net/http"
@@ -85,6 +86,7 @@ func WriteAIRespToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent
 			jsonMsg,
 		); err != nil {
 			cli.StreamForceStop = true
+			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 		}
 	} else {
 		cli.StreamForceStop = true
@@ -115,6 +117,7 @@ func WriteScpOutputToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *ag
 			jsonMsg,
 		); err != nil {
 			fmt.Println(global.GetStyledWarn(err.Error()))
+			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 		}
 	}
 }

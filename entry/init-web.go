@@ -111,6 +111,7 @@ func WithWebMode() {
 					processingFlag = true
 					go func() {
 						cli.StreamChat(input)
+						cli.StreamForceStop = false
 						processingFlag = false
 					}()
 				}
