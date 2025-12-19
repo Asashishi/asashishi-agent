@@ -2,6 +2,7 @@ package entry
 
 import (
 	"testing"
+	"time"
 )
 
 func TestInitCli(t *testing.T) {
@@ -11,6 +12,7 @@ func TestInitCli(t *testing.T) {
 		}
 	}()
 	InitCli()
+	time.Sleep(time.Second * 5)
 }
 
 func TestInitWeb(t *testing.T) {
@@ -20,4 +22,5 @@ func TestInitWeb(t *testing.T) {
 		}
 	}()
 	InitWeb()
+	time.Sleep(time.Second * 5)
 }
