@@ -3,7 +3,6 @@ package tools
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
-	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -62,7 +61,11 @@ func handleScpInteractiveInput(stdinPipe io.WriteCloser) {
 	for {
 		select {
 		case msg = <-global.UInput.ChildProcessStdin:
-			stdinPipe.Write([]byte(msg))
+			if conf.Env.WebMode {
+				stdinPipe.Write([]byte(msg + "\n"))
+			} else {
+				stdinPipe.Write([]byte(msg))
+			}
 		default:
 			if !global.UInput.IsChildProcess {
 				break
@@ -77,9 +80,7 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 		length     int
 		innerErr   error
 		buffer     []byte
-		line       string
 		errContent string
-		scanner    *bufio.Scanner
 	)
 	for {
 		buffer = make([]byte, 4096)
@@ -88,22 +89,11 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 			global.ScpOutputChan <- string(buffer[:length])
 		}
 		if innerErr != nil {
-			if innerErr != io.EOF {
-				fmt.Println(global.GetStyledWarn(innerErr.Error()))
+			errContent = innerErr.Error()
+			if innerErr != io.EOF || innerErr.Error() != PipeClosedExpectedly {
+				fmt.Println(global.GetStyledWarn(errContent))
 			}
 			break
-		}
-	}
-
-	scanner = bufio.NewScanner(reader)
-	for scanner.Scan() {
-		line = scanner.Text()
-		global.ScpOutputChan <- line
-	}
-	if innerErr = scanner.Err(); innerErr != nil {
-		errContent = innerErr.Error()
-		if errContent != PipeClosedExpectedly {
-			fmt.Println(global.GetStyledWarn(innerErr.Error()))
 		}
 	}
 }
@@ -220,7 +210,6 @@ func NoInteractiveExecuteWeb() string {
 	stopFlag = false
 	shell = buildShell()
 	global.UInput.IsChildProcess = true
-
 	reader, writer = io.Pipe()
 	defer reader.Close()
 	defer writer.Close()

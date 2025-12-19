@@ -67,6 +67,7 @@ func WithWebMode() {
 			} else if data.Type == websocket.UserInputType {
 				global.UInput.WebsocketReadChan <- data.Content
 			}
+			global.WaitNextFrame(conf.Env.TickPerSec)
 		}
 	}()
 
