@@ -106,20 +106,24 @@ func (cli *AgentClient) StreamChat(prompt string) {
 			}
 		}
 	}
-	cli.CurrStrem.Close()
+	defer cli.CurrStrem.Close()
+	if cli.CurrStrem.Err() != nil {
+		cli.ErrorChan <- cli.CurrStrem.Err()
+		return
+	}
 	assistantMsg = assistantMsgBuilder.String()
 	if assistantMsg != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMsg))
 	}
 	for k, v := range currTools {
+		if cli.CurrStrem.Err() != nil {
+			cli.ErrorChan <- cli.CurrStrem.Err()
+			break
+		}
 		if k == global.EmptyString {
 			continue
 		}
 		UseTool(k, v.Name, v.Augments, cli)
-	}
-	if cli.CurrStrem.Err() != nil {
-		cli.ErrorChan <- cli.CurrStrem.Err()
-		return
 	}
 	if len(currTools) > 0 {
 		cli.StreamChat("")

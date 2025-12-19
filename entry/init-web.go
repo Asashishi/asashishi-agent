@@ -59,8 +59,8 @@ func WithWebMode() {
 			if conn == nil {
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			} else if _, recved, err = conn.Read(ctx); err != nil {
-				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 				fmt.Println(global.GetStyledWarn(err.Error()))
+				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 				cli.CurrStrem.Close()
 				conn = nil
 			} else if err = json.Unmarshal(recved, &data); err != nil {
