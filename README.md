@@ -199,6 +199,7 @@ go run main.go
 {
     "info": {
         "version": "3.4.2",
+        // asashishi-agent.exe 为 Windows 下的默认配置 如果有变更或处于 linux 环境 请自行切换
         "name": "asashishi-agent.exe"
     },
     "proc": {
