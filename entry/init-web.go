@@ -99,6 +99,22 @@ func WithWebMode() {
 				} else {
 					cli.StreamForceStop = true
 				}
+			case msg = <-global.ScpOutputChan:
+				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
+					Content: msg,
+					Type:    websocket.ChildProcessOutputType,
+				}); innerErr != nil {
+					fmt.Println(global.GetStyledWarn(innerErr.Error()))
+				}
+				if conn != nil {
+					if innerErr = conn.Write(
+						ctx,
+						ws.MessageText,
+						jsonMsg,
+					); innerErr != nil {
+						fmt.Println(global.GetStyledWarn(innerErr.Error()))
+					}
+				}
 			case innerErr = <-cli.ErrorChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 					Content: innerErr.Error(),

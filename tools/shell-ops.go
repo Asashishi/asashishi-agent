@@ -3,6 +3,7 @@ package tools
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -62,9 +63,7 @@ func ClearCommands() bool {
 	return true
 }
 
-// web 模式待修改 使用 channel 将 io.MultiWriter 的输出接到另一个无缓冲管道
-
-func InteractiveExecute() string {
+func InteractiveExecuteCli() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
@@ -102,7 +101,7 @@ func InteractiveExecute() string {
 	return buffer.String()
 }
 
-func NoInteractiveExecute() string {
+func NoInteractiveExecuteCli() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
@@ -128,6 +127,123 @@ func NoInteractiveExecute() string {
 				}
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			}
+		}
+	}()
+	err = shell.Run()
+	global.UInput.IsChildProcess = false
+	if err != nil {
+		if stopFlag {
+			return buffer.String() + StopedByUser
+		}
+		return err.Error()
+	}
+	return buffer.String()
+}
+
+// web 模式待修改 使用 channel 将 io.MultiWriter 的输出接到另一个无缓冲管道
+
+func InteractiveExecuteWeb() string {
+	var (
+		err       error
+		shell     *exec.Cmd
+		buffer    *bytes.Buffer
+		stdinPipe io.WriteCloser
+		reader    *io.PipeReader
+		writer    *io.PipeWriter
+	)
+	shell = buildShell()
+	if stdinPipe, err = shell.StdinPipe(); err != nil {
+		return err.Error()
+	}
+	global.UInput.IsChildProcess = true
+	reader, writer = io.Pipe()
+	defer writer.Close()
+	defer reader.Close()
+	shell.Stdout = io.MultiWriter(os.Stdout, writer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	go func() {
+		var msg string
+		for {
+			select {
+			case msg = <-global.UInput.ChildProcessStdin:
+				stdinPipe.Write([]byte(msg))
+			default:
+				if !global.UInput.IsChildProcess {
+					break
+				}
+				global.WaitNextFrame(conf.Env.TickPerSec)
+			}
+		}
+	}()
+	go func() {
+		var (
+			innerErr error
+			line     string
+			scanner  *bufio.Scanner
+		)
+		scanner = bufio.NewScanner(reader)
+		for scanner.Scan() {
+			line = scanner.Text()
+			global.ScpOutputChan <- line
+		}
+		if innerErr = scanner.Err(); innerErr != nil {
+			fmt.Println(global.GetStyledWarn(innerErr.Error()))
+		}
+	}()
+	err = shell.Run()
+	global.UInput.IsChildProcess = false
+	if err != nil {
+		return err.Error()
+	}
+	return buffer.String()
+}
+
+func NoInteractiveExecuteWeb() string {
+	var (
+		stopFlag bool
+		err      error
+		shell    *exec.Cmd
+		buffer   *bytes.Buffer
+		reader   *io.PipeReader
+		writer   *io.PipeWriter
+	)
+
+	stopFlag = false
+	shell = buildShell()
+	global.UInput.IsChildProcess = true
+
+	reader, writer = io.Pipe()
+	defer writer.Close()
+	defer reader.Close()
+	shell.Stdout = io.MultiWriter(os.Stdout, writer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	go func() {
+		for {
+			select {
+			case <-global.UInput.ChildProcessStdin:
+				stopFlag = true
+				killChildProcessGroup(shell.Process.Pid)
+			default:
+				if !global.UInput.IsChildProcess {
+					break
+				}
+				global.WaitNextFrame(conf.Env.TickPerSec)
+			}
+		}
+	}()
+	go func() {
+		var (
+			innerErr error
+			line     string
+			scanner  *bufio.Scanner
+		)
+		scanner = bufio.NewScanner(reader)
+		for scanner.Scan() {
+			line = scanner.Text()
+			global.ScpOutputChan <- line
+		}
+		if innerErr = scanner.Err(); innerErr != nil {
+			fmt.Println(global.GetStyledWarn(innerErr.Error()))
 		}
 	}()
 	err = shell.Run()

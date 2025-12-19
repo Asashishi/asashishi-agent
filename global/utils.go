@@ -15,6 +15,7 @@ var UInput *GlobalUInput = &GlobalUInput{
 	ProcessStdin:      make(chan string),
 	ChildProcessStdin: make(chan string),
 }
+var ScpOutputChan chan string = make(chan string)
 
 func InitGlobalCliUInput() {
 	var (
