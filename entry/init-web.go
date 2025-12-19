@@ -24,8 +24,10 @@ func WithWebMode() {
 		conn       *ws.Conn
 		fileServer http.Handler
 		ctx        context.Context
+		mux        *http.ServeMux
 		cli        agent.AgentClient = agent.AgentClient{}
 	)
+	mux = http.NewServeMux()
 
 	ctx = context.Background()
 	cli.Init(ctx, tools.GetToolsInfo())
@@ -34,12 +36,12 @@ func WithWebMode() {
 		panic(global.GetStyledError(err.Error()))
 	}
 	fileServer = http.FileServer(http.Dir(filepath.Join(dirPath, conf.Env.ServerRootPath)))
-	http.Handle(global.HttpRootPath, fileServer)
+	mux.Handle(global.HttpRootPath, fileServer)
 
-	http.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
+	mux.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
 		conn = websocket.GetWebsocketConn(conn, writer, reader)
 	})
-	defer conn.Close(ws.StatusInternalError, websocket.ProcessExit)
+	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
 	fmt.Println(
 		global.GetStyledSuccess(
@@ -57,6 +59,7 @@ func WithWebMode() {
 			if conn == nil {
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			} else if _, recved, err = conn.Read(ctx); err != nil {
+				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 				conn = nil
 				cli.StreamForceStop = true
 				fmt.Println(global.GetStyledWarn(err.Error()))
@@ -65,6 +68,7 @@ func WithWebMode() {
 			} else if data.Type == websocket.UserInputType {
 				global.UInput.WebsocketReadChan <- data.Content
 			}
+			global.WaitNextFrame(conf.Env.TickPerSec)
 		}
 	}()
 
@@ -107,6 +111,7 @@ func WithWebMode() {
 					processingFlag = true
 					go func() {
 						cli.StreamChat(input)
+						cli.StreamForceStop = false
 						processingFlag = false
 					}()
 				}
@@ -116,7 +121,7 @@ func WithWebMode() {
 		}
 	}()
 	go OpenBrowser(conf.Env.ServerBaseURL)
-	if err = http.ListenAndServe(conf.Env.ServerListen, nil); err != nil {
+	if err = http.ListenAndServe(conf.Env.ServerListen, WithCORS(mux)); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
 }

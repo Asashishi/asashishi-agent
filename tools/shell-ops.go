@@ -3,7 +3,6 @@ package tools
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
-	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -62,7 +61,11 @@ func handleScpInteractiveInput(stdinPipe io.WriteCloser) {
 	for {
 		select {
 		case msg = <-global.UInput.ChildProcessStdin:
-			stdinPipe.Write([]byte(msg))
+			if conf.Env.WebMode {
+				stdinPipe.Write([]byte(msg + "\n"))
+			} else {
+				stdinPipe.Write([]byte(msg))
+			}
 		default:
 			if !global.UInput.IsChildProcess {
 				break
@@ -77,9 +80,7 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 		length     int
 		innerErr   error
 		buffer     []byte
-		line       string
 		errContent string
-		scanner    *bufio.Scanner
 	)
 	for {
 		buffer = make([]byte, 4096)
@@ -88,22 +89,11 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 			global.ScpOutputChan <- string(buffer[:length])
 		}
 		if innerErr != nil {
+			errContent = innerErr.Error()
 			if innerErr != io.EOF {
-				fmt.Println(global.GetStyledWarn(innerErr.Error()))
+				fmt.Println(global.GetStyledWarn(errContent))
 			}
 			break
-		}
-	}
-
-	scanner = bufio.NewScanner(reader)
-	for scanner.Scan() {
-		line = scanner.Text()
-		global.ScpOutputChan <- line
-	}
-	if innerErr = scanner.Err(); innerErr != nil {
-		errContent = innerErr.Error()
-		if errContent != PipeClosedExpectedly {
-			fmt.Println(global.GetStyledWarn(innerErr.Error()))
 		}
 	}
 }
@@ -182,7 +172,7 @@ func InteractiveExecuteWeb() string {
 	var (
 		err       error
 		shell     *exec.Cmd
-		buffer    *bytes.Buffer
+		buffer    bytes.Buffer
 		stdinPipe io.WriteCloser
 		reader    *io.PipeReader
 		writer    *io.PipeWriter
@@ -195,8 +185,8 @@ func InteractiveExecuteWeb() string {
 	reader, writer = io.Pipe()
 	defer writer.Close()
 	defer reader.Close()
-	shell.Stdout = io.MultiWriter(os.Stdout, writer)
-	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
 	go handleScpInteractiveInput(stdinPipe)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()
@@ -212,7 +202,7 @@ func NoInteractiveExecuteWeb() string {
 		stopFlag bool
 		err      error
 		shell    *exec.Cmd
-		buffer   *bytes.Buffer
+		buffer   bytes.Buffer
 		reader   *io.PipeReader
 		writer   *io.PipeWriter
 	)
@@ -220,12 +210,11 @@ func NoInteractiveExecuteWeb() string {
 	stopFlag = false
 	shell = buildShell()
 	global.UInput.IsChildProcess = true
-
 	reader, writer = io.Pipe()
 	defer reader.Close()
 	defer writer.Close()
-	shell.Stdout = io.MultiWriter(os.Stdout, writer)
-	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
 	go handleScpExit(&stopFlag, shell)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()

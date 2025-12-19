@@ -6,8 +6,10 @@ import (
 	"asashishi-agent/cmd"
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"asashishi-agent/websocket"
 	"context"
 	"fmt"
+	"net/http"
 	"os/exec"
 	"strings"
 
@@ -40,6 +42,20 @@ func OpenBrowser(url string) {
 	}
 }
 
+func WithCORS(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, reader *http.Request) {
+		// 设置允许所有跨域
+		writer.Header().Set(ServerAllowOrigin, conf.Env.AllowOrigin)
+		writer.Header().Set(ServerAllowHeaders, conf.Env.AllowHeaders)
+		writer.Header().Set(ServerAllowMethods, conf.Env.AllowMethods)
+		if reader.Method == http.MethodOptions {
+			writer.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(writer, reader)
+	})
+}
+
 func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {
 	var (
 		ok         bool
@@ -70,6 +86,7 @@ func WriteAIRespToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent
 			jsonMsg,
 		); err != nil {
 			cli.StreamForceStop = true
+			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 		}
 	} else {
 		cli.StreamForceStop = true
@@ -100,6 +117,7 @@ func WriteScpOutputToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *ag
 			jsonMsg,
 		); err != nil {
 			fmt.Println(global.GetStyledWarn(err.Error()))
+			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 		}
 	}
 }
