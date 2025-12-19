@@ -1,9 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>
+    Asashishi Agent
   </title>
 </head>
 <body>
   <h2>WebSocket Eaxmple</h2>
   <button id="sendBtn">Send</button>
-  <div id="log"></div>
+  <div id="log">
+  </div>
+
+  <!-- 用于有原生换行的文本 -->
+  <div id="ascii" style="white-space: pre-line;">
+  </div>
+
   <script>
 
     // 无论你是使用框架还是原生 html 按照以下内容为蓝本编写交互脚本即可
@@ -11,25 +23,32 @@
     // websocket connection
     let socket = new WebSocket("ws://localhost:3000/ws");
     socket.onopen = function() {
-      log("✅ 已连接到 WebSocket 服务");
+      console.log("✅ 已连接到 WebSocket 服务");
     };
     socket.onmessage = function(event) {
       let data = JSON.parse(event.data)
-      log(data.content);
+      print(data);
     };
     socket.onclose = function() {
-      log("\n ❌ 连接已关闭");
+      console.log("\n ❌ 连接已关闭");
     };
     socket.onerror = function(error) {
-      log("\n ⚠️ 出错: " + error);
+      console.log("\n ⚠️ 出错: " + error);
       // 如果是无关紧要的出错(如网络) 重连可以解决问题 服务器仅维护一个 socket 对象 不支持多个连接 如果需要可以自己改写
       socket = new WebSocket("ws://localhost:3000/ws");
     };
 
     // output
-    function log(msg) {
-      const div = document.getElementById("log");
-      div.innerText += msg;
+    function print(data) {
+      // 区分类型进行输出
+      // exec_output 见 ./websocket/consts.go 中的 // Input Type
+      if (data.type === "exec_output") {
+        const div = document.getElementById("ascii");
+        div.innerText += data.content + "\n";
+      } else {
+        const div = document.getElementById("log");
+        div.innerText += data.content;
+      }
     }
 
     // input
@@ -38,16 +57,16 @@
 
         /**
          * @typedef {Object} User
-         * @property {string} type 输入类型, 见 ./websocket/consts.go 中的 // Input Type 网页端目前仅需使用 user_input
+         * @property {string} type 输入类型, 见 ./websocket/consts.go 中的 // Input Type 网页端目前输入仅需使用 user_input
          * @property {string} content 输入内容
          */
         socket.send(JSON.stringify({
             type: 'user_input',
-            content: "请调用一下命令行 随便等待一下用户输入或者执行一些内容 使用交互式执行"
+            content: "请调用一下命令行 等待一下用户输入或者执行一些内容 使用交互式执行"
         }));
-        log("\n ➡️ 已发送: Hello Server");
+        console.log("\n ➡️ 已发送: Hello Server");
       } else {
-        log("\n ⚠️ 连接未建立，无法发送");
+        console.log("\n ⚠️ 连接未建立，无法发送");
       }
     };
   </script>
