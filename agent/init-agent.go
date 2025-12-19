@@ -25,7 +25,7 @@ func (cli *AgentClient) Init(
 	cli.MsgContext[0] = openai.SystemMessage(conf.Env.SysPrompt)
 	cli.LlmClient = openai.NewClient(
 		option.WithAPIKey(conf.Env.ApiKey),
-		option.WithBaseURL(conf.Env.BaseURL),
+		option.WithBaseURL(conf.Env.ModleBaseURL),
 		option.WithJSONSet("temperature", conf.Env.Temperature),
 		option.WithJSONSet("max_tokens", conf.Env.MaxResponseTokenLength),
 	)

@@ -1,6 +1,7 @@
 package agent
 
 import (
+	"asashishi-agent/conf"
 	"asashishi-agent/global"
 	"asashishi-agent/tools"
 	"encoding/json"
@@ -216,9 +217,17 @@ func ToolCallSwitch(name string, arguments string, cli *AgentClient) string {
 			message = NeedRetry
 		}
 	case "InteractiveExecute":
-		message = tools.InteractiveExecute()
+		if conf.Env.WebMode {
+			message = tools.InteractiveExecuteWeb()
+		} else {
+			message = tools.InteractiveExecuteCli()
+		}
 	case "NoInteractiveExecute":
-		message = tools.NoInteractiveExecute()
+		if conf.Env.WebMode {
+			message = tools.NoInteractiveExecuteWeb()
+		} else {
+			message = tools.NoInteractiveExecuteCli()
+		}
 	}
 	return message
 }

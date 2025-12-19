@@ -10,11 +10,13 @@ import (
 	"time"
 )
 
+var Commands []string = []string{}
 var UInput *GlobalUInput = &GlobalUInput{
 	IsChildProcess:    false,
 	ProcessStdin:      make(chan string),
 	ChildProcessStdin: make(chan string),
 }
+var ScpOutputChan chan string = make(chan string)
 
 func InitGlobalCliUInput() {
 	var (

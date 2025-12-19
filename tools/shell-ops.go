@@ -3,6 +3,7 @@ package tools
 import (
 	"asashishi-agent/conf"
 	"asashishi-agent/global"
+	"bufio"
 	"bytes"
 	"fmt"
 	"io"
@@ -11,7 +12,27 @@ import (
 	"strconv"
 )
 
-var Commands []string = []string{}
+func buildShell() *exec.Cmd {
+	var (
+		fomatedCommands string
+		shell           *exec.Cmd
+	)
+	if conf.Env.System == conf.Windows {
+		fomatedCommands = WindowsInitialCommand
+		for _, cmd := range global.Commands {
+			fomatedCommands += fmt.Sprintf("; if ($?) { %s }", cmd)
+		}
+		shell = exec.Command("powershell", "-Command", fomatedCommands)
+	} else {
+		fomatedCommands = LinuxInitialCommand
+		for _, cmd := range global.Commands {
+			fomatedCommands += fmt.Sprintf(" && %s", cmd)
+		}
+		shell = exec.Command("bash", "-c", fomatedCommands)
+	}
+	global.Commands = []string{}
+	return shell
+}
 
 func killChildProcessGroup(pid int) {
 	if conf.Env.System == conf.Windows {
@@ -21,50 +42,92 @@ func killChildProcessGroup(pid int) {
 	}
 }
 
-func buildShell() *exec.Cmd {
-	var (
-		fomatedCommands string
-		shell           *exec.Cmd
-	)
-	if conf.Env.System == conf.Windows {
-		fomatedCommands = WindowsInitialCommand
-		for _, cmd := range Commands {
-			fomatedCommands += fmt.Sprintf("; if ($?) { %s }", cmd)
+func handleScpExit(flag *bool, shell *exec.Cmd) {
+	for {
+		select {
+		case <-global.UInput.ChildProcessStdin:
+			*flag = true
+			killChildProcessGroup(shell.Process.Pid)
+		default:
+			if !global.UInput.IsChildProcess {
+				break
+			}
+			global.WaitNextFrame(conf.Env.TickPerSec)
 		}
-		shell = exec.Command("powershell", "-Command", fomatedCommands)
-	} else {
-		fomatedCommands = LinuxInitialCommand
-		for _, cmd := range Commands {
-			fomatedCommands += fmt.Sprintf(" && %s", cmd)
-		}
-		shell = exec.Command("bash", "-c", fomatedCommands)
 	}
-	Commands = []string{}
-	return shell
+}
+
+func handleScpInteractiveInput(stdinPipe io.WriteCloser) {
+	var msg string
+	for {
+		select {
+		case msg = <-global.UInput.ChildProcessStdin:
+			stdinPipe.Write([]byte(msg))
+		default:
+			if !global.UInput.IsChildProcess {
+				break
+			}
+			global.WaitNextFrame(conf.Env.TickPerSec)
+		}
+	}
+}
+
+func handleScpOutputForWeb(reader *io.PipeReader) {
+	var (
+		length     int
+		innerErr   error
+		buffer     []byte
+		line       string
+		errContent string
+		scanner    *bufio.Scanner
+	)
+	for {
+		buffer = make([]byte, 4096)
+		length, innerErr = reader.Read(buffer)
+		if length > 0 {
+			global.ScpOutputChan <- string(buffer[:length])
+		}
+		if innerErr != nil {
+			if innerErr != io.EOF {
+				fmt.Println(global.GetStyledWarn(innerErr.Error()))
+			}
+			break
+		}
+	}
+
+	scanner = bufio.NewScanner(reader)
+	for scanner.Scan() {
+		line = scanner.Text()
+		global.ScpOutputChan <- line
+	}
+	if innerErr = scanner.Err(); innerErr != nil {
+		errContent = innerErr.Error()
+		if errContent != PipeClosedExpectedly {
+			fmt.Println(global.GetStyledWarn(innerErr.Error()))
+		}
+	}
 }
 
 func GetCommands() []string {
-	return Commands
+	return global.Commands
 }
 
 func AddCommands(command string) bool {
-	Commands = append(Commands, command)
+	global.Commands = append(global.Commands, command)
 	return true
 }
 
 func PopCommands(num int) bool {
-	Commands = Commands[0 : len(Commands)-num]
+	global.Commands = global.Commands[0 : len(global.Commands)-num]
 	return true
 }
 
 func ClearCommands() bool {
-	Commands = []string{}
+	global.Commands = []string{}
 	return true
 }
 
-// web 模式待修改 使用 channel 将 io.MultiWriter 的输出接到另一个无缓冲管道
-
-func InteractiveExecute() string {
+func InteractiveExecuteCli() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
@@ -80,20 +143,7 @@ func InteractiveExecute() string {
 	global.UInput.IsChildProcess = true
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
-	go func() {
-		var msg string
-		for {
-			select {
-			case msg = <-global.UInput.ChildProcessStdin:
-				stdinPipe.Write([]byte(msg))
-			default:
-				if !global.UInput.IsChildProcess {
-					break
-				}
-				global.WaitNextFrame(conf.Env.TickPerSec)
-			}
-		}
-	}()
+	go handleScpInteractiveInput(stdinPipe)
 	err = shell.Run()
 	global.UInput.IsChildProcess = false
 	if err != nil {
@@ -102,7 +152,7 @@ func InteractiveExecute() string {
 	return buffer.String()
 }
 
-func NoInteractiveExecute() string {
+func NoInteractiveExecuteCli() string {
 	defer fmt.Println(global.GetStyledSystemComent(Exit))
 	fmt.Println(global.GetStyledSystemComent(PressEnterToBackToChat))
 	var (
@@ -116,20 +166,68 @@ func NoInteractiveExecute() string {
 	global.UInput.IsChildProcess = true
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
-	go func() {
-		for {
-			select {
-			case <-global.UInput.ChildProcessStdin:
-				stopFlag = true
-				killChildProcessGroup(shell.Process.Pid)
-			default:
-				if !global.UInput.IsChildProcess {
-					break
-				}
-				global.WaitNextFrame(conf.Env.TickPerSec)
-			}
+	go handleScpExit(&stopFlag, shell)
+	err = shell.Run()
+	global.UInput.IsChildProcess = false
+	if err != nil {
+		if stopFlag {
+			return buffer.String() + StopedByUser
 		}
-	}()
+		return err.Error()
+	}
+	return buffer.String()
+}
+
+func InteractiveExecuteWeb() string {
+	var (
+		err       error
+		shell     *exec.Cmd
+		buffer    *bytes.Buffer
+		stdinPipe io.WriteCloser
+		reader    *io.PipeReader
+		writer    *io.PipeWriter
+	)
+	shell = buildShell()
+	if stdinPipe, err = shell.StdinPipe(); err != nil {
+		return err.Error()
+	}
+	global.UInput.IsChildProcess = true
+	reader, writer = io.Pipe()
+	defer writer.Close()
+	defer reader.Close()
+	shell.Stdout = io.MultiWriter(os.Stdout, writer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	go handleScpInteractiveInput(stdinPipe)
+	go handleScpOutputForWeb(reader)
+	err = shell.Run()
+	global.UInput.IsChildProcess = false
+	if err != nil {
+		return err.Error()
+	}
+	return buffer.String()
+}
+
+func NoInteractiveExecuteWeb() string {
+	var (
+		stopFlag bool
+		err      error
+		shell    *exec.Cmd
+		buffer   *bytes.Buffer
+		reader   *io.PipeReader
+		writer   *io.PipeWriter
+	)
+
+	stopFlag = false
+	shell = buildShell()
+	global.UInput.IsChildProcess = true
+
+	reader, writer = io.Pipe()
+	defer reader.Close()
+	defer writer.Close()
+	shell.Stdout = io.MultiWriter(os.Stdout, writer)
+	shell.Stderr = io.MultiWriter(os.Stderr, writer)
+	go handleScpExit(&stopFlag, shell)
+	go handleScpOutputForWeb(reader)
 	err = shell.Run()
 	global.UInput.IsChildProcess = false
 	if err != nil {

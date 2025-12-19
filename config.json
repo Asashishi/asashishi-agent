@@ -1,6 +1,6 @@
 {
     "info": {
-        "version": "3.4.1",
+        "version": "3.4.2",
         "name": "asashishi-agent.exe"
     },
     "proc": {
@@ -16,9 +16,10 @@
         "tick_per_sec": 90,
         "web": {
             "web_mode": false,
-            "http_port": 3000,
             "websocket_route": "/ws",
-            "server_root_path": "web"
+            "server_root_path": "web",
+            "server_listen": "127.0.0.1:3000",
+            "server_base_url": "http://127.0.0.1:3000"
         },
         "terminal_code_style": "monokai"
     },
@@ -36,7 +37,7 @@
         "show_toolcall_args": false,
         "model_name": "deepseek-chat",
         "max_response_token_length": 8192,
-        "base_url": "https://api.deepseek.com/v1",
+        "model_base_url": "https://api.deepseek.com/v1",
         "api_key": ""
     }
 }

@@ -17,6 +17,7 @@ upx --best --lzma asashishi-agent
 mv asashishi-agent build/
 cp README.md build/
 cp config.json build/
+cp -r web build/
 echo "tar -czf linux-x86-amd64.gz build"
 tar -czf linux-x86-amd64.gz build
 mv linux-x86-amd64.gz build/

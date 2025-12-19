@@ -1,9 +1,9 @@
 package websocket
 
-const WebsocketURL string = "ws://localhost:%d/ws"
-
-const ProcessExit string = "Process Exit"
 const ClientExit string = "Client Exit"
+const ProcessExit string = "Process Exit"
+
+const WebsocketURL string = "ws://localhost:%d/ws"
 
 // Input Type
 const AIOutputType string = "ai_msg"
