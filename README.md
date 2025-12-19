@@ -216,8 +216,13 @@ go run main.go
             "web_mode": false,
             "websocket_route": "/ws",
             "server_root_path": "web",
-            "server_listen": "127.0.0.1:3000",
-            "server_base_url": "http://127.0.0.1:3000"
+            "cors": {
+                "allow_origin": "*",
+                "allow_headers": "Content-Type, Authorization",
+                "allow_methods": "GET, POST, PUT, DELETE, OPTIONS"
+            },
+            "server_listen": "0.0.0.0:3000",
+            "server_base_url": "http://localhost:3000"
         },
         "terminal_code_style": "monokai"
     },
@@ -251,10 +256,13 @@ go run main.go
 | `proc.backup` | 是否启用启动时备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
 | `proc.web.web_mode` | 是否启用 Web 模式 | `false`（默认 CLI 模式） |
-| `proc.web.server_listen` | Web 服务器监听地址 | `127.0.0.1:3000` |
-| `proc.web.server_base_url` | Web 服务器基础URL | `http://127.0.0.1:3000` |
+| `proc.web.server_listen` | Web 服务器监听地址 | `0.0.0.0:3000` |
+| `proc.web.server_base_url` | Web 服务器基础URL | `http://localhost:3000` |
 | `proc.web.websocket_route` | WebSocket 路由 | `/ws` |
 | `proc.web.server_root_path` | Web 静态文件目录 | `web` |
+| `proc.web.cors.allow_origin` | CORS 允许的源 | `*`（允许所有）或指定域名 |
+| `proc.web.cors.allow_headers` | CORS 允许的请求头 | `Content-Type, Authorization` |
+| `proc.web.cors.allow_methods` | CORS 允许的 HTTP 方法 | `GET, POST, PUT, DELETE, OPTIONS` |
 | `llm.dir_excepts` | 文件操作排除目录 | `["build", ".git", "node_modules", "backup\\files"]` |
 
 ## 🛠️ 工具功能详解
