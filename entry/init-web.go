@@ -116,7 +116,7 @@ func WithWebMode() {
 		}
 	}()
 	go OpenBrowser(conf.Env.ServerBaseURL)
-	if err = http.ListenAndServe(fmt.Sprintf("%s", conf.Env.ServerListen), nil); err != nil {
+	if err = http.ListenAndServe(conf.Env.ServerListen, nil); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
 }
