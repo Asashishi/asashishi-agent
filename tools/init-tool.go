@@ -15,6 +15,7 @@ var TimeOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Description: openai.String(`
 					1. 此函数用于获取当前系统时间
 					2. 返回一个 YYYYMMDDhhmmss 字符串
+					3. 仅在需要准确时间和记录日志时调用
 					`),
 				Parameters: shared.FunctionParameters{
 					"type":       "object",
@@ -54,7 +55,7 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 			Function: shared.FunctionDefinitionParam{
 				Name: "MoveContent",
 				Description: openai.String(`
-				1. 此函数用于修改文件或文件目录的名称
+				1. 此函数用于修改文件或文件目录的名称或其位置
 				2. 调用此函数后应该调用 GetFileList 获取新的文件目录信息
 				`),
 				Parameters: shared.FunctionParameters{
@@ -166,7 +167,7 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Name: "ReadFileContent",
 				Description: openai.String(`
 				1. 此函数用于读取文件内容
-				2. 函数返回分按行分割的文件内容字符串数组
+				2. 函数会返回文件内容的文本字符串
 				`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
@@ -215,6 +216,7 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				2. 传入的 content 参数必须是整段文件内容, 而不是断续的残句或标题
 				2. 内容可能出现多次, 函数会以数组的形式 如 [[9, 120], [309, 420]...] 的形式返回
 				3. 得到正确的位置后, 需要将位置传递给 ReplaceFileContentByPosition 或 DeleteFileContentByPosition 进行替换或删除操作
+				4. 如果已经读取过文件内容, 可以在上下文中摘选要修改的片段进行再次查找, 未有修改时不得频繁获取整个文件内容 
 				`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
@@ -239,8 +241,7 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Name: "ReplaceFileContentByPosition",
 				Description: openai.String(`
 				1. 此函数用于根据起始字符位置和结束字符位置来替换整段文件内容
-				2. 如果上下文已经包含文件内容, 则在修改前不用再重复读取整个文件内容
-				3. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
+				2. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
 				4. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
 				`),
 				Parameters: shared.FunctionParameters{
@@ -273,9 +274,8 @@ var FileOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolU
 				Name: "DeleteFileContentByPosition",
 				Description: openai.String(`
 				1. 此函数用于根据起始字符位置和结束字符位置来删除整段文件内容
-				2. 如果上下文已经包含文件内容, 则在修改前不用再重复读取整个文件内容
-				3. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
-				4. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
+				2. 为减少纠错次数, 调用此函数前你必须先调用 SearchFileContent
+				3. 完成修改后, 使用 ReadFileContent 检查无误后 ReneFileCache 有误则继续修改或 FileContentRollBack
 				`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
@@ -367,8 +367,7 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 				Name: "GetCommands",
 				Description: openai.String(`
 					1. 此函数用于获取当前命令组
-					2. 此函数不接受参数
-					3. 执行完成后会以字符串形式返回命令组，可以据此判断命令是否符合操作
+					2. 执行完成后会以字符串形式返回命令组，可以据此判断命令是否符合操作
 					`),
 				Parameters: shared.FunctionParameters{
 					"type":       "object",
@@ -384,14 +383,14 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 				Name: "AddCommands",
 				Description: openai.String(`
 					1. 此函数用于向命令组添加命令
-					2. 执行完成后可以使用 GetCommands 进行确认，可以据此判断命令是否符合操作
+					2. 所有命令添加完成后可以使用 GetCommands 进行确认，可以据此判断命令是否符合操作
 					`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
 					"properties": map[string]map[string]string{
 						"command": {
 							"type":        "string",
-							"description": "单条命令或 '命令1 ; 命令2 ...'' 的形式的命令",
+							"description": "单条命令或 '命令1 ;(Linux环境则使用 &&) 命令2 ...'' 的形式的命令",
 						},
 					},
 					"required": []string{"command"},
@@ -406,7 +405,7 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 				Description: openai.String(`
 					1. 此函数用于按倒叙移除命令组中的的命令
 					2. 执行完成后可以使用 GetCommands 进行确认, 可以据此判断命令是否符合操作
-					3. 执行 Excute 会自动执行并清空命令组, 不用连锁调用此命令
+					3. 执行命令组会清空命令组, ClearCommands 和执行命令组后不得调用此函数
 					`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
@@ -429,7 +428,7 @@ var ShellOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionTool
 					1. 此函数用于清空当前命令组
 					2. 此函数不接受参数
 					3. 执行完成后可以使用 GetCommands 进行确认，可以据此判断命令是否符合操作
-					4. 执行 Excute 会自动执行并清空命令组, 不用连锁调用此命令
+					4. 执行命令组会清空命令组, 执行命令组后不得调用此函数
 					`),
 				Parameters: shared.FunctionParameters{
 					"type":       "object",
@@ -482,8 +481,8 @@ var NetOps []openai.ChatCompletionToolUnionParam = []openai.ChatCompletionToolUn
 				Name: "HttpSearch",
 				Description: openai.String(`
 					1. 此函数用于获取相关网页的所有不含标签的文本内容
-					3. 通常，你可能需要根据文本内容提取符合用户输入的某些信息来连续调用这个函数
-					4. 注意, 仅支持 get 请求, 如用户未指定信息源，尽量选择 库官网, github, 或其他机器人友好的网站
+					2. 通常，你可能需要根据文本内容提取符合用户输入的某些信息来连续调用这个函数
+					3. 注意, 仅支持 get 请求, 如用户未指定信息源，尽量选择 库官网, github, 或其他机器人友好的网站
 					`),
 				Parameters: shared.FunctionParameters{
 					"type": "object",
