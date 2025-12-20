@@ -15,7 +15,7 @@
         ],
         "tick_per_sec": 90,
         "web": {
-            "web_mode": true,
+            "web_mode": false,
             "websocket_route": "/ws",
             "server_root_path": "web",
             "cors": {
