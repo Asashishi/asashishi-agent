@@ -116,10 +116,6 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMsg))
 	}
 	for k, v := range currTools {
-		if cli.CurrStrem.Err() != nil {
-			cli.ErrorChan <- cli.CurrStrem.Err()
-			break
-		}
 		if k == global.EmptyString {
 			continue
 		}
