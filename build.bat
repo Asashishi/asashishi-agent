@@ -8,13 +8,13 @@ go mod tidy
 @REM go install github.com/akavel/rsrc@latest
 echo rsrc -ico .\resources\app.ico -o app.syso
 rsrc -ico .\resources\app.ico -o app.syso
-echo go build -ldflags="-s -w" -trimpath -o asashishi-agent.exe
-go build -ldflags="-s -w" -trimpath -o asashishi-agent.exe
+echo go build -ldflags="-s -w" -trimpath -o AsashishiAgent.exe
+go build -ldflags="-s -w" -trimpath -o AsashishiAgent.exe
 echo del /f /q app.syso
 del /f /q app.syso
 @REM https://upx.github.io/
-upx --best --lzma asashishi-agent.exe
-move asashishi-agent.exe build\
+upx --best --lzma AsashishiAgent.exe
+move AsashishiAgent.exe build\
 copy README.md build\
 copy config.json build\
 robocopy web build\web /E
