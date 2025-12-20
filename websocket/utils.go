@@ -10,7 +10,7 @@ import (
 	ws "github.com/coder/websocket"
 )
 
-func SockectPing(ctx context.Context, conn *ws.Conn) {
+func webSocketPing(ctx context.Context, conn *ws.Conn) {
 	var err error
 	for {
 		time.Sleep(time.Second * time.Duration(WebSocketPingDelay))
@@ -31,6 +31,6 @@ func GetWebsocketConn(ctx context.Context, conn *ws.Conn, reader *http.Request, 
 		fmt.Println(global.GetStyledWarn(err.Error()))
 		return nil
 	}
-	go SockectPing(ctx, conn)
+	go webSocketPing(ctx, conn)
 	return conn
 }
