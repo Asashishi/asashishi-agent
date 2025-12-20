@@ -91,7 +91,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				} else {
-					WriteAIRespToWebsocketOutput(ctx, conn, &cli, jsonMsg)
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, true)
 				}
 			case msg = <-global.ScpOutputChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
@@ -100,7 +100,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				} else {
-					WriteScpOutputToWebsocketOutput(ctx, conn, &cli, jsonMsg)
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false)
 				}
 			case innerErr = <-cli.ErrorChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
@@ -109,7 +109,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				} else {
-					WriteAIErrorToWebsocketOutput(ctx, conn, &cli, jsonMsg)
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false)
 				}
 			case input = <-global.UInput.ProcessStdin:
 				if !processingFlag {

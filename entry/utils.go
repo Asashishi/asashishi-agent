@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
+	"time"
 
 	ws "github.com/coder/websocket"
 )
@@ -77,45 +78,30 @@ func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {
 	}
 }
 
-func WriteAIRespToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
-	var err error
+func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, tConnC bool, tStreamC bool) {
+	var (
+		err      error
+		errCount int = 0
+	)
 	if conn != nil {
-		if err = conn.Write(
-			ctx,
-			ws.MessageText,
-			jsonMsg,
-		); err != nil {
-			cli.CurrStrem.Close()
-			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+		for {
+			if err = conn.Write(
+				ctx,
+				ws.MessageText,
+				jsonMsg,
+			); err != nil {
+				if errCount == 3 {
+					if tConnC {
+						conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+					}
+					fmt.Println(global.GetStyledWarn(err.Error()))
+				}
+				errCount++
+				time.Sleep(time.Millisecond * time.Duration(WebsocketWriteRetryDelay))
+			}
 		}
-	} else {
+	} else if tStreamC {
 		cli.CurrStrem.Close()
 	}
-}
 
-func WriteAIErrorToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
-	var err error
-	if conn != nil {
-		if err = conn.Write(
-			ctx,
-			ws.MessageText,
-			jsonMsg,
-		); err != nil {
-			fmt.Println(global.GetStyledWarn(err.Error()))
-		}
-	}
-}
-
-func WriteScpOutputToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
-	var err error
-	if conn != nil {
-		if err = conn.Write(
-			ctx,
-			ws.MessageText,
-			jsonMsg,
-		); err != nil {
-			fmt.Println(global.GetStyledWarn(err.Error()))
-			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
-		}
-	}
 }
