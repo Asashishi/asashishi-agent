@@ -39,7 +39,7 @@ func WithWebMode() {
 	mux.Handle(global.HttpRootPath, fileServer)
 
 	mux.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
-		conn = websocket.GetWebsocketConn(conn, writer, reader)
+		conn = websocket.GetWebsocketConn(ctx, conn, reader, writer)
 	})
 	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
@@ -59,10 +59,12 @@ func WithWebMode() {
 			if conn == nil {
 				global.WaitNextFrame(conf.Env.TickPerSec)
 			} else if _, recved, err = conn.Read(ctx); err != nil {
-				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
-				conn = nil
-				cli.StreamForceStop = true
 				fmt.Println(global.GetStyledWarn(err.Error()))
+				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+				if cli.CurrStrem != nil {
+					cli.CurrStrem.Close()
+				}
+				conn = nil
 			} else if err = json.Unmarshal(recved, &data); err != nil {
 				fmt.Println(global.GetStyledWarn(err.Error()))
 			} else if data.Type == websocket.UserInputType {
@@ -88,30 +90,32 @@ func WithWebMode() {
 					Type:    websocket.AIOutputType,
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
+				} else {
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, true, false)
 				}
-				WriteAIRespToWebsocketOutput(ctx, conn, &cli, jsonMsg)
-			case msg = <-global.ScpOutputChan:
-				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
-					Content: msg,
-					Type:    websocket.ChildProcessOutputType,
-				}); innerErr != nil {
-					fmt.Println(global.GetStyledWarn(innerErr.Error()))
-				}
-				WriteScpOutputToWebsocketOutput(ctx, conn, &cli, jsonMsg)
 			case innerErr = <-cli.ErrorChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 					Content: innerErr.Error(),
 					Type:    websocket.SysErrorType,
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
+				} else {
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false, false)
 				}
-				WriteAIErrorToWebsocketOutput(ctx, conn, &cli, jsonMsg, innerErr)
+			case msg = <-global.ScpOutputChan:
+				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
+					Content: msg,
+					Type:    websocket.ChildProcessOutputType,
+				}); innerErr != nil {
+					fmt.Println(global.GetStyledWarn(innerErr.Error()))
+				} else {
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false, true)
+				}
 			case input = <-global.UInput.ProcessStdin:
 				if !processingFlag {
 					processingFlag = true
 					go func() {
 						cli.StreamChat(input)
-						cli.StreamForceStop = false
 						processingFlag = false
 					}()
 				}

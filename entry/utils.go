@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os/exec"
 	"strings"
+	"time"
 
 	ws "github.com/coder/websocket"
 )
@@ -44,7 +45,6 @@ func OpenBrowser(url string) {
 
 func WithCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, reader *http.Request) {
-		// 设置允许所有跨域
 		writer.Header().Set(ServerAllowOrigin, conf.Env.AllowOrigin)
 		writer.Header().Set(ServerAllowHeaders, conf.Env.AllowHeaders)
 		writer.Header().Set(ServerAllowMethods, conf.Env.AllowMethods)
@@ -76,48 +76,37 @@ func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {
 		*isWaitInput = true
 	}
 }
-
-func WriteAIRespToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
-	var err error
+func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, tConnC bool, tStreamC bool, tScpIO bool) {
+	var (
+		err      error
+		errCount int = 0
+	)
 	if conn != nil {
-		if err = conn.Write(
-			ctx,
-			ws.MessageText,
-			jsonMsg,
-		); err != nil {
-			cli.StreamForceStop = true
-			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+		for {
+			if err = conn.Write(
+				ctx,
+				ws.MessageText,
+				jsonMsg,
+			); err != nil {
+				if errCount == 3 {
+					if tConnC {
+						conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+						conn = nil
+					}
+					fmt.Println(global.GetStyledWarn(err.Error()))
+				}
+				errCount++
+				time.Sleep(time.Millisecond * time.Duration(WebsocketWriteRetryDelay))
+			} else {
+				break
+			}
 		}
 	} else {
-		cli.StreamForceStop = true
-	}
-}
-
-func WriteAIErrorToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, aiErr error) {
-	var err error
-	if conn != nil {
-		if err = conn.Write(
-			ctx,
-			ws.MessageText,
-			jsonMsg,
-		); err != nil {
-			fmt.Println(global.GetStyledWarn(err.Error()))
-
+		if tStreamC {
+			cli.CurrStrem.Close()
 		}
-	}
-	panic(global.GetStyledError(aiErr.Error()))
-}
-
-func WriteScpOutputToWebsocketOutput(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte) {
-	var err error
-	if conn != nil {
-		if err = conn.Write(
-			ctx,
-			ws.MessageText,
-			jsonMsg,
-		); err != nil {
-			fmt.Println(global.GetStyledWarn(err.Error()))
-			conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+		if tScpIO {
+			global.UInput.IsChildProcess = false
 		}
 	}
 }

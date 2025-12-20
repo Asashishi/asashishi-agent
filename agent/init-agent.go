@@ -9,7 +9,6 @@ import (
 
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
-	"github.com/openai/openai-go/v3/packages/ssestream"
 )
 
 func (cli *AgentClient) Init(
@@ -60,12 +59,11 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		assistantMsgBuilder strings.Builder
 		currTools           = map[string]*ToolCall{}
 		chunk               openai.ChatCompletionChunk
-		stream              *ssestream.Stream[openai.ChatCompletionChunk]
 	)
 	if prompt != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.UserMessage(prompt))
 	}
-	stream = cli.LlmClient.Chat.Completions.NewStreaming(
+	cli.CurrStrem = cli.LlmClient.Chat.Completions.NewStreaming(
 		cli.Context,
 		openai.ChatCompletionNewParams{
 			Model:    cli.ModelName,
@@ -73,8 +71,8 @@ func (cli *AgentClient) StreamChat(prompt string) {
 			Messages: cli.MsgContext,
 		},
 	)
-	for stream.Next() {
-		chunk = stream.Current()
+	for cli.CurrStrem.Next() {
+		chunk = cli.CurrStrem.Current()
 		if chunk.Usage.PromptTokens > conf.Env.ContextLength*global.BitK {
 			fmt.Println(global.SpaceString + global.GetStyledSystemComent(ContextOutofRange))
 			cli.MsgContext = []openai.ChatCompletionMessageParamUnion{openai.SystemMessage(conf.Env.SysPrompt)}
@@ -83,11 +81,6 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		if len(chunk.Choices) > 0 {
 			for _, choice := range chunk.Choices {
 				if choice.Delta.Content != global.EmptyString {
-					if cli.StreamForceStop {
-						stream.Close()
-						cli.StreamForceStop = false
-						return
-					}
 					cli.StreamChan <- choice.Delta.Content
 					assistantMsgBuilder.WriteString(choice.Delta.Content)
 				}
@@ -113,13 +106,11 @@ func (cli *AgentClient) StreamChat(prompt string) {
 			}
 		}
 	}
-
-	stream.Close()
-	if cli.StreamForceStop {
-		cli.StreamForceStop = false
+	defer cli.CurrStrem.Close()
+	if cli.CurrStrem.Err() != nil {
+		cli.ErrorChan <- cli.CurrStrem.Err()
 		return
 	}
-
 	assistantMsg = assistantMsgBuilder.String()
 	if assistantMsg != global.EmptyString {
 		cli.MsgContext = append(cli.MsgContext, openai.AssistantMessage(assistantMsg))
@@ -129,10 +120,6 @@ func (cli *AgentClient) StreamChat(prompt string) {
 			continue
 		}
 		UseTool(k, v.Name, v.Augments, cli)
-	}
-	if stream.Err() != nil {
-		cli.ErrorChan <- stream.Err()
-		return
 	}
 	if len(currTools) > 0 {
 		cli.StreamChat("")

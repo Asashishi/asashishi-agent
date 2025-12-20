@@ -56,15 +56,15 @@ func handleScpExit(flag *bool, shell *exec.Cmd) {
 	}
 }
 
-func handleScpInteractiveInput(stdinPipe io.WriteCloser) {
+func handleScpInteractiveInput(stdinPipe *io.WriteCloser) {
 	var msg string
 	for {
 		select {
 		case msg = <-global.UInput.ChildProcessStdin:
 			if conf.Env.WebMode {
-				stdinPipe.Write([]byte(msg + "\n"))
+				(*stdinPipe).Write([]byte(msg + "\n"))
 			} else {
-				stdinPipe.Write([]byte(msg))
+				(*stdinPipe).Write([]byte(msg))
 			}
 		default:
 			if !global.UInput.IsChildProcess {
@@ -85,14 +85,15 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 	for {
 		buffer = make([]byte, 4096)
 		length, innerErr = reader.Read(buffer)
-		if length > 0 {
-			global.ScpOutputChan <- string(buffer[:length])
-		}
+		global.ScpOutputChan <- string(buffer[:length])
 		if innerErr != nil {
 			errContent = innerErr.Error()
 			if innerErr != io.EOF {
 				fmt.Println(global.GetStyledWarn(errContent))
 			}
+			break
+		}
+		if !global.UInput.IsChildProcess {
 			break
 		}
 	}
@@ -133,7 +134,7 @@ func InteractiveExecuteCli() string {
 	global.UInput.IsChildProcess = true
 	shell.Stdout = io.MultiWriter(os.Stdout, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, &buffer)
-	go handleScpInteractiveInput(stdinPipe)
+	go handleScpInteractiveInput(&stdinPipe)
 	err = shell.Run()
 	global.UInput.IsChildProcess = false
 	if err != nil {
@@ -183,11 +184,11 @@ func InteractiveExecuteWeb() string {
 	}
 	global.UInput.IsChildProcess = true
 	reader, writer = io.Pipe()
-	defer writer.Close()
 	defer reader.Close()
+	defer writer.Close()
 	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
-	go handleScpInteractiveInput(stdinPipe)
+	go handleScpInteractiveInput(&stdinPipe)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()
 	global.UInput.IsChildProcess = false
