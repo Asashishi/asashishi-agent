@@ -63,10 +63,10 @@ go install github.com/akavel/rsrc@latest
 ./build.bat
 
 # 或手动执行构建命令
-go build -ldflags="-s -w -H=windowsgui" -trimpath -o asashishi-agent.exe
+go build -ldflags="-s -w -H=windowsgui" -trimpath -o AsashishiAgent.exe
 
 # 5. 使用 UPX 压缩（可选）
-upx --best --lzma asashishi-agent.exe
+upx --best --lzma AsashishiAgent.exe
 ```
 
 ##### 🐧 Linux/macOS 系统构建
@@ -84,10 +84,10 @@ chmod +x build.sh
 ./build.sh
 
 # 或手动执行构建命令
-go build -ldflags="-s -w" -trimpath -o asashishi-agent
+go build -ldflags="-s -w" -trimpath -o AsashishiAgent
 
 # 4. 使用 UPX 压缩（可选）
-upx --best --lzma asashishi-agent
+upx --best --lzma AsashishiAgent
 ```
 
 ##### 📦 构建选项说明
@@ -97,7 +97,7 @@ upx --best --lzma asashishi-agent
 | `-ldflags="-s -w"`         | 移除调试信息，减小文件大小     | 推荐使用                                                        |
 | `-ldflags="-H=windowsgui"` | Windows 隐藏控制台窗口         | Windows 专用                                                    |
 | `-trimpath`                | 移除构建路径信息，提高可移植性 | 推荐使用                                                        |
-| `-o`                       | 指定输出文件名                 | `asashishi-agent.exe` (Windows)`<br>asashishi-agent` (Unix) |
+| `-o`                       | 指定输出文件名                 | `AsashishiAgent.exe` (Windows)`AsashishiAgent` (Unix) |
 
 ##### 🔧 构建脚本功能
 
@@ -113,13 +113,13 @@ upx --best --lzma asashishi-agent
 
 ```bash
 # Windows 快速构建（使用默认配置）
-go build -o asashishi-agent.exe
+go build -o AsashishiAgent.exe
 
 # Linux/macOS 快速构建
-go build -o asashishi-agent
+go build -o AsashishiAgent
 
 # 开发模式构建（保留调试信息）
-go build -gcflags="all=-N -l" -o asashishi-agent-dev
+go build -gcflags="all=-N -l" -o AsashishiAgent-dev
 ```
 
 ##### 🛠️ 开发环境设置
@@ -186,7 +186,7 @@ go vet ./...
 3. **启动程序**
 
 ```bash
-./asashishi-agent.exe
+./AsashishiAgent.exe
 # 或
 go run main.go
 ```
@@ -198,9 +198,9 @@ go run main.go
 ```json
 {
     "info": {
-        "version": "3.4.2",
-        // asashishi-agent.exe 为 Windows 下的默认配置 如果有变更或处于 linux 环境 请自行切换
-        "name": "asashishi-agent.exe"
+        "version": "3.4.3",
+        // AsashishiAgent.exe 为 Windows 下的默认配置 如果有变更或处于 linux 环境 请自行切换
+        "name": "AsashishiAgent.exe"
     },
     "proc": {
         "backup": false,
@@ -497,10 +497,10 @@ go install github.com/akavel/rsrc@latest
 ./build.bat
 
 # 手动构建
-go build -ldflags="-s -w" -trimpath -o asashishi-agent.exe
+go build -ldflags="-s -w" -trimpath -o AsashishiAgent.exe
 
 # 使用 UPX 压缩（可选）
-upx --best --lzma asashishi-agent.exe
+upx --best --lzma AsashishiAgent.exe
 ```
 
 ### 代码规范

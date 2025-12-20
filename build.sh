@@ -8,13 +8,13 @@ echo "go mod tidy"
 go mod tidy
 echo "rsrc -ico ./resources/app.ico -o app.syso"
 rsrc -ico ./resources/app.ico -o app.syso
-echo "go build -ldflags=\"-s -w\" -trimpath -o asashishi-agent"
-go build -ldflags="-s -w" -trimpath -o asashishi-agent
+echo "go build -ldflags=\"-s -w\" -trimpath -o AsashishiAgent"
+go build -ldflags="-s -w" -trimpath -o AsashishiAgent
 echo "rm -f app.syso"
 rm -f app.syso
-echo "upx --best --lzma asashishi-agent"
-upx --best --lzma asashishi-agent
-mv asashishi-agent build/
+echo "upx --best --lzma AsashishiAgent"
+upx --best --lzma AsashishiAgent
+mv AsashishiAgent build/
 cp README.md build/
 cp config.json build/
 cp -r web build/
