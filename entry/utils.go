@@ -98,6 +98,8 @@ func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.Ag
 				}
 				errCount++
 				time.Sleep(time.Millisecond * time.Duration(WebsocketWriteRetryDelay))
+			} else {
+				break
 			}
 		}
 	} else if tStreamC {
