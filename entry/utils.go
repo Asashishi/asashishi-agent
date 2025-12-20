@@ -45,7 +45,6 @@ func OpenBrowser(url string) {
 
 func WithCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, reader *http.Request) {
-		// 设置允许所有跨域
 		writer.Header().Set(ServerAllowOrigin, conf.Env.AllowOrigin)
 		writer.Header().Set(ServerAllowHeaders, conf.Env.AllowHeaders)
 		writer.Header().Set(ServerAllowMethods, conf.Env.AllowMethods)
@@ -77,8 +76,7 @@ func HandleCliUInput(input string, cli *agent.AgentClient, isWaitInput *bool) {
 		*isWaitInput = true
 	}
 }
-
-func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, tConnC bool, tStreamC bool) {
+func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.AgentClient, jsonMsg []byte, tConnC bool, tStreamC bool, tScpIO bool) {
 	var (
 		err      error
 		errCount int = 0
@@ -93,6 +91,7 @@ func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.Ag
 				if errCount == 3 {
 					if tConnC {
 						conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
+						conn = nil
 					}
 					fmt.Println(global.GetStyledWarn(err.Error()))
 				}
@@ -102,8 +101,12 @@ func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.Ag
 				break
 			}
 		}
-	} else if tStreamC {
-		cli.CurrStrem.Close()
+	} else {
+		if tStreamC {
+			cli.CurrStrem.Close()
+		}
+		if tScpIO {
+			global.UInput.IsChildProcess = false
+		}
 	}
-
 }

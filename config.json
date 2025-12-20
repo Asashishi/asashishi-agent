@@ -1,6 +1,6 @@
 {
     "info": {
-        "version": "3.4.2",
+        "version": "3.4.3",
         "name": "asashishi-agent.exe"
     },
     "proc": {
@@ -15,7 +15,7 @@
         ],
         "tick_per_sec": 90,
         "web": {
-            "web_mode": false,
+            "web_mode": true,
             "websocket_route": "/ws",
             "server_root_path": "web",
             "cors": {

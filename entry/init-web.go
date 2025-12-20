@@ -39,7 +39,7 @@ func WithWebMode() {
 	mux.Handle(global.HttpRootPath, fileServer)
 
 	mux.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
-		conn = websocket.GetWebsocketConn(conn, writer, reader)
+		conn = websocket.GetWebsocketConn(ctx, conn, reader, writer)
 	})
 	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
@@ -91,16 +91,7 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				} else {
-					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, true)
-				}
-			case msg = <-global.ScpOutputChan:
-				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
-					Content: msg,
-					Type:    websocket.ChildProcessOutputType,
-				}); innerErr != nil {
-					fmt.Println(global.GetStyledWarn(innerErr.Error()))
-				} else {
-					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false)
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, true, false)
 				}
 			case innerErr = <-cli.ErrorChan:
 				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
@@ -109,7 +100,16 @@ func WithWebMode() {
 				}); innerErr != nil {
 					fmt.Println(global.GetStyledWarn(innerErr.Error()))
 				} else {
-					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false)
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false, false)
+				}
+			case msg = <-global.ScpOutputChan:
+				if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
+					Content: msg,
+					Type:    websocket.ChildProcessOutputType,
+				}); innerErr != nil {
+					fmt.Println(global.GetStyledWarn(innerErr.Error()))
+				} else {
+					WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, true, false, true)
 				}
 			case input = <-global.UInput.ProcessStdin:
 				if !processingFlag {
