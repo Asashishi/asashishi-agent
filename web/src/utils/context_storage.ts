@@ -9,7 +9,7 @@ class ContextStorage {
         return this.storage.get(key);
     }
     public set<T>(items: ContextStorageItemPair<T>[]): void {
-        items.forEach((item: ContextStorageItemPair<T>) => this.storage.set(item.key, item.contextItem))
+        items.forEach((item: ContextStorageItemPair<T>) => this.storage.set(item.key, item.contextItem));
     }
 }
 
