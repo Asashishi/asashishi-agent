@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import type {
     JSX,
     ChangeEvent
@@ -42,7 +42,7 @@ const App: React.FC = (): JSX.Element => {
             }
         }
     ]);
-    
+
     injectContextItems();
 
     return (
