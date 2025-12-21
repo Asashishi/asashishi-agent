@@ -18,8 +18,8 @@ const displayMsg = (data: WebSocketMsg): void => {
 socket.onopen = () => {
   console.log("✅ 已连接到 WebSocket 服务");
 };
-socket.onmessage = function(event: MessageEvent<any>) {
-  const tAraeState: ContextStorageItem<string> | undefined = MainPageContext.get<string>("aiOutput");
+socket.onmessage = function(event: MessageEvent<string>) {
+  const tAraeState: ContextStorageItem<string> | undefined = MainPageContext.get<string>("tAraeValue");
   tAraeState?.setValue("");
   displayMsg(JSON.parse(event.data));
 };
