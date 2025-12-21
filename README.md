@@ -363,7 +363,8 @@ asashishi-agent/
 ├── entry/                    # 程序入口模块（CLI/Web 模式）
 ├── websocket/                # WebSocket 通信模块
 ├── web/                      # Web 界面文件目录
-│   └── public/               # 静态资源目录
+│   ├── src/                  # 前端源码路径
+│   └── public/               # 静态资源路径
 ├── log/                      # 操作日志目录
 └── resources/                # 资源文件目录
 ```
