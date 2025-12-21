@@ -1,4 +1,8 @@
-import { useState, type ChangeEvent, type JSX } from 'react'
+import { useEffect, useState } from 'react'
+import type {
+  JSX,
+  ChangeEvent
+} from 'react';
 import { MainPageContext } from './context';
 import AsashishiAgentWs from './utils/websocket';
 
@@ -41,7 +45,7 @@ const App: React.FC = (): JSX.Element => {
     }
   ]);
 
-  injectContextItems();
+  useEffect(injectContextItems, [aiOutput, scpOutput, tAraeValue]);
 
   return (
     <div>
