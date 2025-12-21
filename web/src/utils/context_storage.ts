@@ -2,7 +2,7 @@ import type { ContextStorageItem, ContextStorageItemPair } from "../types";
 
 class ContextStorage {
     private storage: Map<string, ContextStorageItem<any>>;
-    constructor () {
+    public constructor () {
         this.storage = new Map();
     }
     public get<T>(key: string): ContextStorageItem<T> | undefined {

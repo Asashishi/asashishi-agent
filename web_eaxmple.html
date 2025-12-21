@@ -1,0 +1,81 @@
+  </title>
+</head>
+<body>
+  <h2>WebSocket Example</h2>
+  <div>
+  <label>Input: </label>
+  <div>
+    <textarea type="text" id="uInput" rows="10", cols="50"></textarea>
+  </div>
+  <br />
+  <button id="sendBtn">Send</button>
+  </div>
+  <br />
+  <label>AI: </label>
+  <button id="clearBtnAI">Clear</button>
+  <div id="ai">
+  </div>
+  <br />
+  <label>SCP: </label>
+  <button id="clearBtnSCP">Clear</button>
+  <div id="scp">
+  </div>
+  <script>
+    // 无论你是使用框架还是原生 html 按照以下内容为蓝本编写交互脚本即可
+    // websocket connection
+    let socket = new WebSocket("ws://localhost:3000/ws");
+    socket.onopen = function() {
+      console.log("✅ 已连接到 WebSocket 服务");
+    };
+    socket.onmessage = function(event) {
+      const input = document.getElementById("uInput")
+      input.value = "";
+      let data = JSON.parse(event.data)
+      print(data);
+    };
+    socket.onclose = function() {
+      console.log("\n ❌ 连接已关闭");
+    };
+    socket.onerror = function(error) {
+      console.error("\n ⚠️ 出错: " + error);
+      // 如果是无关紧要的出错(如网络) 重连可以解决问题 服务器仅维护一个 socket 对象 不支持多个连接 如果需要可以自己改写
+      socket = new WebSocket("ws://localhost:3000/ws");
+    };
+    // output
+    function print(data) {
+      if (data.type === "exec_output") {
+        const div = document.getElementById("scp");
+        div.innerText += data.content + "\n";
+      } else {
+        const div = document.getElementById("ai");
+        div.innerText += data.content;
+      }
+    }
+    // input
+    document.getElementById("sendBtn").onclick = () => {
+      const input = document.getElementById("uInput")
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        /**
+         * @typedef {Object} User
+         * @property {string} type 输入类型, 见 ./websocket/consts.go 中的 // Input Type 网页端目前输入仅需使用 user_input
+         * @property {string} content 输入内容
+         */
+        socket.send(JSON.stringify({
+            type: 'user_input',
+            content: input.value,
+        }));
+        console.log("\n ➡️ 已发送: Hello Server");
+      } else {
+        console.error("\n ⚠️ 连接未建立，无法发送");
+      }
+    };
+    // clear
+    document.getElementById("clearBtnAI").onclick = () => {
+        document.getElementById("ai").innerText = "";
+    }
+    document.getElementById("clearBtnSCP").onclick = () => {
+        document.getElementById("scp").innerText = "";
+    }
+  </script>
+</body>
+</html>
