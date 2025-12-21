@@ -575,7 +575,7 @@ upx --best --lzma AsashishiAgent.exe
 **A:** 
 - 在 `config.json` 中设置 `"proc.web.web_mode": true`，然后重启程序。程序将在指定端口（默认 3000）启动 Web 服务器，您可以通过浏览器访问 `http://localhost:3000` 使用 Web 界面
 - Web 模式已包含完整的 React 前端界面，支持实时 WebSocket 通信
-- 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web/index.html 下的示例实现 socket 回调和页面样式
+- 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web 下的示例实现 socket 回调和页面样式
 
 ### Q: Web 模式支持哪些功能？
 **A:** Web 模式支持所有 CLI 模式的功能，并提供现代化的 Web 界面，包括：

@@ -27,16 +27,17 @@ func WithWebMode() {
 		mux        *http.ServeMux
 		cli        agent.AgentClient = agent.AgentClient{}
 	)
-	mux = http.NewServeMux()
-	ctx = context.Background()
-	cli.Init(ctx, tools.GetToolsInfo())
 
 	if dirPath, err = os.Getwd(); err != nil {
 		panic(global.GetStyledError(err.Error()))
 	}
+	ctx = context.Background()
+	cli.Init(ctx, tools.GetToolsInfo())
+
+	// http server
+	mux = http.NewServeMux()
 	fileServer = http.FileServer(http.Dir(filepath.Join(dirPath, conf.Env.ServerRootPath)))
 	mux.Handle(global.HttpRootPath, fileServer)
-
 	mux.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
 		conn = websocket.GetWebsocketConn(ctx, conn, reader, writer)
 	})
