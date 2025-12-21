@@ -17,6 +17,6 @@ upx --best --lzma AsashishiAgent.exe
 move AsashishiAgent.exe build\
 copy README.md build\
 copy config.json build\
-robocopy web build\web /E
+npm run build
 powershell -command "Compress-Archive -Path build -DestinationPath build\win-x86-amd64.zip"
 echo Complete! --
