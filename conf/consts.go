@@ -1,6 +1,6 @@
 package conf
 
-const Version string = "3.4.3"
+const Version string = "3.5.1"
 
 const Bash string = "Bash"
 const Windows string = "Windows"
