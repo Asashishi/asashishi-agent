@@ -4,22 +4,22 @@ import { MainPageContext } from './context';
 
 
 let socket: WebSocket = new WebSocket("ws://localhost:3000/ws");
-  socket.onopen = () => {
-    console.log("✅ 已连接到 WebSocket 服务");
-  };
-  socket.onmessage = function(event: MessageEvent<any>) {
-    const tAraeState: ContextStorageItem<string> | undefined = MainPageContext.get<string>("aiOutput");
-    tAraeState?.setValue("");
-    displayMsg(JSON.parse(event.data));
-  };
-  socket.onclose = function() {
-    console.log("\n ❌ 连接已关闭");
-  };
-  socket.onerror = function(error) {
-    console.error("\n ⚠️ 出错: " + error);
-    // 如果是无关紧要的出错(如网络) 重连可以解决问题 服务器仅维护一个 socket 对象 不支持多个连接 如果需要可以自己改写
-    socket = new WebSocket("ws://localhost:3000/ws");
-  };
+socket.onopen = () => {
+  console.log("✅ 已连接到 WebSocket 服务");
+};
+socket.onmessage = function(event: MessageEvent<any>) {
+  const tAraeState: ContextStorageItem<string> | undefined = MainPageContext.get<string>("aiOutput");
+  tAraeState?.setValue("");
+  displayMsg(JSON.parse(event.data));
+};
+socket.onclose = function() {
+  console.log("\n ❌ 连接已关闭");
+};
+socket.onerror = function(error) {
+  console.error("\n ⚠️ 出错: " + error);
+  // 如果是无关紧要的出错(如网络) 重连可以解决问题 服务器仅维护一个 socket 对象 不支持多个连接 如果需要可以自己改写
+  socket = new WebSocket("ws://localhost:3000/ws");
+};
 
 const displayMsg = (data: WebSocketMsg): void => {
   if (data.type === "exec_output") {
