@@ -38,8 +38,8 @@ class AsashishiAgentWs {
         };
     }
 
-    public send(msg: string) {
-        this.ws.send(msg);
+    public send(msg: WebSocketMsg) {
+        this.ws.send(JSON.stringify(msg));
     }
 
     public disPlayMsg(msg: WebSocketMsg): void {
@@ -51,4 +51,7 @@ class AsashishiAgentWs {
     }
 }
 
-export default AsashishiAgentWs;
+// single instance
+const wsInstance: AsashishiAgentWs = new AsashishiAgentWs();
+
+export default wsInstance;
