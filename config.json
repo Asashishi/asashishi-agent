@@ -9,7 +9,6 @@
             "log",
             ".git",
             "build",
-            "backup/files",
             "backup\\files",
             "node_modules"
         ],
@@ -18,12 +17,15 @@
             "web_mode": false,
             "websocket_route": "/ws",
             "server_root_path": "web",
-            "cors": {
-                "allow_origin": "*",
+            "cros": {
+                "allow_origins": [
+                    "http://localhost:3000",
+                    "http://localhost:5173"
+                ],
                 "allow_headers": "Content-Type, Authorization",
                 "allow_methods": "GET, POST, PUT, DELETE, OPTIONS"
             },
-            "server_listen": "0.0.0.0:3000",
+            "server_listen": "localhost:3000",
             "server_base_url": "http://localhost:3000"
         },
         "terminal_code_style": "monokai"
@@ -34,7 +36,6 @@
             "build",
             ".git",
             "node_modules",
-            "backup/files",
             "backup\\files"
         ],
         "context_length": 128,

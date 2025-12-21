@@ -1,4 +1,24 @@
+# asashishi-agent
 log/
 build/
-**/node_modules/
+node_modules/
 project.todo.md
+
+# asashishi-agent-webpage
+.idea
+*.log
+*.suo
+*.sln
+*.sw?
+logs/
+*.ntvs*
+*.local
+.vscode/*
+.DS_Store
+*.njsproj
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+!.vscode/extensions.json

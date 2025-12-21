@@ -1,4 +1,4 @@
-name: Asashishi Agent Linux CI
+name: asashishi agent linux ci
 
 on:
   push:
@@ -10,24 +10,31 @@ jobs:
   linux-build-and-test:
     runs-on: ubuntu-latest
 
-    
     steps:
       - name: checkout code
         uses: actions/checkout@v4
 
       - name: setup go
         uses: actions/setup-go@v5
-        with: 
+        with:
           go-version: '1.25'
 
-      - name: get libs
-        run: go mod download
+      - name: setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
 
-      - name: build
-        run: go build -ldflags="-s -w" -trimpath -o asashishi-agent
+      - name: install dependencies
+        run: |
+          go mod download
+          npm install
 
-      - name: executable
-        run: chmod +x ./run-test.sh && chmod +x ./asashishi-agent
-      
-      - name: test
-        run: ./run-test.sh
+      - name: build project
+        run: |
+          go build -ldflags="-s -w" -trimpath -o asashishi-agent
+          npm run build
+
+      - name: run tests
+        run: |
+          chmod +x ./run-test.sh ./asashishi-agent
+          ./run-test.sh
