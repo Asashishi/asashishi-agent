@@ -42,12 +42,6 @@ func WithWebMode() {
 	})
 	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
-	fmt.Println(
-		global.GetStyledSuccess(
-			fmt.Sprintf(global.WebServerStartComment, conf.Env.ServerBaseURL),
-		),
-	)
-
 	go func() {
 		var (
 			err    error
@@ -123,6 +117,11 @@ func WithWebMode() {
 			}
 		}
 	}()
+	fmt.Println(
+		global.GetStyledSuccess(
+			fmt.Sprintf(global.WebServerStartComment, conf.Env.ServerBaseURL),
+		),
+	)
 	go OpenBrowser(conf.Env.ServerBaseURL)
 	if err = http.ListenAndServe(conf.Env.ServerListen, WithCORS(mux)); err != nil {
 		panic(global.GetStyledError(err.Error()))
