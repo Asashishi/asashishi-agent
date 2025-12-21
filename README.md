@@ -208,6 +208,7 @@ go run main.go
             "log",
             ".git",
             "build",
+            // linux 下请自行更换分隔符
             "backup\\files",
             "node_modules"
         ],
@@ -216,12 +217,15 @@ go run main.go
             "web_mode": false,
             "websocket_route": "/ws",
             "server_root_path": "web",
-            "cors": {
-                "allow_origin": "*",
+            "cros": {
+                "allow_origins": [
+                    "http://localhost:3000",
+                    "http://localhost:5173"
+                ],
                 "allow_headers": "Content-Type, Authorization",
                 "allow_methods": "GET, POST, PUT, DELETE, OPTIONS"
             },
-            "server_listen": "0.0.0.0:3000",
+            "server_listen": "localhost:3000",
             "server_base_url": "http://localhost:3000"
         },
         "terminal_code_style": "monokai"
@@ -232,6 +236,7 @@ go run main.go
             "build",
             ".git",
             "node_modules",
+            // linux 下请自行更换分隔符
             "backup\\files"
         ],
         "context_length": 128,
@@ -240,7 +245,7 @@ go run main.go
         "model_name": "deepseek-chat",
         "max_response_token_length": 8192,
         "model_base_url": "https://api.deepseek.com/v1",
-        "api_key": "sk-your-api-key-here"
+        "api_key": "example-api-key"
     }
 }
 ```
@@ -256,13 +261,13 @@ go run main.go
 | `proc.backup` | 是否启用启动时备份 | `true`（生产环境） |
 | `llm.use_web_search` | 是否启用联网搜索 | `true`（需要最新信息时） |
 | `proc.web.web_mode` | 是否启用 Web 模式 | `false`（默认 CLI 模式） |
-| `proc.web.server_listen` | Web 服务器监听地址 | `0.0.0.0:3000` |
+| `proc.web.server_listen` | Web 服务器监听地址 | `localhost:3000` |
 | `proc.web.server_base_url` | Web 服务器基础URL | `http://localhost:3000` |
 | `proc.web.websocket_route` | WebSocket 路由 | `/ws` |
 | `proc.web.server_root_path` | Web 静态文件目录 | `web` |
-| `proc.web.cors.allow_origin` | CORS 允许的源 | `*`（允许所有）或指定域名 |
-| `proc.web.cors.allow_headers` | CORS 允许的请求头 | `Content-Type, Authorization` |
-| `proc.web.cors.allow_methods` | CORS 允许的 HTTP 方法 | `GET, POST, PUT, DELETE, OPTIONS` |
+| `proc.web.cros.allow_origins` | CORS 允许的源列表 | `["http://localhost:3000", "http://localhost:5173"]` |
+| `proc.web.cros.allow_headers` | CORS 允许的请求头 | `Content-Type, Authorization` |
+| `proc.web.cros.allow_methods` | CORS 允许的 HTTP 方法 | `GET, POST, PUT, DELETE, OPTIONS` |
 | `llm.dir_excepts` | 文件操作排除目录 | `["build", ".git", "node_modules", "backup\\files"]` |
 
 ## 🛠️ 工具功能详解
@@ -555,7 +560,7 @@ upx --best --lzma AsashishiAgent.exe
 **A:** 网页内容会经过摘要处理，会消耗一定 token (根据网页内容大小, 通常在 110k 左右/次, 摘要由独立上下文处理，主上下文消耗在 5-10k 左右/次)。建议仅在需要最新信息时启用，或使用 `"use_web_search": false` 关闭。
 
 ### Q: Linux 可以运行么？
-**A:** 可以，项目已经完全支持 Linux 所有功能已经通过测试, 但需要编译安装, 暂不提供预编译版本
+**A:** 可以，项目已经完全支持 Linux 所有功能已经通过测试, 但需要编译安装。Windows 预编译版本可在 Releases 页面下载。
 
 ### Q: 支持哪些 AI 模型？
 
@@ -568,10 +573,16 @@ upx --best --lzma AsashishiAgent.exe
 ### Q: 如何启用 Web 模式？
 **A:** 
 - 在 `config.json` 中设置 `"proc.web.web_mode": true`，然后重启程序。程序将在指定端口（默认 3000）启动 Web 服务器，您可以通过浏览器访问 `http://localhost:3000` 使用 Web 界面
+- Web 模式已包含完整的 React 前端界面，支持实时 WebSocket 通信
 - 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web/index.html 下的示例实现 socket 回调和页面样式
 
 ### Q: Web 模式支持哪些功能？
-**A:** Web 将模式支持所有 CLI 模式的功能
+**A:** Web 模式支持所有 CLI 模式的功能，并提供现代化的 Web 界面，包括：
+- 实时聊天界面
+- 代码语法高亮
+- 响应式设计
+- 实时输出显示
+- 一键清空功能
 
 ### Q: 如何运行测试？
 

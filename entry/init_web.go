@@ -28,7 +28,6 @@ func WithWebMode() {
 		cli        agent.AgentClient = agent.AgentClient{}
 	)
 	mux = http.NewServeMux()
-
 	ctx = context.Background()
 	cli.Init(ctx, tools.GetToolsInfo())
 

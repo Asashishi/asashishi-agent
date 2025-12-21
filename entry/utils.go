@@ -45,7 +45,12 @@ func OpenBrowser(url string) {
 
 func WithCORS(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, reader *http.Request) {
-		writer.Header().Set(ServerAllowOrigin, conf.Env.AllowOrigin)
+		var origin string = reader.Header.Get("Origin")
+		for _, item := range conf.Env.AllowOrigins {
+			if item == origin {
+				writer.Header().Set(ServerAllowOrigin, origin)
+			}
+		}
 		writer.Header().Set(ServerAllowHeaders, conf.Env.AllowHeaders)
 		writer.Header().Set(ServerAllowMethods, conf.Env.AllowMethods)
 		if reader.Method == http.MethodOptions {

@@ -6,9 +6,9 @@ type InfoConfig struct {
 }
 
 type WebCrosConfig struct {
-	AllowOrigin  string `json:"allow_origin"`
-	AllowHeaders string `json:"allow_headers"`
-	AllowMethods string `json:"allow_methods"`
+	AllowHeaders string   `json:"allow_headers"`
+	AllowMethods string   `json:"allow_methods"`
+	AllowOrigins []string `json:"allow_origins"`
 }
 
 type WebConfig struct {

@@ -17,7 +17,9 @@ upx --best --lzma AsashishiAgent
 mv AsashishiAgent build/
 cp README.md build/
 cp config.json build/
-npm run build
+npm run build &
+BUILD_PID=$!
+wait $BUILD_PID
 echo "tar -czf linux-x86-amd64.gz build"
 tar -czf linux-x86-amd64.gz build
 mv linux-x86-amd64.gz build/

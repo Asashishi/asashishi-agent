@@ -1,6 +1,7 @@
 package websocket
 
 import (
+	"asashishi-agent/conf"
 	"asashishi-agent/global"
 	"context"
 	"fmt"
@@ -27,7 +28,7 @@ func GetWebsocketConn(ctx context.Context, conn *ws.Conn, reader *http.Request, 
 	if conn != nil {
 		conn.Close(ws.StatusNormalClosure, ClientExit)
 	}
-	if conn, err = ws.Accept(writer, reader, nil); err != nil {
+	if conn, err = ws.Accept(writer, reader, &ws.AcceptOptions{OriginPatterns: conf.Env.AllowOrigins}); err != nil {
 		fmt.Println(global.GetStyledWarn(err.Error()))
 		return nil
 	}
