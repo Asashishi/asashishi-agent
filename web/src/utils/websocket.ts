@@ -1,50 +1,54 @@
 import ContextStorage, { ContextStorageItem } from "./context_storage";
 
-export type WebSocketMsg = {
-    type: string
-    content: string
-}
-
+const ReconnectDelay: number = 100; 
 const WebSocketURL: string = "ws://localhost:3000/ws";
 
 const Warn: string = "⚠️ Something went wrong: ";
 const Connected: string = "✅ WebSocket service connected";
 const Closed: string = "❌ WebSocket service connect closed";
 
+export type WebSocketMsg = {
+    type: string
+    content: string
+}
+
+export type ContextDependency = {
+    key: string
+    contextStorage: ContextStorage
+}
+
+export type AsashishiAgentWsDependencies = {
+    uInput?: ContextStorageItem<string>,
+    aiOutput?: ContextStorageItem<string>,
+    shellOutput?: ContextStorageItem<string>,
+}
+
 class AsashishiAgentWs {
 
     private ws: WebSocket;
-    private uInputState: ContextStorageItem<string> | undefined;
-    private aiOutputState: ContextStorageItem<string> | undefined;
-    private scpOutputState: ContextStorageItem<string> | undefined;
+    private dependencies: AsashishiAgentWsDependencies;
 
-    public injectContextItems(
-        contextStorage: ContextStorage,
-        dependencies: {
-            uInput: string,
-            aiOutput: string,
-            scpOutput: string
+    public injectDependencies(dependencies: ContextDependency[]): void {
+        for (const item of dependencies) {
+            this.dependencies[item.key as keyof AsashishiAgentWsDependencies] = item.contextStorage.get(item.key);
         }
-    ): void {
-        this.uInputState = contextStorage.get(dependencies.uInput);
-        this.aiOutputState = contextStorage.get(dependencies.aiOutput);
-        this.scpOutputState = contextStorage.get(dependencies.scpOutput);
     }
 
     public constructor()  {
+        this.dependencies = {};
         this.ws = new WebSocket(WebSocketURL);
         this.ws.onopen = () => console.log(Connected);
         this.ws.onclose = () => {
             console.log(Closed);
-            this.ws = new WebSocket(WebSocketURL);
+            setTimeout(() => this.ws = new WebSocket(WebSocketURL), ReconnectDelay);
         };
         this.ws.onerror = (error: unknown) => {
             this.ws.close();
             console.warn(Warn + (error as Error).message);
         }
         this.ws.onmessage = (event: MessageEvent<string>) => {
-          if (this.uInputState?.value != "") {
-            this.uInputState?.setValue("");
+          if (this.dependencies.uInput?.value != "") {
+            this.dependencies.uInput?.setValue("");
           }
           this.disPlayMsg(JSON.parse(event.data) as WebSocketMsg);
         };
@@ -56,9 +60,9 @@ class AsashishiAgentWs {
 
     public disPlayMsg(msg: WebSocketMsg): void {
         if (msg.type === "ai_msg") {
-            this.aiOutputState?.setValue(this.aiOutputState.value + msg.content);
+            this.dependencies.aiOutput?.setValue((prev: string): string => prev + msg.content);
         } else {
-            this.scpOutputState?.setValue(this.scpOutputState.value + msg.content + '\n');
+            this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content + '\n');
         }
     }
 }

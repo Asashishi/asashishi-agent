@@ -1,69 +1,25 @@
-import { useEffect, useState } from 'react';
 import type {
     JSX,
-    ChangeEvent
 } from 'react';
-import { MainPageContext } from './context';
-import wsInstance from './utils/websocket';
-import { ContextStorageItem } from './utils/context_storage';
+import Header from './components/Header';
+import SideBar from './components/SideBar';
+import styles from "./app.module.css";
+import UInput from './components/UInput';
+import AICard from './components/AICard';
+import ShellCard from './components/ShellCard';
 
 const App: React.FC = (): JSX.Element => {
-    const [aiOutput, setAiOutput] = useState<string>("");
-    const [scpOutput, setScpOutput] = useState<string>("");
-    const [tAraeValue, setTAraeValue] = useState<string>("");
-
-    useEffect(() => {
-        MainPageContext.set<string>([
-            {
-                key: "aiOutput",
-                contextItem: new ContextStorageItem<string>(aiOutput, setAiOutput),
-            },
-            {
-                key: "scpOutput",
-                contextItem: new ContextStorageItem<string>(scpOutput,setScpOutput),
-            },
-            {
-                key: "tAraeValue",
-                contextItem: new ContextStorageItem<string>(tAraeValue, setTAraeValue),
-            },
-        ]);
-        wsInstance.injectContextItems(MainPageContext, { uInput: "tAraeValue", aiOutput: "aiOutput", scpOutput: "scpOutput" });
-    }, []);
-
     return (
-        <div>
-            <h2>WebSocket Example</h2>
+        <div className={styles.app}>
+            <SideBar />
             <div>
-                <label htmlFor="uInput">Input: </label>
+                <Header />
                 <div>
-                    <textarea
-                        id="uInput"
-                        rows={10}
-                        cols={50}
-                        value={tAraeValue}
-                        onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
-                            setTAraeValue(event.target.value)
-                        }
-                    />
+                    <UInput />
                 </div>
-                <br />
-                <button onClick={() =>
-                    wsInstance.send({
-                        type: 'user_input',
-                        content: tAraeValue,
-                    })
-                }>
-                    Send
-                </button>
+                <AICard />
+                <ShellCard />
             </div>
-            <br />
-            <label>AI: </label>
-            <button onClick={() => setAiOutput("")}>Clear</button>
-            <div id="ai">{aiOutput}</div>
-            <br />
-            <label>SCP: </label>
-            <button onClick={() => setScpOutput("")}>Clear</button>
-            <div id="scp">{scpOutput}</div>
         </div>
     );
 };
