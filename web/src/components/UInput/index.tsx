@@ -1,6 +1,5 @@
 import {
     useState,
-    Fragment
 } from 'react';
 import type {
     JSX,
