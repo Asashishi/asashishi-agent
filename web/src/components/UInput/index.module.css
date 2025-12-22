@@ -1,0 +1,29 @@
+.InputBarWarpper {
+    position: absolute;
+    bottom: 3vh;
+    width: 73vw;
+}
+
+.InputBar {
+    margin-left: 6vw;
+    width: 73vw;
+    margin-right: 6vw;
+    position: relative;
+}
+
+.InputBarTextarea {
+    width: 60vw;
+    height: 60px;
+    columns: 5;
+    font-size: 18px;
+    overflow: auto;
+}
+
+.InputBarButton {
+    padding: 10;
+    width: 100px;
+    height: 25px;
+    color: #000;
+    background-color: white;
+    border-radius: 15px;
+}

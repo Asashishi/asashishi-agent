@@ -1,8 +1,8 @@
 .SideBar {
-    min-width: 20vw;
+    min-width: 270px;
+    max-width: 20vw;
     min-height: 100vh;
-    margin-right: 2vw;
-    border: 3px solid wheat;
+    overflow-y: auto;
 }
 
 .SideBarTitle {
@@ -12,8 +12,8 @@
 }
 
 .TitleIcon {
-    margin: 5px;
-    transform: translateY(12px);
+    margin-right: 10px;
+    transform: translateY(7px);
     width: 36px;
     height: 36px;
 }

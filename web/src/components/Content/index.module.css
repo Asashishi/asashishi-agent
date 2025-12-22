@@ -1,0 +1,10 @@
+.Content {
+    max-width: 80vw;
+    min-width: 80vw;
+    padding: 10px;
+    border-radius: 5px;
+    height: 95vh;
+    position: relative;
+    margin: 10px;
+    background-color: black;
+}

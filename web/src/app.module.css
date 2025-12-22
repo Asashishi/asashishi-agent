@@ -1,5 +1,7 @@
-.app {
+.App {
     display: flex;
     color: white;
-    background-color: black;
+    width: 100%;
+    background-color: #252525;
+    overflow: hidden;
 }

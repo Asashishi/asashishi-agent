@@ -3,9 +3,10 @@ import {
 } from 'react';
 import type {
     JSX,
-    ChangeEvent,
+    ChangeEvent
 } from 'react';
 import wsInstance from '../../utils/websocket';
+import styles from "./index.module.css";
 
 const UInput: React.FC = (): JSX.Element => {
     const [uInput, setUInput] = useState<string>("");
@@ -15,27 +16,27 @@ const UInput: React.FC = (): JSX.Element => {
         setValue: setUInput,
     }]);
     return (
-        <div>
-            <label htmlFor="uInput">Input: </label>
-            <div>
+        <div className={styles.InputBarWarpper}>
+            <div className={styles.InputBar}>
                 <textarea
-                    id="uInput"
-                    rows={10}
-                    cols={50}
+                    className={styles.InputBarTextarea}
                     value={uInput}
-                    onChange={(event: ChangeEvent<HTMLTextAreaElement>) =>
+                    onChange={(event: ChangeEvent<HTMLTextAreaElement>): void =>
                         setUInput(event.target.value)
                     }
                 />
+                <div
+                    className={styles.InputBarButton}
+                    onClick={() =>
+                        wsInstance.send({
+                            type: 'user_input',
+                            content: uInput,
+                        })
+                    }
+                >
+                    Send
+                </div>
             </div>
-            <button onClick={() =>
-                wsInstance.send({
-                    type: 'user_input',
-                    content: uInput,
-                })
-            }>
-                Send
-            </button>
         </div>
     );
 };
