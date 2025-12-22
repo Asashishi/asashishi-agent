@@ -1,18 +1,23 @@
 export type ContextStorageItemPair<T> = {
     key: string,
     contextItem: ContextStorageItem<T>,
-}
-
+};
 
 export class ContextStorageItem<T> {
     public value: T;
-    public setValue: (item: T) => void;
-    public constructor(value: T, setValue: React.Dispatch<React.SetStateAction<T>>) {
+    private setState: React.Dispatch<React.SetStateAction<T>>;
+
+    public constructor(
+        value: T,
+        setState: React.Dispatch<React.SetStateAction<T>>
+    ) {
         this.value = value;
-        this.setValue = (next: T): void => {
-            setValue(next);
-            this.value = next;
-        } 
+        this.setState = setState;
+    }
+
+    public setValue(nValue: T): void {
+        this.value = nValue;
+        this.setState(nValue);
     }
 };
 
