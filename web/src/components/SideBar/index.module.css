@@ -18,26 +18,19 @@
     height: 36px;
 }
 
-.Options {
-    padding: 5px;
-    font-weight: 700;
-}
-
-.Options:hover {
-    cursor: pointer;
-    transition: all 0.3s;
-    background-color: rgb(130, 160, 170);
-}
-
+.Options,
 .OptionsActivite {
     padding: 5px;
     font-weight: 700;
     transition: all 0.3s;
+    cursor: pointer;
+}
+
+.Options:hover,
+.OptionsActivite:hover {
     background-color: rgb(105, 130, 135);
 }
 
-.OptionsActivite:hover {
-    cursor: pointer;
-    transition: all 0.3s;
-    background-color: rgb(130, 160, 170);
+.OptionsActivite {
+    background-color: rgb(105, 130, 135);
 }

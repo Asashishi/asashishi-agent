@@ -14,9 +14,7 @@ const App: React.FC = (): JSX.Element => {
             <SideBar />
             <div>
                 <Header />
-                <div>
-                    <UInput />
-                </div>
+                <UInput />
                 <AICard />
                 <ShellCard />
             </div>

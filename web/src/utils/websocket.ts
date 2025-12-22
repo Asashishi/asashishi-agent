@@ -1,5 +1,3 @@
-import ContextStorage, { ContextStorageItem } from "./context_storage";
-
 const ReconnectDelay: number = 100; 
 const WebSocketURL: string = "ws://localhost:3000/ws";
 
@@ -12,15 +10,16 @@ export type WebSocketMsg = {
     content: string
 }
 
-export type ContextDependency = {
+export type ContextDependency<T> = {
     key: string
-    contextStorage: ContextStorage
+    value: T,
+    setValue: React.Dispatch<React.SetStateAction<T>>,
 }
 
 export type AsashishiAgentWsDependencies = {
-    uInput?: ContextStorageItem<string>,
-    aiOutput?: ContextStorageItem<string>,
-    shellOutput?: ContextStorageItem<string>,
+    uInput?: ContextDependency<string>,
+    aiOutput?: ContextDependency<string>,
+    shellOutput?: ContextDependency<string>,
 }
 
 class AsashishiAgentWs {
@@ -28,9 +27,9 @@ class AsashishiAgentWs {
     private ws: WebSocket;
     private dependencies: AsashishiAgentWsDependencies;
 
-    public injectDependencies(dependencies: ContextDependency[]): void {
+    public injectDependencies(dependencies: ContextDependency<any>[]): void {
         for (const item of dependencies) {
-            this.dependencies[item.key as keyof AsashishiAgentWsDependencies] = item.contextStorage.get(item.key);
+            this.dependencies[item.key as keyof AsashishiAgentWsDependencies] = item;
         }
     }
 

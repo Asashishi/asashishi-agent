@@ -1,31 +1,25 @@
 import React, {
     useState,
-    useEffect,
-    Fragment
+    useContext
 } from 'react';
 import type { JSX } from 'react';
-import { ShellCardContext } from '../../context';
 import wsInstance from '../../utils/websocket';
-import { ContextStorageItem } from '../../utils/context_storage';
+import { AsashishiAgentContext } from '../../context';
 
 const ShellCard: React.FC = (): JSX.Element => {
-    const shellOutput: ContextStorageItem<string> = new ContextStorageItem(...useState<string>(""));
-    useEffect(() => {
-        ShellCardContext.set([{
-            key: "shellOutput",
-            contextItem: shellOutput,
-        }]);
-        wsInstance.injectDependencies([{
-            key: "shellOutput",
-            contextStorage: ShellCardContext,
-        }]);
-    }, []);
+    const { tab } = useContext(AsashishiAgentContext);
+    const [shellOutput, setShellOutput] = useState<string>("");
+    wsInstance.injectDependencies([{
+        key: "shellOutput",
+        value: shellOutput,
+        setValue: setShellOutput,
+    }]);
     return (
-        <Fragment>
-            <label>SCP: </label>
-            <button onClick={() => shellOutput.setValue("")}>Clear</button>
-            <div id="scp">{shellOutput.value}</div>
-        </Fragment>
+        <div style={{ display: tab === "Shell" ? "" : "none"  }}>
+            <label>Shell: </label>
+            <button onClick={() => setShellOutput("")}>Clear</button>
+            <div>{shellOutput}</div>
+        </div>
     );
 };
 

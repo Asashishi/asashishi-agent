@@ -1,22 +1,12 @@
 import {
-    useState,
-    useEffect
+    useContext
 } from 'react';
 import type { JSX } from 'react';
+import { AsashishiAgentContext } from '../../context';
 import styles from "./index.module.css";
-import { SideBarContext } from '../../context';
-import { ContextStorageItem } from '../../utils/context_storage';
-
-type Tab = "AI" | "Shell";
 
 const SideBar: React.FC = (): JSX.Element => {
-    const tab = new ContextStorageItem(...useState<Tab>("AI"));
-    useEffect(() => {
-        SideBarContext.set([{
-            key: "tab",
-            contextItem: tab,
-        }]);
-    }, []);
+    const { tab, setTab } = useContext(AsashishiAgentContext);
     return(
         <div className={styles.SideBar}>
             <h2 className={styles.SideBarTitle}>
@@ -24,9 +14,9 @@ const SideBar: React.FC = (): JSX.Element => {
                 Asashishi Agent
             </h2>
             <div
-                onClick={() => tab.setValue("AI")}
+                onClick={() => setTab("AI")}
                 className={
-                    tab.value === "AI"
+                    tab === "AI"
                     ? styles.OptionsActivite
                     : styles.Options
                 }
@@ -34,9 +24,9 @@ const SideBar: React.FC = (): JSX.Element => {
                 AI Chat
             </div>
             <div
-                onClick={() => tab.setValue("Shell")}
+                onClick={() => setTab("Shell")}
                 className={
-                    tab.value === "Shell"
+                    tab === "Shell"
                     ? styles.OptionsActivite
                     : styles.Options
                 }
