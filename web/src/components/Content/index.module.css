@@ -1,10 +1,11 @@
 .Content {
-    max-width: 80vw;
-    min-width: 80vw;
+    max-width: 1800px;
+    min-width: 78.5vw;
     padding: 10px;
     border-radius: 5px;
-    height: 95vh;
+    margin-top: 1.5vh;
+    margin-bottom: 1.5vh;
+    margin-right: 1.5vh;
     position: relative;
-    margin: 10px;
-    background-color: black;
+    background-color: rgb(15, 15, 15);
 }
