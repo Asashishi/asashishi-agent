@@ -1,4 +1,4 @@
-import type { ContextStorageItem } from "./context_storage";
+import ContextStorage, { ContextStorageItem } from "./context_storage";
 
 export type WebSocketMsg = {
     type: string
@@ -19,13 +19,16 @@ class AsashishiAgentWs {
     private scpOutputState: ContextStorageItem<string> | undefined;
 
     public injectContextItems(
-        uInputState: ContextStorageItem<string>,
-        aiOutputState: ContextStorageItem<string>,
-        scpOutputState: ContextStorageItem<string>,
+        contextStorage: ContextStorage,
+        dependencies: {
+            uInput: string,
+            aiOutput: string,
+            scpOutput: string
+        }
     ): void {
-        this.uInputState = uInputState;
-        this.aiOutputState = aiOutputState;
-        this.scpOutputState = scpOutputState;
+        this.uInputState = contextStorage.get(dependencies.uInput);
+        this.aiOutputState = contextStorage.get(dependencies.aiOutput);
+        this.scpOutputState = contextStorage.get(dependencies.scpOutput);
     }
 
     public constructor()  {

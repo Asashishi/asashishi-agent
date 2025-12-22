@@ -7,14 +7,6 @@ import { MainPageContext } from './context';
 import wsInstance from './utils/websocket';
 import { ContextStorageItem } from './utils/context_storage';
 
-const injectContextItems = (): void => {
-    wsInstance.injectContextItems(
-        MainPageContext.get("tAraeValue")!,
-        MainPageContext.get("aiOutput")!,
-        MainPageContext.get("scpOutput")!,
-    );
-};
-
 const App: React.FC = (): JSX.Element => {
     const [aiOutput, setAiOutput] = useState<string>("");
     const [scpOutput, setScpOutput] = useState<string>("");
@@ -35,7 +27,7 @@ const App: React.FC = (): JSX.Element => {
                 contextItem: new ContextStorageItem<string>(tAraeValue, setTAraeValue),
             },
         ]);
-        injectContextItems();
+        wsInstance.injectContextItems(MainPageContext, { uInput: "tAraeValue", aiOutput: "aiOutput", scpOutput: "scpOutput" });
     }, []);
 
     return (
