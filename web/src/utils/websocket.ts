@@ -1,6 +1,15 @@
-import type { ContextStorageItem, WebSocketMsg } from '../types/index';
+import type { ContextStorageItem } from "./context_storage";
+
+export type WebSocketMsg = {
+    type: string
+    content: string
+}
 
 const WebSocketURL: string = "ws://localhost:3000/ws";
+
+const Warn: string = "⚠️ Something went wrong: ";
+const Connected: string = "✅ WebSocket service connected";
+const Closed: string = "❌ WebSocket service connect closed";
 
 class AsashishiAgentWs {
 
@@ -21,14 +30,14 @@ class AsashishiAgentWs {
 
     public constructor()  {
         this.ws = new WebSocket(WebSocketURL);
-        this.ws.onopen = () => console.log("✅ 已连接到 WebSocket 服务");
+        this.ws.onopen = () => console.log(Connected);
         this.ws.onclose = () => {
-            console.log("\n ❌ 连接已关闭");
+            console.log(Closed);
             this.ws = new WebSocket(WebSocketURL);
         };
         this.ws.onerror = (error: unknown) => {
             this.ws.close();
-            console.error("\n ⚠️ 出错: " + (error as Error).message);
+            console.warn(Warn + (error as Error).message);
         }
         this.ws.onmessage = (event: MessageEvent<string>) => {
           if (this.uInputState?.value != "") {

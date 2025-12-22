@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type {
     JSX,
     ChangeEvent
 } from 'react';
 import { MainPageContext } from './context';
 import wsInstance from './utils/websocket';
+import { ContextStorageItem } from './utils/context_storage';
 
 const injectContextItems = (): void => {
     wsInstance.injectContextItems(
@@ -19,31 +20,23 @@ const App: React.FC = (): JSX.Element => {
     const [scpOutput, setScpOutput] = useState<string>("");
     const [tAraeValue, setTAraeValue] = useState<string>("");
 
-    MainPageContext.set<string>([
-        {
-            key: "aiOutput",
-            contextItem: {
-                value: aiOutput,
-                setValue: setAiOutput,
+    useEffect(() => {
+        MainPageContext.set<string>([
+            {
+                key: "aiOutput",
+                contextItem: new ContextStorageItem<string>(aiOutput, setAiOutput),
             },
-        },
-        {
-            key: "scpOutput",
-            contextItem: {
-                value: scpOutput,
-                setValue: setScpOutput,
-            }
-        },
-        {
-            key: "tAraeValue",
-            contextItem: {
-                value: tAraeValue,
-                setValue: setTAraeValue,
-            }
-        }
-    ]);
-
-    injectContextItems();
+            {
+                key: "scpOutput",
+                contextItem: new ContextStorageItem<string>(scpOutput,setScpOutput),
+            },
+            {
+                key: "tAraeValue",
+                contextItem: new ContextStorageItem<string>(tAraeValue, setTAraeValue),
+            },
+        ]);
+        injectContextItems();
+    }, []);
 
     return (
         <div>

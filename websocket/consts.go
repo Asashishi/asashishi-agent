@@ -1,6 +1,6 @@
 package websocket
 
-const WebSocketPingDelay int = 5
+const WebSocketPingDelay int = 1 // sec
 
 const ClientExit string = "Client Exit"
 const ProcessExit string = "Process Exit"
