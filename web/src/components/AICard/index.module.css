@@ -1,0 +1,12 @@
+.AIOutputWrapper {
+    min-height: 67vh;
+    overflow-y: scroll;
+}
+
+.AIOutput {
+    white-space: pre-wrap;
+}
+
+.UserInput {
+    white-space: pre-wrap;
+}

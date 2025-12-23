@@ -110,6 +110,13 @@ func WithWebMode() {
 					processingFlag = true
 					go func() {
 						cli.StreamChat(input)
+						if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
+							Type: websocket.AIOutputEndType,
+						}); innerErr != nil {
+							fmt.Println(global.GetStyledWarn(innerErr.Error()))
+						} else {
+							WriteOutputToWebWithRetry(ctx, conn, &cli, jsonMsg, false, false, false)
+						}
 						processingFlag = false
 					}()
 				}

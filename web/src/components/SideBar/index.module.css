@@ -1,13 +1,31 @@
 .SideBar {
-    min-width: 300px;
-    min-height: 100vh;
-    overflow-y: auto;
+    height: 100vh;
+    overflow-y: scroll;
 }
+
+.SideBar::-webkit-scrollbar {
+    width: 10px; /* 滚动条宽度 */
+}
+
+.SideBar::-webkit-scrollbar-track {
+    background: #353535; /* 轨道颜色 */
+}
+
+.SideBar::-webkit-scrollbar-thumb {
+    background: #000000; /* 滑块颜色 */
+    border-radius: 4px;
+}
+
+.SideBar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 
 .SideBarTitle {
     align-items: center;
     text-align: center;
     justify-content: center;
+    padding-bottom: 15px;
 }
 
 .TitleIcon {
@@ -18,18 +36,50 @@
 }
 
 .Options,
+.OptionsNewSession,
 .OptionsActivite {
     padding: 5px;
     font-weight: 700;
+    font-size: 1.2rem;
     transition: all 0.3s;
     cursor: pointer;
 }
 
 .Options:hover,
+.OptionsNewSession:hover,
 .OptionsActivite:hover {
     background-color: rgb(105, 130, 135);
 }
 
+.Options:active,
+.OptionsNewSession:active,
+.OptionsActivite:active {
+    background-color: rgb(166, 203, 210);
+}
+
 .OptionsActivite {
     background-color: rgb(105, 130, 135);
+}
+
+.OptionsNewSession {
+    margin-bottom: 10px;
+    border: 3px dashed #999;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.OptionsNewSession span {
+    display: inline-block;
+    font-size: 1.25rem;
+    margin-left: 5px;
+    transition: all 0.5s ease;
+}
+
+.OptionsNewSession:hover span {
+    animation: spin 1s ease;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
 }

@@ -1,29 +1,65 @@
-.InputBarWarpper {
+.InputBarWrapper {
+    bottom: 2vh;
+    width: 80%;
     position: absolute;
-    bottom: 1vh;
-    width: 73vw;
 }
 
 .InputBar {
-    margin-left: 6vw;
-    width: 73vw;
-    margin-right: 6vw;
-    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 10px;
 }
 
-.InputBarTextarea {
-    width: 60vw;
-    height: 60px;
-    columns: 5;
-    font-size: 18px;
-    overflow: auto;
+.InputBar .InputBarTextarea {
+    width: 100%;
+    height: 67px;
+    padding: 0;
+    display: block;
+    margin: 0;
+    font-size: 1.2rem;
+    resize: none;
+    outline: none;
+    border: 0;
+    font-weight: 500;
+    padding: 5px;
+    overflow-y: auto;
+    box-sizing: border-box;
 }
 
-.InputBarButton {
-    padding: 10;
-    width: 100px;
-    height: 25px;
-    color: #000;
+.InputBar .InputBarButtonsWrapper {
+    display: flex;
+    width: 100%;
+    padding-top: 5px;
+    justify-content: right;
     background-color: white;
-    border-radius: 15px;
+}
+
+.InputBarButtonsWrapper .InputBarButton {
+    cursor: pointer;
+    padding-top: 5px;
+    padding-left: 15px;
+    width: 130px;
+    min-height: 30px;
+    max-height: 30px;
+    color: #ffffff;
+    font-weight: 500;
+    background-color: #000;
+    border-radius: 8px;
+    margin-right: 20px;
+    margin-bottom: 5px;
+    position: relative;
+    transition: all 0.3s;
+}
+
+.InputBarButton:hover {
+    background-color: #303030;
+}
+.InputBarButton:active {
+    background-color: #505050;
+}
+
+.InputBarButton span {
+    position: absolute;
+    right: 10px;
+    font-weight: 600;
 }

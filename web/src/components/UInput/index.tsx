@@ -16,25 +16,36 @@ const UInput: React.FC = (): JSX.Element => {
         setValue: setUInput,
     }]);
     return (
-        <div className={styles.InputBarWarpper}>
+        <div className={styles.InputBarWrapper}>
             <div className={styles.InputBar}>
                 <textarea
-                    className={styles.InputBarTextarea}
+                    name="uInput"
                     value={uInput}
+                    className={styles.InputBarTextarea}
                     onChange={(event: ChangeEvent<HTMLTextAreaElement>): void =>
                         setUInput(event.target.value)
                     }
                 />
-                <div
-                    className={styles.InputBarButton}
-                    onClick={() =>
-                        wsInstance.send({
-                            type: 'user_input',
-                            content: uInput,
-                        })
-                    }
-                >
-                    Send
+                <div className={styles.InputBarButtonsWrapper}>
+                    <div
+                        className={styles.InputBarButton}
+                        onClick={() => setUInput("")}
+                    >
+                        Clear
+                        <span>⌫</span>
+                    </div>
+                    <div
+                        className={styles.InputBarButton}
+                        onClick={() =>
+                            wsInstance.send({
+                                type: 'user_input',
+                                content: uInput,
+                            })
+                        }
+                    >
+                        Send
+                        <span>↑</span>
+                    </div>
                 </div>
             </div>
         </div>

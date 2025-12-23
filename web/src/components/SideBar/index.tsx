@@ -13,25 +13,34 @@ const SideBar: React.FC = (): JSX.Element => {
                 <img src='./app.ico' className={styles.TitleIcon}/>
                 Asashishi Agent
             </h2>
-            <div
-                onClick={() => setTab("AI")}
-                className={
-                    tab === "AI"
-                    ? styles.OptionsActivite
-                    : styles.Options
-                }
-            >
-                AI Chat
-            </div>
-            <div
-                onClick={() => setTab("Shell")}
-                className={
-                    tab === "Shell"
-                    ? styles.OptionsActivite
-                    : styles.Options
-                }
-            > 
-                Web Shell
+            <div>
+                <div
+                    className={styles.OptionsNewSession}
+                    onClick={() => {}}
+                >
+                    NewSession
+                    <span>⟳</span>
+                </div>
+                <div
+                    onClick={() => setTab("AI")}
+                    className={
+                        tab === "AI"
+                        ? styles.OptionsActivite
+                        : styles.Options
+                    }
+                >
+                    AI Chat
+                </div>
+                <div
+                    onClick={() => setTab("Shell")}
+                    className={
+                        tab === "Shell"
+                        ? styles.OptionsActivite
+                        : styles.Options
+                    }
+                > 
+                    Web Shell
+                </div>
             </div>
         </div>
     )
