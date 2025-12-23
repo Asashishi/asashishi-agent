@@ -18,7 +18,7 @@ const ShellCard: React.FC = (): JSX.Element => {
         <div style={{ display: tab === "Shell" ? "" : "none"  }}>
             <label>Shell: </label>
             <button onClick={() => setShellOutput("")}>Clear</button>
-            <div>{shellOutput}</div>
+            <div style={{ whiteSpace: "pre-wrap" }}>{shellOutput}</div>
         </div>
     );
 };

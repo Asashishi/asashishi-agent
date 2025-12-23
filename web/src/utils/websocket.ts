@@ -1,5 +1,5 @@
 import { GreenSignal, GreySignal, RedSignal } from "../consts/signal";
-import { AIOutputEndType, AIOutputType, ChildProcessOutputType, SysErrorType, SystMsgType, SystWarnType } from '../consts/websocket';
+import { AIOutputEndType, AIOutputType, ChildProcessOutputType } from '../consts/websocket';
 import type { AsashishiAgentWsDependencies, ContextDependency, DisplayMsg, WebSocketMsg } from "../types/websocket_type";
 
 const ReconnectDelay: number = 500; 
@@ -84,8 +84,8 @@ class AsashishiAgentWs {
                 this.dependencies.aiOutput?.setValue("");
                 break;
             }   
-            case SystMsgType || SystWarnType || SysErrorType || ChildProcessOutputType: {
-                this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content + '\n');
+            case ChildProcessOutputType: {
+                this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content);
                 break;
             }
         }
