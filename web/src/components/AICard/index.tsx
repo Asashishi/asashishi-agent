@@ -34,7 +34,7 @@ const AICard: React.FC = (): JSX.Element => {
               behavior: "smooth",
             });
         }
-    }, [aiOutput]);
+    }, [ioHistories, aiOutput]);
     return (
         <div
             ref={cardRef}
