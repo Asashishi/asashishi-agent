@@ -1,5 +1,6 @@
 import { GreenSignal, GreySignal, RedSignal } from "../consts/signal";
-import type { AsashishiAgentWsDependencies, ContextDependency, WebSocketMsg } from "../types/websocket_type";
+import { AIOutputEndType, AIOutputType, ChildProcessOutputType, SysErrorType, SystMsgType, SystWarnType } from '../consts/websocket';
+import type { AsashishiAgentWsDependencies, ContextDependency, DisplayMsg, WebSocketMsg } from "../types/websocket_type";
 
 const ReconnectDelay: number = 500; 
 const WebSocketURL: string = "ws://localhost:3000/ws";
@@ -44,7 +45,15 @@ class AsashishiAgentWs {
     }
 
     public send(msg: WebSocketMsg): void {
-        return this.ws.send(JSON.stringify(msg));
+        this.dependencies.outputHistories?.setValue((prev: DisplayMsg[]): DisplayMsg[] => {
+            const next: DisplayMsg[] = prev;
+            next.push({
+                type: "input",
+                content: msg.content,
+            });
+            return next;
+        });
+        this.ws.send(JSON.stringify(msg));
     }
 
     public reconnect = (): void => {
@@ -58,10 +67,27 @@ class AsashishiAgentWs {
     }
 
     public disPlayMsg(msg: WebSocketMsg): void {
-        if (msg.type === "ai_msg") {
-            this.dependencies.aiOutput?.setValue((prev: string): string => prev + msg.content);
-        } else {
-            this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content + '\n');
+        switch (msg.type) {
+            case AIOutputType: {
+                this.dependencies.aiOutput?.setValue((prev: string): string => prev + msg.content);
+                break;
+            }
+            case AIOutputEndType: {
+                this.dependencies.outputHistories?.setValue((prev: DisplayMsg[]): DisplayMsg[] => {
+                    const next: DisplayMsg[] = prev;
+                    next.push({
+                        type: "output",
+                        content: this.dependencies.aiOutput!.value!,
+                    });
+                    return next;
+                });
+                this.dependencies.aiOutput?.setValue("");
+                break;
+            }   
+            case SystMsgType || SystWarnType || SysErrorType || ChildProcessOutputType: {
+                this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content + '\n');
+                break;
+            }
         }
     }
 }

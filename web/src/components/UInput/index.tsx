@@ -22,9 +22,7 @@ const UInput: React.FC = (): JSX.Element => {
                     name="uInput"
                     value={uInput}
                     className={styles.InputBarTextarea}
-                    onChange={(event: ChangeEvent<HTMLTextAreaElement>): void =>
-                        setUInput(event.target.value)
-                    }
+                    onChange={(event: ChangeEvent<HTMLTextAreaElement>): void => setUInput(event.target.value)}
                 />
                 <div className={styles.InputBarButtonsWrapper}>
                     <div
@@ -36,12 +34,13 @@ const UInput: React.FC = (): JSX.Element => {
                     </div>
                     <div
                         className={styles.InputBarButton}
-                        onClick={() =>
+                        onClick={() => {
+                            setUInput("");
                             wsInstance.send({
                                 type: 'user_input',
                                 content: uInput,
-                            })
-                        }
+                            });
+                        }}
                     >
                         Send
                         <span>↑</span>

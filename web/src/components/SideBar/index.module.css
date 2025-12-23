@@ -4,22 +4,21 @@
 }
 
 .SideBar::-webkit-scrollbar {
-    width: 10px; /* 滚动条宽度 */
+    width: 10px;
 }
 
 .SideBar::-webkit-scrollbar-track {
-    background: #353535; /* 轨道颜色 */
+    background: #353535;
 }
 
 .SideBar::-webkit-scrollbar-thumb {
-    background: #000000; /* 滑块颜色 */
+    background: #000000;
     border-radius: 4px;
 }
 
 .SideBar::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-
 
 .SideBarTitle {
     align-items: center;

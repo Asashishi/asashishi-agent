@@ -1,12 +1,45 @@
 .AIOutputWrapper {
     min-height: 67vh;
+    max-height: 67vh;
     overflow-y: scroll;
+    border-radius: 15px;
+}
+
+.AIOutputWrapper::-webkit-scrollbar {
+    width: 10px;
+}
+
+.AIOutputWrapper::-webkit-scrollbar-track {
+    background: #353535;
+}
+
+.AIOutputWrapper::-webkit-scrollbar-thumb {
+    background: #000000;
+    border-radius: 4px;
+}
+
+.AIOutputWrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .AIOutput {
     white-space: pre-wrap;
+    background: #252525;
+    margin: 10px;
+    padding: 10px;
+    border-radius: 15px;
 }
 
 .UserInput {
+    margin: 5px;
     white-space: pre-wrap;
+    text-align: left;
+}
+
+.UserInput span {
+    margin: 10px;
+    padding-left: 3px;
+    padding-right: 3px;
+    background-color: rgb(80, 80, 80);
+    border-radius: 5px;
 }
