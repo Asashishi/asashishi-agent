@@ -9,10 +9,9 @@ import styles from "./index.module.css";
 import type { DisplayMsg } from '../../types/websocket_type';
 
 const AICard: React.FC = (): JSX.Element => {
-
     const { tab } = useContext(AsashishiAgentContext);
     const [aiOutput, setAIOutput] = useState<string>("");
-    const [outputHistories, setoutputHistories] = useState<DisplayMsg[]>([]);
+    const { ioHistories, setIOHistories } = useContext(AsashishiAgentContext);
     wsInstance.injectDependencies([
         {
             key: "aiOutput",
@@ -20,14 +19,14 @@ const AICard: React.FC = (): JSX.Element => {
             setValue: setAIOutput,
         },
         {
-            key: "outputHistories",
-            value: outputHistories,
-            setValue: setoutputHistories,
+            key: "ioHistories",
+            value: ioHistories,
+            setValue: setIOHistories,
         },
     ]);
     return (
         <div style={{ display: tab === "AI" ? "" : "none" }} className={styles.AIOutputWrapper}>
-            {outputHistories.map((item: DisplayMsg): JSX.Element => {
+            {ioHistories.map((item: DisplayMsg): JSX.Element => {
                 if (item.type === "input") {
                     return (
                         <div className={styles.UserInput}>

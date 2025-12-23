@@ -45,14 +45,6 @@ class AsashishiAgentWs {
     }
 
     public send(msg: WebSocketMsg): void {
-        this.dependencies.outputHistories?.setValue((prev: DisplayMsg[]): DisplayMsg[] => {
-            const next: DisplayMsg[] = prev;
-            next.push({
-                type: "input",
-                content: msg.content,
-            });
-            return next;
-        });
         this.ws.send(JSON.stringify(msg));
     }
 
@@ -73,7 +65,7 @@ class AsashishiAgentWs {
                 break;
             }
             case AIOutputEndType: {
-                this.dependencies.outputHistories?.setValue((prev: DisplayMsg[]): DisplayMsg[] => {
+                this.dependencies.ioHistories?.setValue((prev: DisplayMsg[]): DisplayMsg[] => {
                     const next: DisplayMsg[] = prev;
                     next.push({
                         type: "output",

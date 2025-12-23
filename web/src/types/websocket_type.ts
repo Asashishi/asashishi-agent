@@ -15,7 +15,7 @@ export type AsashishiAgentWsDependencies = {
     aiOutput?: ContextDependency<string>;
     shellOutput?: ContextDependency<string>;
     wsSignal?: ContextDependency<SignalStaus>;
-    outputHistories?: ContextDependency<DisplayMsg[]>;
+    ioHistories?: ContextDependency<DisplayMsg[]>;
 }
 
 export type DisplayMsg = {

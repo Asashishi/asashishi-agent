@@ -1,4 +1,5 @@
 import {
+    useContext,
     useState,
 } from 'react';
 import type {
@@ -7,9 +8,12 @@ import type {
 } from 'react';
 import wsInstance from '../../utils/websocket';
 import styles from "./index.module.css";
+import { AsashishiAgentContext } from '../../context';
+import type { DisplayMsg } from '../../types/websocket_type';
 
 const UInput: React.FC = (): JSX.Element => {
     const [uInput, setUInput] = useState<string>("");
+    const { setIOHistories } = useContext(AsashishiAgentContext);
     wsInstance.injectDependencies([{
         key: "uInput",
         value: uInput,
@@ -35,11 +39,19 @@ const UInput: React.FC = (): JSX.Element => {
                     <div
                         className={styles.InputBarButton}
                         onClick={() => {
-                            setUInput("");
+                            setIOHistories((prev: DisplayMsg[]): DisplayMsg[] => {
+                                const next: DisplayMsg[] = prev;
+                                next.push({
+                                    type: "input",
+                                    content: uInput,
+                                });
+                                return next;
+                            });
                             wsInstance.send({
                                 type: 'user_input',
                                 content: uInput,
                             });
+                            setUInput("");
                         }}
                     >
                         Send
