@@ -61,6 +61,9 @@ class AsashishiAgentWs {
     public disPlayMsg(msg: WebSocketMsg): void {
         switch (msg.type) {
             case AIOutputType: {
+                if (this.dependencies.tab?.value !== "chat") {
+                    this.dependencies.tab?.setValue("chat");
+                }
                 this.dependencies.aiOutput?.setValue((prev: string): string => prev + msg.content);
                 break;
             }
@@ -69,6 +72,7 @@ class AsashishiAgentWs {
                     const next: DisplayMsg[] = prev;
                     next.push({
                         type: "output",
+                        diplayPosition: "chat",
                         content: this.dependencies.aiOutput!.value!,
                     });
                     return next;
@@ -77,6 +81,9 @@ class AsashishiAgentWs {
                 break;
             }   
             case ChildProcessOutputType: {
+                if (this.dependencies.tab?.value !== "shell") {
+                    this.dependencies.tab?.setValue("shell");
+                }
                 this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content);
                 break;
             }

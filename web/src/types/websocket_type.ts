@@ -12,13 +12,17 @@ export type ContextDependency<T> = {
 }
 
 export type AsashishiAgentWsDependencies = {
+    tab?: ContextDependency<Tab>;
     aiOutput?: ContextDependency<string>;
     shellOutput?: ContextDependency<string>;
     wsSignal?: ContextDependency<SignalStaus>;
     ioHistories?: ContextDependency<DisplayMsg[]>;
 }
 
+export type Tab = "chat" | "shell";
+
 export type DisplayMsg = {
     content: string;
     type: "input" | "output";
+    diplayPosition: Tab;
 }

@@ -15,7 +15,7 @@ const ShellCard: React.FC = (): JSX.Element => {
         setValue: setShellOutput,
     }]);
     return (
-        <div style={{ display: tab === "Shell" ? "" : "none"  }}>
+        <div style={{ display: tab === "shell" ? "" : "none", maxHeight: "67vh", overflowY: "scroll" }}>
             <label>Shell: </label>
             <button onClick={() => setShellOutput("")}>Clear</button>
             <div style={{ whiteSpace: "pre-wrap" }}>{shellOutput}</div>

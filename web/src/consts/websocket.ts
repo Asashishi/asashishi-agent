@@ -7,5 +7,4 @@ export const SystWarnType: string = "sys_warn";
 export const SysErrorType: string = "sys_error";
 export const UserInputType: string = "user_input";
 export const AIOutputEndType: string = "ai_msg_end";
-// 新增 exec_start
 export const ChildProcessOutputType: string = "exec_output";

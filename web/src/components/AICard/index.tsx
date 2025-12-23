@@ -1,5 +1,7 @@
-import {
+import React, {
     useContext,
+    useEffect,
+    useRef,
     useState,
 } from 'react';
 import type { JSX } from 'react';
@@ -12,6 +14,7 @@ const AICard: React.FC = (): JSX.Element => {
     const { tab } = useContext(AsashishiAgentContext);
     const [aiOutput, setAIOutput] = useState<string>("");
     const { ioHistories, setIOHistories } = useContext(AsashishiAgentContext);
+    const cardRef: React.Ref<HTMLDivElement> | undefined = useRef(null);
     wsInstance.injectDependencies([
         {
             key: "aiOutput",
@@ -24,10 +27,22 @@ const AICard: React.FC = (): JSX.Element => {
             setValue: setIOHistories,
         },
     ]);
+    useEffect(() => {
+        if (cardRef.current) {
+            cardRef.current?.scrollTo({
+              top: cardRef.current.scrollHeight,
+              behavior: "smooth",
+            });
+        }
+    }, [aiOutput]);
     return (
-        <div style={{ display: tab === "AI" ? "" : "none" }} className={styles.AIOutputWrapper}>
-            {ioHistories.map((item: DisplayMsg): JSX.Element => {
-                if (item.type === "input") {
+        <div
+            ref={cardRef}
+            className={styles.AIOutputWrapper}
+            style={{ display: tab === "chat" ? "" : "none" }}
+        >
+            {ioHistories.map((item: DisplayMsg): JSX.Element | void => {
+                if (item.type === "input" && item.diplayPosition === "chat") {
                     return (
                         <div className={styles.UserInput}>
                             <span>
@@ -36,8 +51,9 @@ const AICard: React.FC = (): JSX.Element => {
                             {item.content}
                         </div>
                     )
+                } else if (item.type === "output") {
+                    return <div className={styles.AIOutput}>{item.content}</div>
                 }
-                return <div className={styles.AIOutput}>{item.content}</div>
             })}
             {aiOutput && <div className={styles.AIOutput}>{aiOutput}</div>}
         </div>

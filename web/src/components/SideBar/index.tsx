@@ -4,9 +4,17 @@ import {
 import type { JSX } from 'react';
 import { AsashishiAgentContext } from '../../context';
 import styles from "./index.module.css";
+import wsInstance from '../../utils/websocket';
 
 const SideBar: React.FC = (): JSX.Element => {
     const { tab, setTab } = useContext(AsashishiAgentContext);
+
+    wsInstance.injectDependencies([{
+        key: "tab",
+        value: tab,
+        setValue: setTab,
+    }]);
+
     return(
         <div className={styles.SideBar}>
             <h2 className={styles.SideBarTitle}>
@@ -18,13 +26,13 @@ const SideBar: React.FC = (): JSX.Element => {
                     className={styles.OptionsNewSession}
                     onClick={() => {}}
                 >
-                    NewSession
+                    New Session
                     <span>⟳</span>
                 </div>
                 <div
-                    onClick={() => setTab("AI")}
+                    onClick={() => setTab("chat")}
                     className={
-                        tab === "AI"
+                        tab === "chat"
                         ? styles.OptionsActivite
                         : styles.Options
                     }
@@ -32,9 +40,9 @@ const SideBar: React.FC = (): JSX.Element => {
                     AI Chat
                 </div>
                 <div
-                    onClick={() => setTab("Shell")}
+                    onClick={() => setTab("shell")}
                     className={
-                        tab === "Shell"
+                        tab === "shell"
                         ? styles.OptionsActivite
                         : styles.Options
                     }

@@ -13,7 +13,7 @@ import type { DisplayMsg } from '../../types/websocket_type';
 
 const UInput: React.FC = (): JSX.Element => {
     const [uInput, setUInput] = useState<string>("");
-    const { setIOHistories } = useContext(AsashishiAgentContext);
+    const { setIOHistories, tab } = useContext(AsashishiAgentContext);
     wsInstance.injectDependencies([{
         key: "uInput",
         value: uInput,
@@ -39,14 +39,10 @@ const UInput: React.FC = (): JSX.Element => {
                     <div
                         className={styles.InputBarButton}
                         onClick={() => {
-                            setIOHistories((prev: DisplayMsg[]): DisplayMsg[] => {
-                                const next: DisplayMsg[] = prev;
-                                next.push({
-                                    type: "input",
-                                    content: uInput,
-                                });
-                                return next;
-                            });
+                            setIOHistories((prev: DisplayMsg[]): DisplayMsg[] => [
+                                ...prev,
+                                { type: "input", content: uInput, diplayPosition: tab },
+                            ]);
                             wsInstance.send({
                                 type: 'user_input',
                                 content: uInput,
