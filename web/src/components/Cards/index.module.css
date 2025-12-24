@@ -1,4 +1,4 @@
-.AIOutputWrapper {
+.IOOutputWrapper {
     min-height: 67vh;
     max-height: 67vh;
     max-width: 100%;
@@ -7,26 +7,26 @@
     border-radius: 15px;
 }
 
-.AIOutputWrapper::-webkit-scrollbar {
+.IOOutputWrapper::-webkit-scrollbar {
     width: 10px;
 }
 
-.AIOutputWrapper::-webkit-scrollbar-track {
+.IOOutputWrapper::-webkit-scrollbar-track {
     background: #353535;
     border-radius: 5px;
 }
 
-.AIOutputWrapper::-webkit-scrollbar-thumb {
+.IOOutputWrapper::-webkit-scrollbar-thumb {
     background: #000000;
     border-radius: 5px;
 }
 
-.AIOutputWrapper::-webkit-scrollbar-thumb:hover {
+.IOOutputWrapper::-webkit-scrollbar-thumb:hover {
     background: #555;
     border-radius: 5px;
 }
 
-.AIOutput {
+.IOOutput {
     margin: 5px;
     white-space: pre-wrap;
     text-align: left;

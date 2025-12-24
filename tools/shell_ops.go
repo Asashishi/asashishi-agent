@@ -11,6 +11,16 @@ import (
 	"strconv"
 )
 
+func stopHook(shell *exec.Cmd) {
+	for {
+		if global.UInput.IsChildProcess == false {
+			killChildProcessGroup(shell.Process.Pid)
+			break
+		}
+		global.WaitNextFrame(conf.Env.TickPerSec)
+	}
+}
+
 func buildShell() *exec.Cmd {
 	var (
 		fomatedCommands string
@@ -188,6 +198,7 @@ func InteractiveExecuteWeb() string {
 	defer writer.Close()
 	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
+	go stopHook(shell)
 	go handleScpInteractiveInput(&stdinPipe)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()
@@ -216,6 +227,7 @@ func NoInteractiveExecuteWeb() string {
 	defer writer.Close()
 	shell.Stdout = io.MultiWriter(os.Stdout, writer, &buffer)
 	shell.Stderr = io.MultiWriter(os.Stderr, writer, &buffer)
+	go stopHook(shell)
 	go handleScpExit(&stopFlag, shell)
 	go handleScpOutputForWeb(reader)
 	err = shell.Run()

@@ -1,5 +1,6 @@
 import React, { createContext, useState, type JSX, type ReactNode } from "react";
 import type { DisplayMsg, Tab } from "../types/websocket_type";
+import wsInstance from "../utils/websocket";
 
 export type ContextItems<T> = Record<string, T | React.Dispatch<React.SetStateAction<T>>>
 
@@ -13,7 +14,19 @@ const AppContext = ({ children }: { children: ReactNode }): JSX.Element => {
         setTab,
         ioHistories,
         setIOHistories,
-    }
+    };
+    wsInstance.injectDependencies([
+        {
+            key: "tab",
+            value: tab,
+            setValue: setTab,
+        },
+        {
+            key: "ioHistories",
+            value: ioHistories,
+            setValue: setIOHistories,
+        },
+    ]);
     return (
         <AsashishiAgentContext.Provider value={context}>
             {children}

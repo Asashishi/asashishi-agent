@@ -2,7 +2,7 @@ import type { SignalStaus } from "./signal_status_type";
 
 export type WebSocketMsg = {
     type: string;
-    content: string;
+    content?: string;
 }
 
 export type ContextDependency<T> = {

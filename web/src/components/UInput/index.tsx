@@ -39,7 +39,7 @@ const UInput: React.FC = (): JSX.Element => {
                     <div
                         className={styles.InputBarButton}
                         onClick={() => {
-                            setIOHistories((prev: DisplayMsg[]): DisplayMsg[] => [
+                            tab !== "shell" && setIOHistories((prev: DisplayMsg[]): DisplayMsg[] => [
                                 ...prev,
                                 { type: "input", content: uInput, diplayPosition: tab },
                             ]);

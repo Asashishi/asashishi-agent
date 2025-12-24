@@ -4,8 +4,8 @@ import type {
 import type React from 'react';
 import Header from '../Header';
 import UInput from '../UInput';
-import AICard from '../AICard';
-import ShellCard from '../ShellCard';
+import AICard from '../Cards/AICard';
+import ShellCard from '../Cards/ShellCard';
 import styles from "./index.module.css";
 
 const Content: React.FC = (): JSX.Element => {

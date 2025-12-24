@@ -8,3 +8,4 @@ export const SysErrorType: string = "sys_error";
 export const UserInputType: string = "user_input";
 export const AIOutputEndType: string = "ai_msg_end";
 export const ChildProcessOutputType: string = "exec_output";
+export const RequestNewSession: string = "request_new_session";

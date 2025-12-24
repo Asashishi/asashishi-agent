@@ -5,27 +5,21 @@ import React, {
     useState,
 } from 'react';
 import type { JSX } from 'react';
-import wsInstance from '../../utils/websocket';
-import { AsashishiAgentContext } from '../../context';
-import styles from "./index.module.css";
-import type { DisplayMsg } from '../../types/websocket_type';
+import wsInstance from '../../../utils/websocket';
+import { AsashishiAgentContext } from '../../../context';
+import type { DisplayMsg } from '../../../types/websocket_type';
+import styles from "../index.module.css";
 
 const AICard: React.FC = (): JSX.Element => {
-    const { tab } = useContext(AsashishiAgentContext);
     const [aiOutput, setAIOutput] = useState<string>("");
-    const { ioHistories, setIOHistories } = useContext(AsashishiAgentContext);
+    const { tab, ioHistories } = useContext(AsashishiAgentContext);
     const cardRef: React.Ref<HTMLDivElement> | undefined = useRef(null);
     wsInstance.injectDependencies([
         {
             key: "aiOutput",
             value: aiOutput,
             setValue: setAIOutput,
-        },
-        {
-            key: "ioHistories",
-            value: ioHistories,
-            setValue: setIOHistories,
-        },
+        }
     ]);
     useEffect(() => {
         if (cardRef.current) {
@@ -34,11 +28,14 @@ const AICard: React.FC = (): JSX.Element => {
               behavior: "smooth",
             });
         }
+        if (!ioHistories.length) {
+            setAIOutput("");
+        }
     }, [ioHistories, aiOutput]);
     return (
         <div
             ref={cardRef}
-            className={styles.AIOutputWrapper}
+            className={styles.IOOutputWrapper}
             style={{ display: tab === "chat" ? "" : "none" }}
         >
             {ioHistories.map((item: DisplayMsg): JSX.Element | void => {
@@ -52,10 +49,10 @@ const AICard: React.FC = (): JSX.Element => {
                         </div>
                     )
                 } else if (item.type === "output") {
-                    return <div className={styles.AIOutput}>{item.content}</div>
+                    return <div className={styles.IOOutput}>{item.content}</div>
                 }
             })}
-            {aiOutput && <div className={styles.AIOutput}>{aiOutput}</div>}
+            {aiOutput && <div className={styles.IOOutput}>{aiOutput}</div>}
         </div>
     );
 };

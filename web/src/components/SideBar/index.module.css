@@ -50,9 +50,12 @@
     background-color: rgb(105, 130, 135);
 }
 
-.Options:active,
-.OptionsNewSession:active,
-.OptionsActivite:active {
+.Options:hover,
+.OptionsActivite:hover {
+    cursor: not-allowed;
+}
+
+.OptionsNewSession:active {
     background-color: rgb(166, 203, 210);
 }
 

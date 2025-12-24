@@ -63,6 +63,12 @@ func WithWebMode() {
 				fmt.Println(global.GetStyledWarn(err.Error()))
 			} else if data.Type == websocket.UserInputType {
 				global.UInput.WebsocketReadChan <- data.Content
+			} else if data.Type == websocket.RequestNewSession {
+				if cli.CurrStrem != nil {
+					cli.CurrStrem.Close()
+				}
+				cli.RemoveAllContext()
+				global.UInput.IsChildProcess = false
 			}
 			global.WaitNextFrame(conf.Env.TickPerSec)
 		}

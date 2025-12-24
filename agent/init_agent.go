@@ -52,6 +52,10 @@ func (cli *AgentClient) ChatForWebSearchContentDataClean(prompt string) string {
 	return resp.Choices[0].Message.Content
 }
 
+func (cli *AgentClient) RemoveAllContext() {
+	cli.MsgContext = cli.MsgContext[0:1]
+}
+
 func (cli *AgentClient) StreamChat(prompt string) {
 	var (
 		assistantMsg        string
@@ -75,7 +79,7 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		chunk = cli.CurrStrem.Current()
 		if chunk.Usage.PromptTokens > conf.Env.ContextLength*global.BitK {
 			fmt.Println(global.SpaceString + global.GetStyledSystemComent(ContextOutofRange))
-			cli.MsgContext = []openai.ChatCompletionMessageParamUnion{openai.SystemMessage(conf.Env.SysPrompt)}
+			cli.RemoveAllContext()
 			return
 		}
 		if len(chunk.Choices) > 0 {
