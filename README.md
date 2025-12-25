@@ -352,6 +352,14 @@ asashishi-agent/
 ├── go.sum                    # Go 依赖校验文件
 ├── .gitignore                # Git 忽略配置文件
 ├── LICENSE                   # MIT 许可证文件
+├── package.json              # Node.js 项目配置文件
+├── package-lock.json         # Node.js 依赖锁定文件
+├── eslint.config.js          # ESLint 配置文件
+├── tsconfig.json             # TypeScript 主配置文件
+├── tsconfig.app.json         # TypeScript 应用配置文件
+├── tsconfig.node.json        # TypeScript Node 配置文件
+├── vite.config.ts            # Vite 构建工具配置文件
+├── web_eaxmple.html          # Web 界面示例文件
 │
 ├── agent/                    # AI 代理核心模块
 ├── tools/                    # 工具实现模块
@@ -366,7 +374,9 @@ asashishi-agent/
 │   ├── src/                  # 前端源码路径
 │   └── public/               # 静态资源路径
 ├── log/                      # 操作日志目录
-└── resources/                # 资源文件目录
+├── resources/                # 资源文件目录
+├── .github/                  # GitHub Actions 工作流配置
+└── build/                    # 构建输出目录（自动生成）
 ```
 
 ### 📁 模块功能概览
@@ -574,16 +584,14 @@ upx --best --lzma AsashishiAgent.exe
 ### Q: 如何启用 Web 模式？
 **A:** 
 - 在 `config.json` 中设置 `"proc.web.web_mode": true`，然后重启程序。程序将在指定端口（默认 3000）启动 Web 服务器，您可以通过浏览器访问 `http://localhost:3000` 使用 Web 界面
-- Web 模式已包含完整的 React 前端界面，支持实时 WebSocket 通信
-- 注意! Web 模式尚未正式发布，如需提前使用，请自行按照 ./web_eaxmple.html 的示例实现 socket 回调和页面样式
+- Web 模式现已正式发布，也支持参照 web_eaxmple.html 进行自定义开发
 
 ### Q: Web 模式支持哪些功能？
 **A:** Web 模式支持所有 CLI 模式的功能，并提供现代化的 Web 界面，包括：
 - 实时聊天界面
-- 代码语法高亮
 - 响应式设计
 - 实时输出显示
-- 一键清空功能
+- 一键重连与 new session 功能
 
 ### Q: 如何运行测试？
 
