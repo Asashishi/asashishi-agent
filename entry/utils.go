@@ -108,6 +108,7 @@ func WriteOutputToWebWithRetry(ctx context.Context, conn *ws.Conn, cli *agent.Ag
 		}
 	} else {
 		if tStreamC {
+			cli.ForceStopFlag = true
 			cli.CurrStrem.Close()
 		}
 		if tScpIO {

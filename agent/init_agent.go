@@ -84,7 +84,7 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		}
 		if len(chunk.Choices) > 0 {
 			for _, choice := range chunk.Choices {
-				if choice.Delta.Content != global.EmptyString {
+				if choice.Delta.Content != global.EmptyString && !cli.ForceStopFlag {
 					cli.StreamChan <- choice.Delta.Content
 					assistantMsgBuilder.WriteString(choice.Delta.Content)
 				}
@@ -111,6 +111,9 @@ func (cli *AgentClient) StreamChat(prompt string) {
 		}
 	}
 	defer cli.CurrStrem.Close()
+	if cli.ForceStopFlag {
+		return
+	}
 	if cli.CurrStrem.Err() != nil {
 		cli.ErrorChan <- cli.CurrStrem.Err()
 		return

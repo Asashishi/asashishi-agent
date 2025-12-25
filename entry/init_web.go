@@ -41,6 +41,13 @@ func WithWebMode() {
 	mux.HandleFunc(conf.Env.WebsocketRoute, func(writer http.ResponseWriter, reader *http.Request) {
 		conn = websocket.GetWebsocketConn(ctx, conn, reader, writer)
 	})
+	mux.HandleFunc(conf.Env.StatusRoute, func(writer http.ResponseWriter, reader *http.Request) {
+		if global.UInput.IsChildProcess {
+			writer.Write([]byte(Shell))
+		} else {
+			writer.Write([]byte(Chat))
+		}
+	})
 	defer conn.Close(ws.StatusNormalClosure, websocket.ProcessExit)
 
 	go func() {
@@ -56,6 +63,7 @@ func WithWebMode() {
 				fmt.Println(global.GetStyledWarn(err.Error()))
 				conn.Close(ws.StatusNormalClosure, websocket.ClientExit)
 				if cli.CurrStrem != nil {
+					cli.ForceStopFlag = true
 					cli.CurrStrem.Close()
 				}
 				conn = nil
@@ -65,6 +73,7 @@ func WithWebMode() {
 				global.UInput.WebsocketReadChan <- data.Content
 			} else if data.Type == websocket.RequestNewSession {
 				if cli.CurrStrem != nil {
+					cli.ForceStopFlag = true
 					cli.CurrStrem.Close()
 				}
 				cli.RemoveAllContext()
@@ -115,6 +124,9 @@ func WithWebMode() {
 				if !processingFlag {
 					processingFlag = true
 					go func() {
+						if cli.ForceStopFlag {
+							cli.ForceStopFlag = false
+						}
 						cli.StreamChat(input)
 						if jsonMsg, innerErr = json.Marshal(websocket.WebsocketMsg{
 							Type: websocket.AIOutputEndType,

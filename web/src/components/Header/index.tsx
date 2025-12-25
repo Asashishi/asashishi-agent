@@ -1,10 +1,14 @@
-import { useState, type JSX } from 'react';
+import { useContext, useState, type JSX } from 'react';
 import styles from './index.module.css';
 import type { SignalStaus } from '../../types/signal_status_type';
 import wsInstance from '../../utils/websocket';
 import { GreySignal, YellowSignal } from '../../consts/signal';
+import syncServerStaus from '../../http';
+import { AsashishiAgentContext } from '../../context';
+import { ReGetStatusDelay } from '../../consts/http';
 
 const Header: React.FC = (): JSX.Element => {
+    const { setTab } = useContext(AsashishiAgentContext);
     const [wsSignal, setWsSignal] = useState<SignalStaus>({
         strength: 2,
         color: YellowSignal,
@@ -26,7 +30,10 @@ const Header: React.FC = (): JSX.Element => {
                 <span style={{ background: wsSignal.strength > 3 ? wsSignal.color : GreySignal }} />
             </p>
             <button
-                onClick={wsInstance.reconnect}
+                onClick={() => {
+                    wsInstance.reconnect();
+                    setTimeout(() => syncServerStaus(setTab), ReGetStatusDelay);
+                }}
                 className={styles.ReconnectButton}
             >
                 <span>⟳</span>

@@ -1,9 +1,6 @@
 import { GreenSignal, GreySignal, RedSignal } from "../consts/signal";
-import { AIOutputEndType, AIOutputType, ChildProcessOutputType } from '../consts/websocket';
+import { AIOutputEndType, AIOutputType, ChildProcessOutputType, ReconnectDelay, WebSocketURL } from '../consts/websocket';
 import type { AsashishiAgentWsDependencies, ContextDependency, DisplayMsg, WebSocketMsg } from "../types/websocket_type";
-
-const ReconnectDelay: number = 500; 
-const WebSocketURL: string = "ws://localhost:3000/ws";
 
 class AsashishiAgentWs {
     private ws: WebSocket;

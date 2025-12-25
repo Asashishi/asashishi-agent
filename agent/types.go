@@ -13,12 +13,13 @@ type ToolCall struct {
 }
 
 type AgentClient struct {
-	ModelName  string
-	ErrorChan  chan error
-	StreamChan chan string
-	LlmClient  openai.Client
-	Context    context.Context
-	ToolsList  []openai.ChatCompletionToolUnionParam
-	MsgContext []openai.ChatCompletionMessageParamUnion
-	CurrStrem  *ssestream.Stream[openai.ChatCompletionChunk]
+	ForceStopFlag bool
+	ModelName     string
+	ErrorChan     chan error
+	StreamChan    chan string
+	LlmClient     openai.Client
+	Context       context.Context
+	ToolsList     []openai.ChatCompletionToolUnionParam
+	MsgContext    []openai.ChatCompletionMessageParamUnion
+	CurrStrem     *ssestream.Stream[openai.ChatCompletionChunk]
 }

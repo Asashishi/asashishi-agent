@@ -36,14 +36,14 @@ const ShellCard: React.FC = (): JSX.Element => {
             style={{ display: tab === "shell" ? "" : "none" }}
         >
             {shellOutput && <div className={styles.IOOutput}>{shellOutput}</div>}
-            {ioHistories.length && ioHistories[ioHistories.length - 1].diplayPosition === "shell" && (
+            {ioHistories.length && ioHistories[ioHistories.length - 1].diplayPosition === "shell" ? (
                 <div className={styles.UserInput}>
                     <span>
                         User
                     </span>
                     {ioHistories[ioHistories.length - 1].content}
                 </div>
-            )}
+            ) : null}
         </div>
     );
 };

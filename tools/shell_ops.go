@@ -106,6 +106,7 @@ func handleScpOutputForWeb(reader *io.PipeReader) {
 		if !global.UInput.IsChildProcess {
 			break
 		}
+		global.WaitNextFrame(conf.Env.TickPerSec)
 	}
 }
 
