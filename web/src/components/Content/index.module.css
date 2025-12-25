@@ -1,0 +1,8 @@
+.Content {
+    padding-left: 10%;
+    padding-right: 10%;
+    border-radius: 15px;
+    margin: 15px;
+    background-color: rgb(25, 25, 25);
+    position: relative;
+}

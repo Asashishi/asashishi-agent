@@ -1,0 +1,51 @@
+.HeaderWrapper {
+    position: relative;
+}
+
+.HeaderWrapper .Signal {
+    position: absolute;
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    transform: translateY(-62px) translateX(235px);
+}
+
+.Signal span {
+    width: 6px;
+    border-radius: 2px;
+}
+
+.Signal span:nth-child(1) { height: 8px; }
+.Signal span:nth-child(2) { height: 12px; }
+.Signal span:nth-child(3) { height: 16px; }
+.Signal span:nth-child(4) { height: 20px; }
+
+.HeaderWrapper .ReconnectButton {
+    cursor: pointer;
+    position: absolute;
+    transform: translateY(-50px) translateX(285px);
+    background: white;
+    color: black;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    border: 0;
+}
+
+.ReconnectButton:hover {
+    background: #c3c3c3;
+}
+
+.ReconnectButton span {
+    display: inline-block;
+}
+
+.ReconnectButton:hover span {
+    animation: spin 1s ease;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

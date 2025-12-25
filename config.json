@@ -1,6 +1,6 @@
 {
     "info": {
-        "version": "3.5.1",
+        "version": "4.0.1",
         "name": "AsashishiAgent.exe"
     },
     "proc": {
@@ -14,7 +14,8 @@
         ],
         "tick_per_sec": 90,
         "web": {
-            "web_mode": false,
+            "web_mode": true,
+            "status_route": "/status",
             "websocket_route": "/ws",
             "server_root_path": "web",
             "cros": {

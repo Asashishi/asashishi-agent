@@ -15,6 +15,7 @@ type WebConfig struct {
 	WebCrosConfig  `json:"cros"`
 	WebMode        bool   `json:"web_mode"`
 	ServerListen   string `json:"server_listen"`
+	StatusRoute    string `json:"status_route"`
 	WebsocketRoute string `json:"websocket_route"`
 	ServerRootPath string `json:"server_root_path"`
 	ServerBaseURL  string `json:"server_base_url"`

@@ -1,0 +1,8 @@
+.App {
+    display: grid;
+    color: white;
+    width: 100vw;
+    grid-template-columns: minmax(300px, 20vw) 1fr;
+    background-color: #252525;
+    overflow: hidden;
+}

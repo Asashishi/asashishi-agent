@@ -3,8 +3,8 @@ module asashishi-agent
 go 1.25.5
 
 require (
-	github.com/alecthomas/chroma/v2 v2.20.0
-	github.com/openai/openai-go/v3 v3.13.0
+	github.com/alecthomas/chroma/v2 v2.21.1
+	github.com/openai/openai-go/v3 v3.15.0
 )
 
 require (

@@ -1,52 +1,89 @@
-import type { ContextStorageItem, WebSocketMsg } from '../types/index';
-
-const WebSocketURL: string = "ws://localhost:3000/ws";
+import { GreenSignal, GreySignal, RedSignal } from "../consts/signal";
+import { AIOutputEndType, AIOutputType, ChildProcessOutputType, ReconnectDelay, WebSocketURL } from '../consts/websocket';
+import type { AsashishiAgentWsDependencies, ContextDependency, DisplayMsg, WebSocketMsg } from "../types/websocket_type";
 
 class AsashishiAgentWs {
-
     private ws: WebSocket;
-    private uInputState: ContextStorageItem<string> | undefined;
-    private aiOutputState: ContextStorageItem<string> | undefined;
-    private scpOutputState: ContextStorageItem<string> | undefined;
-
-    public injectContextItems(
-        uInputState: ContextStorageItem<string>,
-        aiOutputState: ContextStorageItem<string>,
-        scpOutputState: ContextStorageItem<string>,
-    ): void {
-        this.uInputState = uInputState;
-        this.aiOutputState = aiOutputState;
-        this.scpOutputState = scpOutputState;
-    }
+    private dependencies: AsashishiAgentWsDependencies;
 
     public constructor()  {
-        this.ws = new WebSocket(WebSocketURL);
-        this.ws.onopen = () => console.log("✅ 已连接到 WebSocket 服务");
-        this.ws.onclose = () => {
-            console.log("\n ❌ 连接已关闭");
-            this.ws = new WebSocket(WebSocketURL);
-        };
-        this.ws.onerror = (error: unknown) => {
-            this.ws.close();
-            console.error("\n ⚠️ 出错: " + (error as Error).message);
-        }
-        this.ws.onmessage = (event: MessageEvent<string>) => {
-          if (this.uInputState?.value != "") {
-            this.uInputState?.setValue("");
-          }
-          this.disPlayMsg(JSON.parse(event.data) as WebSocketMsg);
-        };
+        this.dependencies = {};
+        this.dependencies.wsSignal?.setValue({
+            strength: 4,
+            color: GreySignal,
+        });
+        this.ws = this.connect();
     }
 
-    public send(msg: WebSocketMsg) {
+    private connect(): WebSocket {
+        this.ws = new WebSocket(WebSocketURL);
+        this.ws.onopen = () => {
+            this.dependencies.wsSignal?.setValue({
+                strength: 4,
+                color: GreenSignal,
+            })
+        }
+        this.ws.onclose = (): void => {
+            this.dependencies.wsSignal?.setValue({
+                strength: 1,
+                color: RedSignal,
+            });
+            setTimeout(() => this.connect(), ReconnectDelay);
+        };
+        this.ws.onerror = (error: unknown): void => {
+            this.ws.close();
+            console.warn((error as Error).message);
+        }
+        this.ws.onmessage = (event: MessageEvent<string>) => {
+          // 改禁止发送按钮
+          this.disPlayMsg(JSON.parse(event.data) as WebSocketMsg);
+        };
+        return this.ws;
+    }
+
+    public send(msg: WebSocketMsg): void {
         this.ws.send(JSON.stringify(msg));
     }
 
+    public reconnect = (): void => {
+        this.ws.close();
+    }
+
+    public injectDependencies(dependencies: ContextDependency<any>[]): void {
+        for (const item of dependencies) {
+            this.dependencies[item.key as keyof AsashishiAgentWsDependencies] = item;
+        }
+    }
+
     public disPlayMsg(msg: WebSocketMsg): void {
-        if (msg.type === "ai_msg") {
-            this.aiOutputState?.setValue(this.aiOutputState.value + msg.content);
-        } else {
-            this.scpOutputState?.setValue(this.scpOutputState.value + msg.content + '\n');
+        switch (msg.type) {
+            case AIOutputType: {
+                if (this.dependencies.tab?.value !== "chat") {
+                    this.dependencies.tab?.setValue("chat");
+                }
+                this.dependencies.aiOutput?.setValue((prev: string): string => prev + msg.content);
+                break;
+            }
+            case AIOutputEndType: {
+                this.dependencies.ioHistories?.setValue((prev: DisplayMsg[]): DisplayMsg[] => {
+                    const next: DisplayMsg[] = prev;
+                    next.push({
+                        type: "output",
+                        diplayPosition: "chat",
+                        content: this.dependencies.aiOutput!.value!,
+                    });
+                    return next;
+                });
+                this.dependencies.aiOutput?.setValue("");
+                break;
+            }   
+            case ChildProcessOutputType: {
+                if (this.dependencies.tab?.value !== "shell") {
+                    this.dependencies.tab?.setValue("shell");
+                }
+                this.dependencies.shellOutput?.setValue((prev: string): string => prev + msg.content);
+                break;
+            }
         }
     }
 }
